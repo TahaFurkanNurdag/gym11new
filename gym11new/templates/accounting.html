@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Anasayfa</title>
+<link rel="stylesheet" href={{ url_for('static', filename='css/home.css') }} />
+<link rel="stylesheet" href={{ url_for('static', filename='css/topStyle.css') }} />
+
+</head>
+<body>
+	<form action="/accounting" method="POST" onsubmit="return validate()">
+		<h1>Accounting!</h1>
+		<div class="section"><span></span>All values </div>
+		<div class="inner-wrap">
+				<p>Price:<input type="text" name="price"></p>
+				<p>Date:<input type="date" name="date"></p>
+				Description:<textarea name ="explanation" rows=5 placeholder="Description :"></textarea>
+		</div>
+
+		<input type="submit" value="Upload">
+	</form>
+</body>
+</html>

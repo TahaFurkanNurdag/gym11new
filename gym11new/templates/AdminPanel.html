@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>Admin</title>
+	<link rel="stylesheet" href={{ url_for('static', filename='css/home.css') }} />
+	<link rel="stylesheet" href={{ url_for('static', filename='css/topStyle.css') }} />
+</head>
+
+<body>
+	<div id="title">
+		<a href="/">
+			<img id="logo" src={{ url_for('static', filename='images/sitelogo.png') }} />
+		</a>
+
+		{% if not girildiMi %}
+		<div id="signInButton">
+			<a class="link" href="/loginForm">Giriş Yap</a>
+		</div>
+		{% else %}
+		<div class="dropdown">
+			<button class="dropbtn">Hoşgeldin, <br>{{adi}}</button>
+			<div class="dropdown-content">
+				<a href="/account/profile">Profil</a>
+				<a href="/AdminPanel" class="w3-bar-item w3-button" style="{{adminpanel}}">Admin Panel</a>
+				<hr>
+				<a href="/logout">Çıkış</a>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+
+	<h1 align="center">Admin Paneli</h1>
+	<div class="display" align="center">
+		<a href="/accountingDetails" class="button button2">Check Accounting </a>
+		<a href="/clientsDetails" class="button button2">Check Clients</a>
+		<a href="/registerationForm" class="button button2">Add Client</a>
+		<a href="/addcategory" class="button button2">Add new packet</a>
+		<a href="/accountingForm" class="button button2">Add Accounting Form</a>
+	</div>
+
+</body>
+
+</html>

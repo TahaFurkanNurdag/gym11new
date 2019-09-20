@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Anasayfa</title>
+<link rel="stylesheet" href={{ url_for('static', filename='css/home.css') }} />
+<link rel="stylesheet" href={{ url_for('static', filename='css/topStyle.css') }} />
+</head>
+<body>
+
+	<table>
+		<thead>
+		<tr>
+			<th>E-Mail</th>
+			<th>Name</th>
+			<th>Surname</th>
+			<th>Adress-1</th>
+			<th>Adress-2</th>
+			<th>City</th>
+			<th>District</th>
+			<th>Country</th>
+			<th>Phone</th>
+			<th>Height</th>
+			<th>Weight</th>
+			<th>Registration Date </th>
+			<th>isActive</th>
+			<th>Attendance</th>
+			<th>Number of friends</th>
+			<th>Did he pay or not</th>
+		</tr>
+		</thead>
+		<tbody>
+			{% for row in value %} 
+				<tr>
+					<td>{{row[2]}}</td>
+					<td>{{row[3]}}</td>
+					<td>{{row[4]}}</td>
+					<td>{{row[5]}}</td>
+					<td>{{row[6]}}</td>
+					<td>{{row[7]}}</td>
+					<td>{{row[8]}}</td>
+					<td>{{row[9]}}</td>
+					<td>{{row[10]}}</td>
+					<td>{{row[11]}}</td>
+					<td>{{row[12]}}</td>
+					<td>{{row[13]}}</td>
+					<td>{{row[14]}}</td>
+					<td>{{row[16]}}</td>
+					<td>{{row[17]}}</td>
+					<td>{{row[18]}}</td>
+
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<form action="/increaseOneMonth" method="POST" >
+		<div class="section"><span>1</span>Personal Informations </div>
+		<div class="inner-wrap">
+				<p>e-Mail:<input type="text" name="email"></p>
+				<p>Number of Day:<input type="text" name="odemegunu"></p>		
+		</div>
+		<input type="submit" value="Register">
+		<a href="/decreaseOneDay" > Decrease one day everyone </a>
+		<a href="/increaseOneDay" > Increase one day everyone </a>
+	</form>
+</body>
+</html>

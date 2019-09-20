@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Ürün Silme Sayfası</title>
+<link rel="stylesheet" href={{url_for('static', filename='css/remove.css')}}>
+</link>
+</head>
+<style>
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 50%;
+		}
+	
+		td,
+		th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+	
+		tr:nth-child(even) {
+			background-color: #dddddd;
+		}
+	</style>
+<body>
+<table>
+	{% for i in range(6) %}
+	<tr>
+		{% for row in data %}
+		<td>
+			<a href="/removeItem?productId={{row[0]}}">
+			{% if i == 4 %}
+				<img src={{ url_for('static', filename='uploads/' + row[i]) }} id="itemImage" />
+			{% elif i == 3 %}
+				{{row[i][:12]+"..."}}
+			{% else %}
+				{{row[i]}}
+			{% endif %}
+			</a>
+		</td>
+		{% endfor %}
+	</tr>
+	{% endfor %}
+</table>
+<p>><a href="/AdminPanel" class="w3-button w3-black"> Admin Sayfasi</a> </p> 
+</body>
+</html>

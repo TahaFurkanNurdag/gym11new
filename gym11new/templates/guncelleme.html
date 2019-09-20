@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>Urun Guncelleme</title>
+	<link rel="stylesheet" href={{ url_for('static', filename='css/home.css') }} />
+	<link rel="stylesheet" href={{ url_for('static', filename='css/topStyle.css') }} />
+	<style>
+		ul {
+			list-style-type: none;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			background-color: SlateGray;
+		}
+
+		li {
+			float: left;
+		}
+
+		li a {
+			display: block;
+			color: white;
+			text-align: center;
+			padding: 14px 16px;
+			text-decoration: none;
+		}
+
+		li a:hover {
+			background-color: rgb(148, 148, 148);
+		}
+
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 50%;
+		}
+
+		td,
+		th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+
+		tr:nth-child(even) {
+			background-color: #dddddd;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="title">
+		<a href="/">
+			<img id="logo" src={{ url_for('static', filename='images/sitelogo.png') }} />
+		</a>
+
+		{% if not girildiMi %}
+		<div id="signInButton">
+			<a class="link" href="/loginForm">Giriş Yap</a>
+		</div>
+		{% else %}
+		<div class="dropdown">
+			<button class="dropbtn">Hoşgeldin, <br>{{adi}}</button>
+			<div class="dropdown-content">
+				<a href="/account/orders">Geçmiş Siparişler</a>
+				<a href="/account/profile">Profil</a>
+				<a href="/AdminPanel" class="w3-bar-item w3-button" style="{{adminpanel}}">Admin Panel</a>
+				<hr>
+				<a href="/logout">Çıkış</a>
+			</div>
+		</div>
+		{% endif %}
+		<div id="kart">
+			<a class="link" href="/cart">
+				<img src={{url_for('static', filename='images/shoppingCart.png')}} id="cartIcon" />
+				Sepet ( {{sepetSayac}} )
+			</a>
+		</div>
+	</div>
+	<div style="max-width:1564px">
+		<div class="display">
+			<h2 align="center">Ürün Güncelleme</h2>
+			<form action="/updateitem" method="POST">
+				<div class="display" align="center">
+					<table>
+						<tr>
+							<th>Ürün:</th>
+							<td><select name="urunler">
+									{% for row in urunler %}
+									<option value="{{row[0]}}">{{row[1]}}</option>
+									{% endfor %}
+								</select></td>
+						</tr>
+						<tr>
+							<th>İsim:</th>
+							<td><input name="isim" type="text" placeholder="Ürünün İsmini Degistir"></td>
+						</tr>
+						<tr>
+							<th>Fiyat:</th>
+							<td><input name="fiyat" type="text" placeholder="Ürünü Fiyatını Değiştir"></td>
+						</tr>
+					</table>
+					<br>
+					<button class="w3-btn w3-black" type="submit">Guncelle</button>
+				</div>
+			</form>
+
+			<p>><a href="/AdminPanel" class="w3-button w3-black"> Admin Sayfasi</a> </p>
+		</div>
+	</div>
+</body>
+
+</html>
