@@ -135,20 +135,8 @@
 		<img id="logo" src= {{ url_for('static', filename='images/sitelogo.png') }} />
 	</a>
 
-	{% if not girildiMi %}
-	<div id="signInButton">
-		<a class="link" href="/loginForm">Log in!</a>
-	</div>
-	{% else %}
-	<div class="dropdown">
-		<button class="dropbtn">Hoşgeldin, <br>{{adi}}</button>
-		<div class="dropdown-content">
-			<a href="/account/profile">Profil</a>
-			<hr>
-			<a href="/logout">Exit</a>
-		</div>
-	</div>
-	{% endif %}
+
+
 </div>
 <div class="form-style-10">
 <form action="/register" method="POST" onsubmit="return validate()">
@@ -160,7 +148,14 @@
 				<p>Surname: <input type="text" name="soyadi"></p>
 				<p>Height: <input type="text" name="boy"></p>
 				<p>Weight:<input type="text" name="kilo"></p>
-				<p>Type of packet:<input type="text" name="pakettipi"></p>
+				<tr>
+								<th>Kategori:</th>
+								<td><select class="w3-input" name="pakettipi">
+										{% for row in pakettipleri %}
+										<option value="{{row[0]}}">{{row[0]}}</option>
+										{% endfor %}
+									</select></td>
+				</tr>
 				<p>Is Active:<input type="text" name="aktifmi"></p>
 				<p>Date of registration:<input type="date" name="kayitgunu"></p>
 				<p>Number Of Friends:<input type="text" name="arkadassayisi"></p>
@@ -186,11 +181,11 @@
 		<input type="submit" value="Register">
 	</form>
 </div>
-
-
-
-<div class="display" align="center">
-    <a href="/loginForm" class="button button2" align="center">Log in!</a>
-</div>
+<th>Kategori:</th>
+								<td><select class="w3-input" name="paketipi">
+										{% for row in paketipleri %}
+										<option value="{{row[0]}}">{{row[0]}}</option>
+										{% endfor %}
+									</select></td>
 </body>
 </html>

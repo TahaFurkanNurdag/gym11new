@@ -12,7 +12,7 @@ ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif']) #upload edilecek fotogra
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 def getLoginDetails():
-    with sqlite3.connect('database.db') as conn: 
+    with sqlite3.connect('gym11.db') as conn: 
         cur = conn.cursor()
         try:
             if 'email' not in session: #emaile gore giris yapildi mi? yapilmadiysa alttaki satilar
@@ -59,25 +59,29 @@ def addcategory():
         return render_template('kategoriEkle.html' , girildiMi=girildiMi, adi=adi)
     else:
         return "Bu sayfaya sadece adminler erisebilir..."
-# @app.route("/addcategoryitem", methods=["GET", "POST"]) #kategoriEkle.html icinden bu sayfa cagiriliyor
-# def addcategoryitem():
-#     if request.method == "POST": 
-#         isim = request.form['isim']
-#         with sqlite3.connect('database.db') as conn:
-#             try:
-#                 cur = conn.cursor()
-#                 cur.execute('''INSERT INTO kategoriler (isim) VALUES (?)''', (isim,))
-#                 conn.commit() #burada kategori veritabanina ekleniyor
-#                 msg="Basarili"
-#             except:
-#                 msg="Hata olustu"
-#                 conn.rollback()
-#                 return redirect(url_for('root'))
-#         conn.close()
-#         print(msg)
-#         return redirect(url_for('root'))
-#     else:
-#         return redirect(url_for('root'))
+
+@app.route("/addcategoryitem", methods=["GET", "POST"]) #kategoriEkle.html icinden bu sayfa cagiriliyor
+def addcategoryitem():
+    if request.method == "POST": 
+        paketadi = request.form['paketadi']
+        paketfiyati = request.form['paketfiyati']
+        paketaciklamasi = request.form['paketaciklamasi']
+
+        with sqlite3.connect('gym11.db') as conn:
+            try:
+                cur = conn.cursor()
+                cur.execute('''INSERT INTO pakettipi (paketadi,paketfiyati,paketaciklamasi) VALUES (?,?,?)''', (paketadi,paketfiyati,paketaciklamasi,))
+                conn.commit() #burada kategori veritabanina ekleniyor
+                msg="Basarili"
+            except:
+                msg="Hata olustu"
+                conn.rollback()
+                return redirect(url_for('root'))
+        conn.close()
+        print(msg)
+        return redirect(url_for('root'))
+    else:
+        return redirect(url_for('root'))
 
 
 
@@ -106,7 +110,7 @@ def editProfile():
     if 'email' not in session:
         return redirect(url_for('loginForm')) #login ekranina yonlendirme
     girildiMi, adi = getLoginDetails()
-    with sqlite3.connect('database.db') as conn:
+    with sqlite3.connect('gym11.db') as conn:
         cur = conn.cursor()
         cur.execute("SELECT * FROM kullanicilar WHERE email = ?", (session['email'], ))
         profilVeri = cur.fetchone() #kullanicinin emailine gore bilgileri degiskene aktarildi html'de duzenlenebilir
@@ -124,7 +128,7 @@ def viewProfile():
     if 'email' not in session: #bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
     girildiMi, adi = getLoginDetails()
-    with sqlite3.connect('database.db') as conn:
+    with sqlite3.connect('gym11.db') as conn:
         cur = conn.cursor()
         cur.execute("SELECT * FROM kullanicilar WHERE email = ?", (session['email'], ))
         profilVeri = cur.fetchone() #kullanicinin emailine gore bilgileri degiskene aktarildi html'de gosterilecek
@@ -147,7 +151,7 @@ def changePassword():
         eskiParola = hashlib.md5(eskiParola.encode()).hexdigest() #eski parola cozulerek degiskene aktarildi
         yeniParola = request.form['yeniParola']
         yeniParola = hashlib.md5(yeniParola.encode()).hexdigest() #yeni parola cozulerek degiskene aktarildi
-        with sqlite3.connect('database.db') as conn:
+        with sqlite3.connect('gym11.db') as conn:
             cur = conn.cursor()
             cur.execute("SELECT userId, parola FROM kullanicilar WHERE email = ?", (session['email'], ))
             userId, parola = cur.fetchone() #emaile gore userid ve parolasi alindi
@@ -183,7 +187,7 @@ def updateProfile():
         il = request.form['il']
         ulke = request.form['ulke']
         tel = request.form['tel'] #html icinde doldurulan alanlar degiskenlere aktarildi
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect('gym11.db') as con:
                 try:
                     cur = con.cursor()
                     cur.execute('UPDATE kullanicilar SET adi = ?, soyadi = ?, adres1 = ?, adres2 = ?, postaKodu = ?, ilce = ?, il = ?, ulke = ?, tel = ? WHERE email = ?', (adi, soyadi, adres1, adres2, postaKodu, ilce, il, ulke, tel, email))
@@ -227,7 +231,7 @@ def logout():
     if 'email' not in session: #kisi eger giris yapmamissa anasayfaya yonlendirilir
         return redirect(url_for('root'))
     email = session['email']
-    with sqlite3.connect('database.db') as conn:
+    with sqlite3.connect('gym11.db') as conn:
         cur = conn.cursor()
         cur.execute("SELECT userId FROM kullanicilar WHERE email = ?", (email, ))
         userId = cur.fetchone()[0]  #bu kisim usttekilerle ayni mantik
@@ -241,7 +245,7 @@ def logout():
     return redirect(url_for('root')) #anasayfaya donus
 
 def is_valid(email, parola, adminMi): #email ve parola dogru mu kiyasi
-    con = sqlite3.connect('database.db')
+    con = sqlite3.connect('gym11.db')
     cur = con.cursor()
     cur.execute('SELECT email, parola, adminMi FROM kullanicilar')
     data = cur.fetchall()
@@ -273,11 +277,13 @@ def register():
         aktifmi = request.form['aktifmi']
         arkadassayisi = request.form['arkadassayisi']
 
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect('gym11.db') as con:
             try:
                 cur = con.cursor()
+                cur.execute('select paketadi from pakettipi')
+                paketipleri = cur.fetchall()
+                print(paketipleri)
                 cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,aktifmi,katilim,arkadassayisi, odeme,adminMi) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, "30",0)', (hashlib.md5(parola.encode()).hexdigest(), email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,aktifmi,arkadassayisi))
-
                 con.commit() #veritabanina kaydedildi
 
                 msg = "Kayıt Başarılı"
@@ -286,7 +292,7 @@ def register():
                 msg = "Hata olustu"
                 print (e)
         con.close()
-        return render_template("giris.html", error=msg)
+        return render_template("giris.html", error=msg , paketipleri=paketipleri)
     else:
         return redirect(url_for('root'))
 
@@ -318,7 +324,7 @@ def parse(data): #urunleri listelememizde kullandigimiz fonksiyon. birden fazla 
 
 @app.route("/clientsDetails")
 def clientsDetails():
-    con = sqlite3.connect('database.db')
+    con = sqlite3.connect('gym11.db')
     cur = con.cursor()
     cur.execute("select * from kullanicilar")
     data = cur.fetchall() #data from database
@@ -326,7 +332,7 @@ def clientsDetails():
 
 @app.route("/accountingDetails")
 def accountingDetails():
-    con = sqlite3.connect('database.db')
+    con = sqlite3.connect('gym11.db')
     cur = con.cursor()
     cur.execute("select * from muhasebe")
     data = cur.fetchall() #data from database
@@ -364,7 +370,7 @@ def totalAmount():
         date = request.form['date']
         explanation=request.form['explanation']
         if price and date:
-            with sqlite3.connect('database.db') as con:
+            with sqlite3.connect('gym11.db') as con:
                 try:
                     cur = con.cursor()
                     cur.execute('INSERT INTO muhasebe (price,date,explanation) VALUES ( ?, ?,?)', (price,date,explanation))
@@ -387,7 +393,7 @@ def addOneMonthToTheUser():
     if request.method == 'POST':
         email = request.form['email']
         gunsayisi = request.form['odemegunu']
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect('gym11.db') as con:
             try:
                 cur = con.cursor()
                 cur.execute('update kullanicilar SET  odeme=odeme+ ? where email = ?',(gunsayisi,email))
@@ -404,7 +410,7 @@ def addOneMonthToTheUser():
 def decreaseOneDay():
     print("-1yarrak")
     if True == True:
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect('gym11.db') as con:
             print("yarrak")
             try:
                 print("yarra1k")
@@ -424,7 +430,7 @@ def decreaseOneDay():
 def increaseOneDay():
     print("-1yarrak")
     if True == True:
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect('gym11.db') as con:
             print("yarrak")
             try:
                 print("yarra1k")
@@ -439,6 +445,7 @@ def increaseOneDay():
     else:
         print("error")
         return redirect(url_for('root'))
+
 
 
 if __name__ == '__main__':
