@@ -27,7 +27,6 @@ def getLoginDetails():
     conn.close() #connection kapatildi
     return (girildiMi, adi) #fonksiyonun dondurdugu degiskenler
 
-
 @app.route("/")
 def root():
     if 'email' not in session: #giris yapilmadiysa
@@ -46,8 +45,6 @@ def adminpanel():
         return render_template('AdminPanel.html' , girildiMi=girildiMi, adi=adi) 
     else:
         return "Bu sayfaya sadece adminler erisebilir..." #eger kisi admin degilse bu yazi ile karsilasacak
-
-
 
 @app.route("/addcategory") #kategori ekleme sayfasi
 def addcategory():
@@ -83,8 +80,6 @@ def addcategoryitem():
     else:
         return redirect(url_for('root'))
 
-
-
 @app.route("/account/profile") #profil sayfasi
 def profileHome():
     if 'email' not in session: #bu kisim usttekilerle ayni mantik
@@ -97,7 +92,6 @@ def profileHome():
         return redirect(url_for('loginForm')) #giris yapilmadiysa login ekranina yonlendirme
     girildiMi, adi = getLoginDetails() #giris yapildiysa detaylari cek ve html'ye aktar
     return render_template("profilSyf.html", adminpanel=adminpanel, girildiMi=girildiMi, adi=adi)
-
 
 @app.route("/account/profile/edit") #profil bilgilerini duzenleme sayfasi
 def editProfile():
