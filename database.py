@@ -23,7 +23,7 @@ conn.execute('''CREATE TABLE `kullanicilar` (
 	`aktifmi`   INTEGER,
 	`katilim`   INTEGER,
 	`arkadassayisi` INTEGER,
-	`odeme`    TEXT,
+	`odeme`    INTEGER,
 	`adminMi`	INTEGER,
 	PRIMARY KEY(`userId`)
 		)''')
@@ -53,7 +53,6 @@ conn.execute('''CREATE TABLE `pakettipi` (
 	PRIMARY KEY(`id`)
 		)''')
 
-		
 conn.execute('''CREATE TABLE `kategoriler` (
 	`categoryId`	INTEGER,
 	`isim`	TEXT,
@@ -62,32 +61,4 @@ conn.execute('''CREATE TABLE `kategoriler` (
 
 conn.commit()
 
-#ilk veriler
-cur = conn.cursor()	
-cur.execute('''INSERT INTO kategoriler (isim) VALUES ("deneme")''')
-cur.execute('''INSERT INTO kullanicilar (parola,email,adi,soyadi,adres1,adres2,il,ilce,ulke,tel,boy,kilo,kayitgunu,pakettipi,aktifmi,katilim,arkadassayisi,odeme,adminMi) 	VALUES ("deneme", "deneme@deneme.com", "deneme", "deneme","deneme",  "deneme", "deneme","deneme", "deneme", "deneme",123,321,26.09.2019,1,1,23,90,"hayir", 1)''')
-
-
-cur.execute('''INSERT INTO kullanicilar (
-	parola,
-	email,
-	adi,
-	soyadi,
-	adres1,
-	adres2,
-	il,
-	ilce,
-	ulke,
-	tel,
-	boy,
-	kilo,
-	kayitgunu,
-	pakettipi,
-	aktifmi,
-	katilim,
-	arkadassayisi,
-	adminMi) VALUES ("a","a@a","tahafurkan","nurdag","kuckbakkalkoyadres","atasehiradres","istanbul","atasehirilce","turkiye","05350363656",123,1234,26.05.1995,1,1,50,1)''')
-
-	
-conn.commit()
 conn.close()
