@@ -2,14 +2,64 @@
 <html>
 
 <head>
-	<title>Kayıt Sayfası </title>
-	<script type="text/javascript" src="{{ url_for('static', filename = 'js/validateForm.js') }}">
-	</script>
+	<title>Client Details</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
+
+<!-- Navbar -->
+<header style="font-family: 'Roboto', sans-serif;">
+	<div>
+		<div class="w3-bar w3-gym11 w3-card w3-left-align w3-large">
+			<a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-gym11"
+				href="javascript:void(0);" onclick="toggleMenu()" title="Toggle Navigation Menu">Menu</a>
+			<a href="/">
+				<img class="w3-bar-item w3-image w3-circle" style="height: 50px; width: auto"
+					src="{{ url_for('static', filename='images/sitelogo.png') }}" />
+			</a>
+			<a class="w3-bar-item w3-hide-small w3-padding-large w3-black"><b>
+					{% if adi %}
+					{{adi}}
+					{% else %}
+					!
+					{% endif %}
+				</b></a>
+			{% if not girildiMi %}
+			<a class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-gym11" href="/loginForm">Giriş
+				Yap</a>
+			{% else %}
+			<a href="/accountingMain"
+				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Accounting</a>
+			<a href="/clientMain" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Client</a>
+			<a href="/addcategory" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Add
+				Packages</a>
+			<a href="/logout"
+				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Logout</a>
+			{% endif %}
+		</div>
+
+		<!-- Navbar on small screens -->
+		<div id="navBar" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
+			{% if not girildiMi %}
+			<a class="w3-bar-item w3-button w3-padding-large w3-hover-gym11" href="/loginForm">Giriş
+				Yap</a>
+			{% else %}
+			<a href="/account/profile" class="w3-bar-item w3-button w3-padding-large">Accounting</a>
+			<a href="/references" class="w3-bar-item w3-button w3-padding-large">Client</a>
+			<a href="/adminPage" class="w3-bar-item w3-button w3-padding-large">Add Packages</a>
+			<a href="/logout" class="w3-bar-item w3-button w3-padding-large">Logout</a>
+			{% endif %}
+		</div>
+	</div>
+	<br class="w3-margin-bottom">
+	<br class="w3-margin-bottom">
+</header>
+<!-- Navbar End -->
+
+<!-- Content -->
+
 <style type="text/css">
 	.form-style-10 {
 		width: 450px;
@@ -141,113 +191,63 @@
 	}
 </style>
 
-
-<!-- Navbar -->
-<header style="font-family: 'Roboto', sans-serif;">
-	<div>
-		<div class="w3-bar w3-gym11 w3-card w3-left-align w3-large">
-			<a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-gym11"
-				href="javascript:void(0);" onclick="toggleMenu()" title="Toggle Navigation Menu">Menu</a>
-			<a href="/">
-				<img class="w3-bar-item w3-image w3-circle" style="height: 50px; width: auto"
-					src="{{ url_for('static', filename='images/sitelogo.png') }}" />
-			</a>
-			<a class="w3-bar-item w3-hide-small w3-padding-large w3-black"><b>
-					{% if adi %}
-					{{adi}}
-					{% else %}
-					!
-					{% endif %}
-				</b></a>
-			{% if not girildiMi %}
-			<a class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-gym11" href="/loginForm">Giriş
-				Yap</a>
-			{% else %}
-			<a href="/accountingMain"
-				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Accounting</a>
-			<a href="/clientMain" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Client</a>
-			<a href="/addcategory" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Add
-				Packages</a>
-			<a href="/logout"
-				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Logout</a>
-			{% endif %}
-		</div>
-
-		<!-- Navbar on small screens -->
-		<div id="navBar" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-			{% if not girildiMi %}
-			<a class="w3-bar-item w3-button w3-padding-large w3-hover-gym11" href="/loginForm">Giriş
-				Yap</a>
-			{% else %}
-			<a href="/account/profile" class="w3-bar-item w3-button w3-padding-large">Accounting</a>
-			<a href="/references" class="w3-bar-item w3-button w3-padding-large">Client</a>
-			<a href="/adminPage" class="w3-bar-item w3-button w3-padding-large">Add Packages</a>
-			<a href="/logout" class="w3-bar-item w3-button w3-padding-large">Logout</a>
-			{% endif %}
-		</div>
-	</div>
-	<br class="w3-margin-bottom">
-	<br class="w3-margin-bottom">
-</header>
-<!-- Navbar End -->
-
-<!-- Content -->
-
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
+	<div class="w3-padding w3-half">
+			<form class="form-style-10" action="/addTeacherDetails" method="POST">
+				<div class="section"><span>1</span>Extra Packages</div>
+				<div class="inner-wrap">
+					<p>Name of the Teacher</p>
+					<select class="w3-input" name="ogretmenAdi">
+							{% for row in ogretmenMi %}
+							<option value="{{row[0]}}">{{row[0]}}</option>
+							{% endfor %}
+					</select>
+				<p>Client Name<input type="text" name="uyeadi"></p>
+				<p>Date<input type="date" name="date"></p>
+				<p>Type of package</p>
+					<select class="w3-input" name="pakettipi">
+							{% for row in pakettipleri %}
+							<option value="{{row[0]}}">{{row[0]}}</option>
+							{% endfor %}
+						</select>
+				</div>
+				<input type="submit" value="Add extra package">
+			</form>
+			
+		
+		</div>		
+		
+			
 	
-	<div class="form-style-10">
-		<form action="/register" method="POST" onsubmit="return validate()">
-
-			<h1>Register!<span>Create your profile...</span></h1>
-			<div class="section"><span>1</span>Personal Informations </div>
-			<div class="inner-wrap">
-				<p>Name:<input type="text" name="adi"></p>
-				<p>Surname: <input type="text" name="soyadi"></p>
-				<p>Height: <input type="text" name="boy"></p>
-				<p>Weight:<input type="text" name="kilo"></p>
-				<p>Is Teacher:<input type="text" name="ogretmenMi"></p>
+	<hr>
+	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+		<br>
+		<table style="width: 100%">
+			<thead>
 				<tr>
-					<th>Category:</th>
-					<td><select class="w3-input" name="pakettipi">
-							{% for row in data %}
-							<option value="{{row[0]}}">{{row[0]}}</option>
-							{% endfor %}
-						</select></td>
+					<th>Client No</th>
+					<th>Name of Teacher</th>
+					<th>Date</th>
+					<th>Package type</th>
+				
 				</tr>
+			</thead>
+			<tbody>
+				{% for row in value %}
 				<tr>
-					<th>Extra Category:</th>
-					<td><select class="w3-input" name="ekstrapaketler">
-							{% for row in data %}
-							<option value="{{row[0]}}">{{row[0]}}</option>
-							{% endfor %}
-						</select></td>
+					<td class="w3-gray">{{row[0]}}</td>
+					<td class="w3-gray">{{row[1]}}</td>
+					<td class="w3-gray">{{row[2]}}</td>
+					<td class="w3-gray">{{row[3]}}</td>
+					 
 				</tr>
-				<p>Is Active:<input type="text" name="aktifmi"></p>
-				<p>Date of registration:<input type="date" name="kayitgunu"></p>
-				<p>Number Of Friends:<input type="text" name="arkadassayisi"></p>
-			</div>
-			<div class="section"><span>2</span>Address Information</div>
-			<div class="inner-wrap">
-				<p>1. Adress: <input type="text" name="adres1"></p>
-				<p>2. Adress: <input type="text" name="adres2"></p>
-				<p>City: <input type="text" name="il"></p>
-				<p>District: <input type="text" name="ilce"></p>
-				<p>Country: <input type="text" name="ulke"></p>
-			</div>
-			<div class="section"><span>3</span>Phone - Email</div>
-			<div class="inner-wrap">
-				<p>Telephone: <input type="text" name="tel"></p>
-				<p>E-mail:<input type="email" name="email"></p>
-			</div>
-			<div class="section"><span>4</span>Şifre</div>
-			<div class="inner-wrap">
-				<p>Password: <input type="password" name="parola" id="parola" required></p>
-				<p>Password(Repeat):<input type="password" name="cpassword" id="cpassword"></p>
-			</div>
-			<input type="submit" value="Register">
-		</form>
+				{% endfor %}
+			</tbody>
+		</table>
+		<br>
 	</div>
+
 </body>
 
 </html>

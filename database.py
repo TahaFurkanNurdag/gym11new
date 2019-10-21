@@ -19,11 +19,14 @@ conn.execute('''CREATE TABLE `kullanicilar` (
 	`boy`   INTEGER,
 	`kilo`  INTEGER,
 	`kayitgunu` DATE,
-	`pakettipi` INTEGER,
+	`pakettipi` TEXT,
+	`ekstrapaketler` TEXT,
+	`paketkalangunsayisi` INTEGER,
 	`aktifmi`   INTEGER,
 	`katilim`   INTEGER,
 	`arkadassayisi` INTEGER,
 	`odeme`    INTEGER,
+	`ogretmenMi`	INTEGER,
 	`adminMi`	INTEGER,
 	PRIMARY KEY(`userId`)
 		)''')
@@ -35,7 +38,14 @@ conn.execute('''CREATE TABLE `muhasebe` (
 	`explanation` TEXT,
 	PRIMARY KEY(`id`)
 		)''')
-
+		
+conn.execute('''CREATE TABLE `ogretmenler` (
+	`id`	INTEGER,
+	`ogretmenAdi` TEXT,
+	`date`  DATE,
+	`pakettipi` TEXT,
+	PRIMARY KEY(`id`,`pakettipi`)
+		)''')
 		
 conn.execute('''CREATE TABLE `hareketler` (
 	`id`	INTEGER,

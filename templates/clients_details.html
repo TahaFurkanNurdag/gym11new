@@ -219,6 +219,42 @@
 			</form>
 		</div>
 	</div>
+				<div class="w3-padding w3-half">
+			<form class="form-style-10" action="/addExtraPacgage" method="POST">
+				<div class="section"><span>1</span>Extra Packages</div>
+				<div class="inner-wrap">
+					<p>Client Number<input type="text" name="no"></p>
+					<p>Type of package</p>
+					<select class="w3-input" name="ekstrapaketler">
+							{% for row in pakettipleri %}
+							<option value="{{row[0]}}">{{row[0]}}</option>
+							{% endfor %}
+						</select>
+				</div>
+				<input type="submit" value="Add extra package">
+			</form>
+			
+			
+			
+			
+				<div class="w3-padding w3-half">
+			<form class="form-style-10" action="/increaseOneMonthForExtraPackage" method="POST">
+				<div class="section"><span>2</span>Extra Package Days</div>
+				<div class="inner-wrap">
+					<p>Client Number<input type="text" name="no"></p>
+					<p>Number of Days<input type="text" name="odemegunu"></p>
+				</div>
+				<input type="submit" value="Increase or Decrease From extra packages">
+				<hr>
+				<input type="button" onclick="location.href='/increaseOneDayForExtraPackage'" value="+1" style="font-size: 24pt!important">
+				<input type="button" onclick="location.href='/decreaseOneDayForExtraPackage'" value="-1" style="font-size: 24pt!important">
+				from extra packages
+			</form>
+		</div>
+		</div>		
+		
+			
+	
 	<hr>
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
@@ -238,10 +274,14 @@
 					<th>Height</th>
 					<th>Weight</th>
 					<th>Registration Date </th>
+					<th>Type of packet</th>
+					<th>Extra packet</th>
 					<th>isActive</th>
 					<th>Attendance</th>
 					<th>Number of Friends</th>
+					<th>Remaining Packet Days</th>
 					<th>Remaining Payment Days</th>
+					<th>isTeacher</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -261,17 +301,48 @@
 					<td class="w3-gray">{{row[12]}}</td>
 					<td class="w3-gray">{{row[13]}}</td>
 					<td class="w3-gray">{{row[14]}}</td>
-					<td class="w3-gray">{{row[16]}}</td>
+					<td class="w3-gray">{{row[15]}}</td>
+					<!-- 16 DA REMAININ EXTRA PACKETS VAR !-->
 					<td class="w3-gray">{{row[17]}}</td>
-					{% if row[18] <= 0 %}
-					<td class="w3-red">{{row[18]}}</td>
-					{% elif row[18] > 0 and row[18] <= 7 %}
-					<td class="w3-orange">{{row[18]}}</td>
-					{% elif row[18] > 7 and row[18] <= 14 %}
-					<td class="w3-yellow">{{row[18]}}</td>
+					<td class="w3-gray">{{row[18]}}</td>
+					<td class="w3-gray">{{row[19]}}</td>
+					
+					
+					
+					{% if row[16] <= 0 %}
+					<td class="w3-red">{{row[16]}}</td>
+					{% elif row[16] > 0 and row[16] <= 7 %}
+					<td class="w3-orange">{{row[16]}}</td>
+					{% elif row[16] > 7 and row[16] <= 14 %}
+					<td class="w3-yellow">{{row[16]}}</td>
 					{% else %}
-					<td class="w3-green">{{row[18]}}</td>
+					<td class="w3-green">{{row[20]}}</td>
 					{% endif %}
+					
+					{% if row[20] <= 0 %}
+					<td class="w3-red">{{row[20]}}</td>
+					{% elif row[20] > 0 and row[20] <= 7 %}
+					<td class="w3-orange">{{row[20]}}</td>
+					{% elif row[20] > 7 and row[20] <= 14 %}
+					<td class="w3-yellow">{{row[20]}}</td>
+					{% else %}
+					<td class="w3-green">{{row[20]}}</td>
+					{% endif %}
+					
+
+					<td class="w3-gray">{{row[21]}}</td>
+
+
+
+
+
+
+
+
+
+		
+					
+					
 				</tr>
 				{% endfor %}
 			</tbody>

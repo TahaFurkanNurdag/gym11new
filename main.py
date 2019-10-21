@@ -34,7 +34,7 @@ def getLoginDetails():
         except Exception as e:
             print(e)
     conn.close()  # connection kapatildi
-    return (userId, girildiMi, adi)  # fonksiyonun dondurdugu degiskenler
+    return (userId, girildiMi,adi)  # fonksiyonun dondurdugu degiskenler
 
 
 @app.route("/")
@@ -164,14 +164,16 @@ def register():
         kilo = request.form['kilo']
         kayitgunu = request.form['kayitgunu']
         pakettipi = request.form['pakettipi']
+        ekstrapaketler = request.form['ekstrapaketler']
+        ogretmenMi = request.form['ogretmenMi']
         aktifmi = request.form['aktifmi']
         arkadassayisi = request.form['arkadassayisi']
 
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,aktifmi,katilim,arkadassayisi, odeme,adminMi) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, 30,1)', (hashlib.md5(
-                    parola.encode()).hexdigest(), email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel, boy, kilo, kayitgunu, pakettipi, aktifmi, arkadassayisi))
+                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,ekstrapaketler,paketkalangunsayisi,aktifmi,katilim,arkadassayisi, odeme,ogretmenMi,adminMi) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,0, ?, 0, ?, 30,?,1)', (hashlib.md5(
+                    parola.encode()).hexdigest(), email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel, boy, kilo, kayitgunu, pakettipi,ekstrapaketler, aktifmi, arkadassayisi,ogretmenMi))
                 con.commit()  # veritabanina kaydedildi
 
                 msg = "Kayıt Başarılı"
@@ -238,12 +240,69 @@ def clientsDetails():
         return redirect(url_for('root'))
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
+    with sqlite3.connect('database.db') as con:
+        try:
+            cur = con.cursor()
+            cur.execute('SELECT paketadi FROM pakettipi')
+            pakettipleri = cur.fetchall()
+        except Exception as e:
+            con.rollback()
+            msg = "Hata olustu"
+            print(e)
+    con.close()
     userId, girildiMi, adi = getLoginDetails()
     con = sqlite3.connect('database.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM kullanicilar ORDER BY odeme ASC")
     data = cur.fetchall()  # data from database
-    return render_template("clients_details.html", value=data, userId=userId, girildiMi=girildiMi, adi=adi)
+    return render_template("clients_details.html", value=data, userId=userId, girildiMi=girildiMi, adi=adi,pakettipleri=pakettipleri)
+
+
+@app.route("/teachersDetails")
+def teachersDetails():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    with sqlite3.connect('database.db') as con:
+        try:
+            cur = con.cursor()
+            cur.execute('SELECT paketadi FROM pakettipi')
+            pakettipleri = cur.fetchall()
+        except Exception as e:
+            con.rollback()
+            msg = "Hata olustu"
+            print(e)
+    con.close()
+    with sqlite3.connect('database.db') as con:
+        try:
+            cur = con.cursor()
+            cur.execute('SELECT ogretmenMi FROM kullanicilar where ogretmenMi =1')
+            ogretmenMi = cur.fetchall()
+        except Exception as e:
+            con.rollback()
+            msg = "Hata olustu"
+            print(e)
+    con.close()
+    with sqlite3.connect('database.db') as con:
+        try:
+            cur = con.cursor()
+            cur.execute('SELECT * FROM kullanicilar where ogretmenMi =1')
+            ogretmenMi = cur.fetchall()
+        except Exception as e:
+            con.rollback()
+            msg = "Hata olustu"
+            print(e)
+    con.close()
+    userId, girildiMi, adi = getLoginDetails()
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM ogretmenler")
+    data = cur.fetchall()  # data from database
+    return render_template("teacher_details.html", ogretmenMi=ogretmenMi, value=data, userId=userId, girildiMi=girildiMi, adi=adi,pakettipleri=pakettipleri)
 
 
 @app.route("/accountingDetails")
@@ -337,7 +396,26 @@ def addOneMonthToTheUser():
     else:
         return redirect(url_for('root'))
 
+@app.route("/addExtraPacgage", methods=['GET', 'POST'])
+def addExtraPacgage():
+    if request.method == 'POST':
+        no = request.form['no']
+        ekstrapaketler = request.form['ekstrapaketler']
+        with sqlite3.connect('database.db') as con:
+            try:
+                cur = con.cursor()
+                cur.execute(
+                    'update kullanicilar SET  ekstrapaketler=? where userId = ?', (ekstrapaketler, no))
+                con.commit()  # veritabanina kaydedildi
+            except Exception as e:
+                con.rollback()
+                print(e)
+        con.close()
+        return redirect(url_for('clientsDetails'))
+    else:
+        return redirect(url_for('root'))
 
+        
 @app.route("/decreaseOneDay")
 def decreaseOneDay():
     if True == True:
@@ -357,6 +435,8 @@ def decreaseOneDay():
         return redirect(url_for('root'))
 
 
+
+        
 @app.route("/increaseOneDay")
 def increaseOneDay():
     if True == True:
@@ -375,6 +455,11 @@ def increaseOneDay():
         print("error")
         return redirect(url_for('root'))
 
+        
+
+		
+
+
 @app.route("/increaseOne", methods = ['GET', 'POST'])
 def increaseOne():
     if request.method == 'POST':
@@ -392,8 +477,106 @@ def increaseOne():
         return redirect(url_for('clientsDetails'))
     else:
         return redirect(url_for('root'))
+############################################################################# Teacher Functions ########
+@app.route("/addTeacherDetails", methods = ['GET', 'POST'])
+def addTeacherDetails():
+    id=0
+    if request.method == 'POST':
+        id=id+1
+        ogretmenAdi = request.form['ogretmenAdi']
+        date=request.form['date']
+        pakettipi = request.form['pakettipi']
+        with sqlite3.connect('database.db') as con:
+            try:
+                cur = con.cursor()
+                cur.execute('INSERT INTO ogretmenler (id,ogretmenAdi,date,pakettipi) VALUES ( ?,?, ?,?)', (id,ogretmenAdi,date,pakettipi))
+                con.commit() #veritabanina kaydedildi
+            except  Exception as e:
+                con.rollback()
+                print (e)
+        con.close()
+        return redirect(url_for('teachersDetails'))
+    else:
+        return redirect(url_for('root'))
+
+#####
 
 
+
+
+
+
+############################################################################# Teacher Functions ########
+		
+############################################################################# Package Functions ########
+@app.route("/increaseOneMonthForExtraPackage", methods=['GET', 'POST'])
+def increaseOneMonthForExtraPackage():
+    if request.method == 'POST':
+        no = request.form['no']
+        gunsayisi = request.form['odemegunu']
+        with sqlite3.connect('database.db') as con:
+            try:
+                cur = con.cursor()
+                cur.execute(
+                    'update kullanicilar SET  paketkalangunsayisi=paketkalangunsayisi+ ? where userId = ?', (gunsayisi, no))
+                con.commit()  # veritabanina kaydedildi
+            except Exception as e:
+                con.rollback()
+                print(e)
+        con.close()
+        return redirect(url_for('clientsDetails'))
+    else:
+        return redirect(url_for('root'))
+		
+@app.route("/decreaseOneDayForExtraPackage")
+def decreaseOneDayForExtraPackage():
+    if True == True:
+        with sqlite3.connect('database.db') as con:
+            try:
+                cur = con.cursor()
+                cur.execute(
+                    'update kullanicilar SET  paketkalangunsayisi=paketkalangunsayisi-1 where userId > 1')
+                con.commit()  # veritabanina kaydedildi
+            except Exception as e:
+                con.rollback()
+                print(e)
+        con.close()
+        return redirect(url_for('clientsDetails'))
+    else:
+        print("error")
+        return redirect(url_for('root'))
+
+
+
+        
+@app.route("/increaseOneDayForExtraPackage")
+def increaseOneDayForExtraPackage():
+    if True == True:
+        with sqlite3.connect('database.db') as con:
+            try:
+                cur = con.cursor()
+                cur.execute(
+                    'update kullanicilar SET  paketkalangunsayisi=paketkalangunsayisi+1 where userId > 1')
+                con.commit()  # veritabanina kaydedildi
+            except Exception as e:
+                con.rollback()
+                print(e)
+        con.close()
+        return redirect(url_for('clientsDetails'))
+    else:
+        print("error")
+        return redirect(url_for('root'))
+
+        
+
+
+
+
+
+
+
+
+############################################################################# Package Functions ########
 @app.route("/accountingMain")
 def accountingMain():
     if session['adminMi'] == 1:  # admin paneli eger admin mi degiskeni 1 ise goruntulenecek
