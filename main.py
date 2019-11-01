@@ -480,9 +480,8 @@ def increaseOne():
 ############################################################################# Teacher Functions ########
 @app.route("/addTeacherDetails", methods = ['GET', 'POST'])
 def addTeacherDetails():
-    id=0
     if request.method == 'POST':
-        id=id+1
+        id = request.form ['uyeadi']
         ogretmenAdi = request.form['ogretmenAdi']
         date=request.form['date']
         pakettipi = request.form['pakettipi']
@@ -500,9 +499,6 @@ def addTeacherDetails():
         return redirect(url_for('root'))
 
 #####
-
-
-
 
 
 
