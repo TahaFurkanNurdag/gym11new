@@ -62,7 +62,7 @@
 
 <style type="text/css">
 	.form-style-10 {
-		width: 450px;
+		width: 100%;
 		padding: 30px;
 		margin: 40px auto;
 		background: #FFF;
@@ -194,9 +194,9 @@
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
 	<div class="w3-container">
-		<div class="w3-padding w3-half">
+		<div class="w3-padding w3-quarter">
 			<form class="form-style-10" action="/increaseOne" method="POST">
-				<div class="section"><span>1</span>Attencance</div>
+				<div class="section">Attencance</div>
 				<div class="inner-wrap">
 					<p>Client Number<input type="text" name="no"></p>
 					<p>Number of Days<input type="text" name="odemegunu"></p>
@@ -204,57 +204,55 @@
 				<input type="submit" value="Increase attendance">
 			</form>
 		</div>
-		<div class="w3-padding w3-half">
+		<div class="w3-padding w3-quarter">
 			<form class="form-style-10" action="/increaseOneMonth" method="POST">
-				<div class="section"><span>2</span>Payment</div>
+				<div class="section">Payment</div>
 				<div class="inner-wrap">
 					<p>Client Number<input type="text" name="no"></p>
 					<p>Number of Days<input type="text" name="odemegunu"></p>
 				</div>
 				<input type="submit" value="Increase or Decrease">
 				<hr>
-				<input type="button" onclick="location.href='/increaseOneDay'" value="+1" style="font-size: 24pt!important">
-				<input type="button" onclick="location.href='/decreaseOneDay'" value="-1" style="font-size: 24pt!important">
+				<input type="button" onclick="location.href='/increaseOneDay'" value="+1"
+					style="font-size: 24pt!important">
+				<input type="button" onclick="location.href='/decreaseOneDay'" value="-1"
+					style="font-size: 24pt!important">
 				from all
 			</form>
 		</div>
-	</div>
-				<div class="w3-padding w3-half">
+		<div class="w3-padding w3-quarter">
 			<form class="form-style-10" action="/addExtraPacgage" method="POST">
-				<div class="section"><span>1</span>Extra Packages</div>
+				<div class="section">Extra Packages</div>
 				<div class="inner-wrap">
 					<p>Client Number<input type="text" name="no"></p>
 					<p>Type of package</p>
 					<select class="w3-input" name="ekstrapaketler">
-							{% for row in pakettipleri %}
-							<option value="{{row[0]}}">{{row[0]}}</option>
-							{% endfor %}
-						</select>
+						{% for row in pakettipleri %}
+						<option value="{{row[0]}}">{{row[0]}}</option>
+						{% endfor %}
+					</select>
 				</div>
 				<input type="submit" value="Add extra package">
 			</form>
-			
-			
-			
-			
-				<div class="w3-padding w3-half">
+		</div>
+		<div class="w3-padding w3-quarter">
 			<form class="form-style-10" action="/increaseOneMonthForExtraPackage" method="POST">
-				<div class="section"><span>2</span>Extra Package Days</div>
+				<div class="section">Extra Package Days</div>
 				<div class="inner-wrap">
 					<p>Client Number<input type="text" name="no"></p>
 					<p>Number of Days<input type="text" name="odemegunu"></p>
 				</div>
 				<input type="submit" value="Increase or Decrease From extra packages">
 				<hr>
-				<input type="button" onclick="location.href='/increaseOneDayForExtraPackage'" value="+1" style="font-size: 24pt!important">
-				<input type="button" onclick="location.href='/decreaseOneDayForExtraPackage'" value="-1" style="font-size: 24pt!important">
+				<input type="button" onclick="location.href='/increaseOneDayForExtraPackage'" value="+1"
+					style="font-size: 24pt!important">
+				<input type="button" onclick="location.href='/decreaseOneDayForExtraPackage'" value="-1"
+					style="font-size: 24pt!important">
 				from extra packages
 			</form>
 		</div>
-		</div>		
-		
-			
-	
+	</div>
+
 	<hr>
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
@@ -306,9 +304,9 @@
 					<td class="w3-gray">{{row[17]}}</td>
 					<td class="w3-gray">{{row[18]}}</td>
 					<td class="w3-gray">{{row[19]}}</td>
-					
-					
-					
+
+
+
 					{% if row[16] <= 0 %}
 					<td class="w3-red">{{row[16]}}</td>
 					{% elif row[16] > 0 and row[16] <= 7 %}
@@ -318,7 +316,7 @@
 					{% else %}
 					<td class="w3-green">{{row[20]}}</td>
 					{% endif %}
-					
+
 					{% if row[20] <= 0 %}
 					<td class="w3-red">{{row[20]}}</td>
 					{% elif row[20] > 0 and row[20] <= 7 %}
@@ -328,7 +326,7 @@
 					{% else %}
 					<td class="w3-green">{{row[20]}}</td>
 					{% endif %}
-					
+
 
 					<td class="w3-gray">{{row[21]}}</td>
 
@@ -340,9 +338,9 @@
 
 
 
-		
-					
-					
+
+
+
 				</tr>
 				{% endfor %}
 			</tbody>

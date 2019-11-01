@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Client Details</title>
+	<title>Trainer Details</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
@@ -59,7 +59,6 @@
 <!-- Navbar End -->
 
 <!-- Content -->
-
 <style type="text/css">
 	.form-style-10 {
 		width: 450px;
@@ -193,7 +192,10 @@
 
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
-	<div class="w3-padding w3-half">
+	<div class="w3-padding">
+		{% if msg %}
+		<p class="w3-gym11">{{msg}}</p>
+		{% endif %}
 			<form class="form-style-10" action="/addTeacherDetails" method="POST">
 				<div class="section"><span>1</span>Extra Packages</div>
 				<div class="inner-wrap">
@@ -214,12 +216,8 @@
 				</div>
 				<input type="submit" value="Add extra package">
 			</form>
-			
-		
-		</div>		
-		
-			
-	
+		</div>
+	</div>
 	<hr>
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>

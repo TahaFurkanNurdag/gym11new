@@ -7,6 +7,7 @@ import os  # hashlib sifreleme icin, os upload islemleri icin
 from werkzeug.utils import secure_filename
 from datetime import date, timedelta
 import calendar  # to check clients days
+import shutil # Backup lib
 
 app = Flask(__name__)
 app.secret_key = 'random string'
@@ -267,6 +268,7 @@ def teachersDetails():
         return redirect(url_for('root'))
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
+    msg=""
     with sqlite3.connect('database.db') as con:
         try:
             cur = con.cursor()
@@ -302,7 +304,7 @@ def teachersDetails():
     cur = con.cursor()
     cur.execute("SELECT * FROM ogretmenler")
     data = cur.fetchall()  # data from database
-    return render_template("teacher_details.html", ogretmenMi=ogretmenMi, value=data, userId=userId, girildiMi=girildiMi, adi=adi,pakettipleri=pakettipleri)
+    return render_template("teacher_details.html", ogretmenMi=ogretmenMi, value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri, msg=msg)
 
 
 @app.route("/accountingDetails")
@@ -321,7 +323,7 @@ def accountingDetails():
     data = cur.fetchall()  # data from database
     cur.execute("select price from muhasebe")
     temp_deger = cur.fetchall()
-    print(temp_deger)
+    con.close()
     deger = []
     for i in range(len(temp_deger)):
         deger.append(int(str(temp_deger[i])[1:-2]))
@@ -329,6 +331,68 @@ def accountingDetails():
 
     return render_template("accounting_details.html", value=data, sums=deger, userId=userId, girildiMi=girildiMi, adi=adi)
 
+@app.route("/copyingPage")
+def copyingPage():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    userId, girildiMi, adi = getLoginDetails()
+    return render_template('copyingPage.html', girildiMi=girildiMi, adi=adi)
+
+@app.route("/backupProcedure")
+def backupProcedure():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    try:
+        shutil.copyfile('./database.db', './database_backup.db')
+    except Exception as e:
+        print(f"Hata oluştu: {e}")
+    userId, girildiMi, adi = getLoginDetails()
+    return render_template('root.html', girildiMi=girildiMi, adi=adi)
+
+@app.route("/backupAccounting")
+def backupAccounting():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    userId, girildiMi, adi = getLoginDetails()
+    try:
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("select * from muhasebe")
+        data = cur.fetchall()  # data from database
+        cur.execute("select price from muhasebe")
+        temp_deger = cur.fetchall()
+        deger = []
+        for i in range(len(temp_deger)):
+            deger.append(int(str(temp_deger[i])[1:-2]))
+        deger = sum(deger)
+        textfile = open("accountingBackup.txt","w", encoding="utf-8")
+        textfile.write(f"Toplam: {deger};")
+        for i in data:
+            textfile.write(f"\n{i}")
+        textfile.close()
+        cur.execute("DELETE FROM muhasebe") # Remove all data
+        con.commit()
+        con.close()
+
+    except Exception as e:
+        print(f"Hata oluştu: {e}")
+    userId, girildiMi, adi = getLoginDetails()
+    return render_template('root.html', girildiMi=girildiMi, adi=adi)
 
 @app.route("/accountingForm")  # kaydolma sayfasi
 def accountingForm():
@@ -341,7 +405,6 @@ def accountingForm():
         return redirect(url_for('loginForm'))
     userId, girildiMi, adi = getLoginDetails()
     return render_template("accounting.html", girildiMi=girildiMi, adi=adi)
-
 
 @app.route("/accounting", methods=['GET', 'POST'])
 def totalAmount():
@@ -358,6 +421,10 @@ def totalAmount():
         date = request.form['date']
         explanation = request.form['explanation']
         if price and date:
+            try:
+                print(int(price))
+            except Exception as e:
+                print(f"Hata {e}, girdi integer değil muhtemelen.")
             with sqlite3.connect('database.db') as con:
                 try:
                     cur = con.cursor()
@@ -375,7 +442,6 @@ def totalAmount():
         return render_template("accounting.html", error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi)
     else:
         return redirect(url_for('root'))
-
 
 @app.route("/increaseOneMonth", methods=['GET', 'POST'])
 def addOneMonthToTheUser():
@@ -414,7 +480,6 @@ def addExtraPacgage():
         return redirect(url_for('clientsDetails'))
     else:
         return redirect(url_for('root'))
-
         
 @app.route("/decreaseOneDay")
 def decreaseOneDay():
@@ -433,9 +498,6 @@ def decreaseOneDay():
     else:
         print("error")
         return redirect(url_for('root'))
-
-
-
         
 @app.route("/increaseOneDay")
 def increaseOneDay():
@@ -455,11 +517,6 @@ def increaseOneDay():
         print("error")
         return redirect(url_for('root'))
 
-        
-
-		
-
-
 @app.route("/increaseOne", methods = ['GET', 'POST'])
 def increaseOne():
     if request.method == 'POST':
@@ -477,6 +534,7 @@ def increaseOne():
         return redirect(url_for('clientsDetails'))
     else:
         return redirect(url_for('root'))
+
 ############################################################################# Teacher Functions ########
 @app.route("/addTeacherDetails", methods = ['GET', 'POST'])
 def addTeacherDetails():
@@ -497,12 +555,6 @@ def addTeacherDetails():
         return redirect(url_for('teachersDetails'))
     else:
         return redirect(url_for('root'))
-
-#####
-
-
-
-############################################################################# Teacher Functions ########
 		
 ############################################################################# Package Functions ########
 @app.route("/increaseOneMonthForExtraPackage", methods=['GET', 'POST'])
@@ -542,9 +594,6 @@ def decreaseOneDayForExtraPackage():
         print("error")
         return redirect(url_for('root'))
 
-
-
-        
 @app.route("/increaseOneDayForExtraPackage")
 def increaseOneDayForExtraPackage():
     if True == True:
@@ -562,15 +611,6 @@ def increaseOneDayForExtraPackage():
     else:
         print("error")
         return redirect(url_for('root'))
-
-        
-
-
-
-
-
-
-
 
 ############################################################################# Package Functions ########
 @app.route("/accountingMain")
