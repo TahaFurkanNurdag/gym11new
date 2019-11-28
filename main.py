@@ -140,7 +140,7 @@ def is_valid(email, parola, adminMi):  # email ve parola dogru mu kiyasi
     cur.execute('SELECT email, parola, adminMi FROM kullanicilar')
     data = cur.fetchall()
     for row in data:
-        if row[0] == email and row[1] == hashlib.md5(parola.encode()).hexdigest():
+        if row[0] == email and row[1] == parola:
             adminMi = row[2]
             session['adminMi'] = adminMi
             return True
@@ -173,8 +173,8 @@ def register():
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,ekstrapaketler,paketkalangunsayisi,aktifmi,katilim,arkadassayisi, odeme,ogretmenMi,adminMi) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,0, ?, 0, ?, 30,?,1)', (hashlib.md5(
-                    parola.encode()).hexdigest(), email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel, boy, kilo, kayitgunu, pakettipi,ekstrapaketler, aktifmi, arkadassayisi,ogretmenMi))
+                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,ekstrapaketler,paketkalangunsayisi,aktifmi,katilim,arkadassayisi, odeme,ogretmenMi,adminMi) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,0, ?, 0, ?, 30,?,1)', (
+                    parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel, boy, kilo, kayitgunu, pakettipi,ekstrapaketler, aktifmi, arkadassayisi,ogretmenMi))
                 con.commit()  # veritabanina kaydedildi
 
                 msg = "Kayıt Başarılı"
@@ -282,8 +282,8 @@ def teachersDetails():
     with sqlite3.connect('database.db') as con:
         try:
             cur = con.cursor()
-            cur.execute('SELECT ogretmenMi FROM kullanicilar where ogretmenMi =1')
-            ogretmenMi = cur.fetchall()
+            cur.execute('SELECT adi FROM kullanicilar where ogretmenMi =1')
+            ogretmenAdi = cur.fetchall()
         except Exception as e:
             con.rollback()
             msg = "Hata olustu"
@@ -304,7 +304,7 @@ def teachersDetails():
     cur = con.cursor()
     cur.execute("SELECT * FROM ogretmenler")
     data = cur.fetchall()  # data from database
-    return render_template("teacher_details.html", ogretmenMi=ogretmenMi, value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri, msg=msg)
+    return render_template("teacher_details.html", ogretmenMi=ogretmenMi,ogretmenAdi=ogretmenAdi, value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri, msg=msg)
 
 
 @app.route("/accountingDetails")
@@ -342,6 +342,41 @@ def copyingPage():
         return redirect(url_for('loginForm'))
     userId, girildiMi, adi = getLoginDetails()
     return render_template('copyingPage.html', girildiMi=girildiMi, adi=adi)
+
+@app.route("/incomeDetails")
+def incomeDetails():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    userId, girildiMi, adi = getLoginDetails()
+    with sqlite3.connect('database.db') as con:
+        try:
+            cur = con.cursor()
+            cur.execute('SELECT paketadi FROM pakettipi')
+            pakettipleri = cur.fetchall()
+        except Exception as e:
+            con.rollback()
+            msg = "Hata olustu"
+            print(e)
+    con.close()
+    with sqlite3.connect('database.db') as con:
+                try:
+                    cur = con.cursor()
+                    cur.execute("select * from gelir")
+                    temp_deger = cur.fetchall()
+                    con.commit()  # veritabanina kaydedildi
+                    msg = "Kayıt Başarılı"
+                except Exception as e:
+                    con.rollback()
+                    msg = "Hata olustu"
+                    print(e)
+    con.close()
+    return render_template('income_details.html',temp_deger=temp_deger, girildiMi=girildiMi, adi=adi,pakettipleri=pakettipleri)
+
 
 @app.route("/backupProcedure")
 def backupProcedure():
@@ -405,6 +440,99 @@ def accountingForm():
         return redirect(url_for('loginForm'))
     userId, girildiMi, adi = getLoginDetails()
     return render_template("accounting.html", girildiMi=girildiMi, adi=adi)
+
+
+@app.route("/income", methods=['GET', 'POST'])
+def income():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    userId, girildiMi, adi = getLoginDetails()
+    if request.method == 'POST':
+        # burasi muhasebe kismi icin
+
+        date = request.form['date']
+        price = request.form['ucret']
+        explanation = request.form['explanation']
+        # end of muhasebe kismi
+
+        # new accounting kismi
+        uyeadi=request.form['uyeAdi']
+        uyeSoyadi=request.form['uyeSoyadi']
+        pakettipi=request.form['pakettipi']
+        if price and date:
+            try:
+                 
+                print(int(price))
+            except Exception as e:
+                print(f"Hata {e}, girdi integer değil muhtemelen.")
+            with sqlite3.connect('database.db') as con:
+                try:
+                    cur = con.cursor()
+                    cur.execute(
+                        'INSERT INTO muhasebe (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
+                    cur.execute(
+                        'INSERT INTO gelir(userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?)'  ,(uyeadi,uyeSoyadi,price,date,pakettipi,explanation))    
+                    cur.execute("select * from gelir")
+                    temp_deger = cur.fetchall()
+                    con.commit()  # veritabanina kaydedildi
+                    msg = "Kayıt Başarılı"
+                except Exception as e:
+                    con.rollback()
+                    msg = "Hata olustu"
+                    print(e)
+            con.close()
+        else:
+            msg = "Kayıt bilgileri eksik"
+        return render_template("income_details.html",temp_deger=temp_deger, error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi)
+    else:
+        return redirect(url_for('root'))
+
+@app.route("/search", methods=['GET', 'POST'])
+def search():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    userId, girildiMi, adi = getLoginDetails()
+    if request.method == 'POST':
+        name = request.form['name']
+        surname = request.form['surname']
+        if True and True:
+            try:
+                5+2
+            except Exception as e:
+                print(f"Hata {e}, girdi integer değil muhtemelen.")
+            with sqlite3.connect('database.db') as con:
+                try:
+                    cur = con.cursor()
+                    cur.execute(
+                        'select * from gelir where userName=? and userSurname=?', (name,surname))
+                    value=cur.fetchall()
+                    cur.execute(
+                        'select * from gelir')
+                    temp_deger=cur.fetchall()
+                    con.commit()  # veritabanina kaydedildi
+                    msg = "Kayıt Başarılı"
+                except Exception as e:
+                    con.rollback()
+                    msg = "Hata olustu"
+                    print(e)
+            con.close()
+        else:
+            msg = "Kayıt bilgileri eksik"
+        return render_template("income_details.html",temp_deger=temp_deger, value=value,error=msg, date=date, girildiMi=girildiMi, adi=adi)
+    else:
+        return redirect(url_for('root'))
+
+
 
 @app.route("/accounting", methods=['GET', 'POST'])
 def totalAmount():

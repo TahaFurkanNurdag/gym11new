@@ -43,8 +43,7 @@ conn.execute('''CREATE TABLE `ogretmenler` (
 	`id`	INTEGER,
 	`ogretmenAdi` TEXT,
 	`date`  DATE,
-	`pakettipi` TEXT,
-	PRIMARY KEY(`id`,`pakettipi`)
+	`pakettipi` TEXT
 		)''')
 		
 conn.execute('''CREATE TABLE `hareketler` (
@@ -67,6 +66,17 @@ conn.execute('''CREATE TABLE `kategoriler` (
 	`categoryId`	INTEGER,
 	`isim`	TEXT,
 	PRIMARY KEY(`categoryId`)
+		)''')
+		
+conn.execute('''CREATE TABLE `gelir` (
+	`userId`	INTEGER,
+	`userName`	TEXT,
+	`userSurname`	TEXT,
+	`price`	TEXT,
+	`date`	DATE,
+	`paketadi`	TEXT,
+	`aciklama`	TEXT,
+	PRIMARY KEY(`userId`)
 		)''')
 
 conn.commit()
