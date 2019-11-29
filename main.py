@@ -1,5 +1,6 @@
 from flask import *
 from datetime import datetime
+from datetime import date
 import sqlite3
 import hashlib
 import os  # hashlib sifreleme icin, os upload islemleri icin
@@ -388,7 +389,23 @@ def backupProcedure():
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
     try:
-        shutil.copyfile('./database.db', './database_backup.db')
+        today=date.today()
+        now = date.today().weekday()
+        if(now==0):
+            now="Pazartesi"
+        if(now==1):
+            now="Sali"
+        if(now==2):
+            now="Carsamba"
+        if(now==3):
+            now="Persembe"
+        if(now==4):
+            now="Cuma"
+        if(now==5):
+            now="Cumartesi"
+        if(now==6):
+            now="Pazar"
+        shutil.copyfile('./database.db', './database_backup_'+ str(today) +'_'+str(now)+'_.db')
     except Exception as e:
         print(f"Hata oluştu: {e}")
     userId, girildiMi, adi = getLoginDetails()
@@ -415,7 +432,24 @@ def backupAccounting():
         for i in range(len(temp_deger)):
             deger.append(int(str(temp_deger[i])[1:-2]))
         deger = sum(deger)
-        textfile = open("accountingBackup.txt","w", encoding="utf-8")
+        today=date.today()
+        now = date.today().weekday()
+        if(now==0):
+            now="Pazartesi"
+        if(now==1):
+            now="Sali"
+        if(now==2):
+            now="Carsamba"
+        if(now==3):
+            now="Persembe"
+        if(now==4):
+            now="Cuma"
+        if(now==5):
+            now="Cumartesi"
+        if(now==6):
+            now="Pazar"
+        
+        textfile = open("accountingBackup_"+str(today)+"_"+str(now)+".txt","w", encoding="utf-8")
         textfile.write(f"Toplam: {deger};")
         for i in data:
             textfile.write(f"\n{i}")
@@ -519,6 +553,9 @@ def search():
                     cur.execute(
                         'select * from gelir')
                     temp_deger=cur.fetchall()
+                    cur.execute(
+                        'select sum(price) from gelir where userName=? and userSurname=?', (name,surname))
+                    dept=cur.fetchall()
                     con.commit()  # veritabanina kaydedildi
                     msg = "Kayıt Başarılı"
                 except Exception as e:
@@ -528,7 +565,7 @@ def search():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        return render_template("income_details.html",temp_deger=temp_deger, value=value,error=msg, date=date, girildiMi=girildiMi, adi=adi)
+        return render_template("income_details.html",dept=dept,temp_deger=temp_deger, value=value,error=msg, date=date, girildiMi=girildiMi, adi=adi)
     else:
         return redirect(url_for('root'))
 
