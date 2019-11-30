@@ -330,15 +330,45 @@ def accountingDetails():
     cur = con.cursor()
     cur.execute("select * from muhasebe")
     data = cur.fetchall()  # data from database
+
+    cur.execute("select * from cafemuhasebe")
+    cafedata = cur.fetchall()  # data from database
+
+    cur.execute("select * from alacaklar")
+    alacaklar = cur.fetchall()  # data from database
+    
     cur.execute("select price from muhasebe")
-    temp_deger = cur.fetchall()
-    con.close()
+    temp_deger_muhasebe = cur.fetchall()
+
+   
+    
     deger = []
-    for i in range(len(temp_deger)):
-        deger.append(int(str(temp_deger[i])[1:-2]))
+    for i in range(len(temp_deger_muhasebe)):
+        deger.append(int(str(temp_deger_muhasebe[i])[1:-2]))
     deger = sum(deger)
 
-    return render_template("accounting_details.html", value=data, sums=deger, userId=userId, girildiMi=girildiMi, adi=adi)
+    cur.execute("select price from cafemuhasebe")
+    temp_deger_cafemuhasebe = cur.fetchall()
+   
+    
+    degerCafe = []
+    for i in range(len(temp_deger_cafemuhasebe)):
+        degerCafe.append(int(str(temp_deger_cafemuhasebe[i])[1:-2]))
+    degerCafe = sum(degerCafe)
+
+    cur.execute("select price from alacaklar")
+    temp_deger_alacaklar = cur.fetchall()
+    con.close()
+    
+    degerAlacaklar = []
+    for i in range(len(temp_deger_alacaklar)):
+        degerAlacaklar.append(int(str(temp_deger_alacaklar[i])[1:-2]))
+    degerAlacaklar = sum(degerAlacaklar)
+    print(degerAlacaklar)
+
+    
+
+    return render_template("accounting_details.html",degerCafe=degerCafe,degerAlacaklar=degerAlacaklar,cafedata=cafedata,alacaklar=alacaklar ,temp_deger_muhasebe=temp_deger_muhasebe, temp_deger_cafemuhasebe=temp_deger_cafemuhasebe,temp_deger_alacaklar=temp_deger_alacaklar, value=data, deger=deger, userId=userId, girildiMi=girildiMi, adi=adi)
 
 @app.route("/copyingPage")
 def copyingPage():
@@ -452,6 +482,7 @@ def cafeIncome():
             with sqlite3.connect('database.db') as con:
                 try:
                     cur = con.cursor()
+                    
                     cur.execute(
                         'INSERT INTO cafe (urunAdi,urunStok,urunFiyat,satinAlanKisiAdi,date) VALUES ( ?,?,?, ?,?)', (urunAdi,howMany,price,uyeadi, date))
                     con.commit()  # veritabanina kaydedildi
@@ -637,10 +668,17 @@ def income():
             with sqlite3.connect('database.db') as con:
                 try:
                     cur = con.cursor()
-                    cur.execute(
-                        'INSERT INTO muhasebe (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
-                    cur.execute(
+                    if int(price) < 0:
+                        cur.execute(
+                        'INSERT INTO alacaklar (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
+                        cur.execute(
                         'INSERT INTO gelir(userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?)'  ,(uyeadi,uyeSoyadi,price,date,pakettipi,explanation))    
+
+                    else:
+                        cur.execute(
+                        'INSERT INTO gelir(userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?)'  ,(uyeadi,uyeSoyadi,price,date,pakettipi,explanation))    
+                        cur.execute(
+                        'INSERT INTO muhasebe (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
                     cur.execute("select * from gelir")
                     temp_deger = cur.fetchall()
                     con.commit()  # veritabanina kaydedildi
@@ -652,7 +690,7 @@ def income():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        return render_template("income_details.html",temp_deger=temp_deger, error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi) and redirect(url_for('incomeDetails'))
+        return render_template("income_details.html",temp_deger=temp_deger, error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi)
     else:
         return redirect(url_for('incomeDetails'))
 

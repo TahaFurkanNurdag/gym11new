@@ -114,7 +114,8 @@ conn.execute('''CREATE TABLE `cafeUrunleri` (
 	PRIMARY KEY(`urunId`)
 		)''')
 		
-
+conn.execute('''INSERT INTO kullanicilar` (userId,parola,email,adi,soyadi,adres1,adres2,il,ilce,ulke,tel,boy,kilo,kayitgunu,pakettipi,ekstrapaketler,paketkalangunsayisi,aktifmi,katilim,arkadassayisi,odeme,ogretmenMi,adminMi,)
+VALUES ('tfn', 'tfn@tfn', 'tfn', 'tfn','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1' ''')
 
 conn.commit()
 
