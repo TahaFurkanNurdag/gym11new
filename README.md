@@ -1,7 +1,9 @@
 # gym11
 
 ### TO-DO
-- Teachers Details kısmında sadece 1 hoca 1 kişi kaydedebiliyor sanırım.
+- paket tipleri extendable olucak
+-cafe geliri farkli olucak
+-cafe income detailsda hatalar var
 
 ## Authors
 - Özgür Özbek
