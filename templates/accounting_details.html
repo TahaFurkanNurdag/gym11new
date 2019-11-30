@@ -60,14 +60,91 @@
 
 <!-- Content -->
 
-<body
-	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
+<body style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
+					<!------------------------NORMAL MUHASEBE------------------------- -->
 		{% if sums == 0 %}
-		<div class="w3-margin w3-center w3-gray"><h1 class="">Your current state is {{sums}}₺</h1></div>
+		<div class="w3-margin w3-center w3-gray"><h1 class="">All income without depts {{sums}}₺</h1></div>
 		{% elif sums > 0 %}
-		<div class="w3-margin w3-center w3-green"><h1 class="">You are good! Your current state is +{{sums}}₺</h1></div>
+		<div class="w3-margin w3-center w3-green"><h1 class="">You are good! Your current state without depts is +{{sums}}₺</h1></div>
 		{% else %}
-		<div class="w3-margin w3-center w3-gym11"><h1>There are problems! Your current state is {{sums}}₺</h1></div>
+		<div class="w3-margin w3-center w3-gym11"><h1>There are problems! Your current state without depts is {{sums}}₺</h1></div>
+		{% endif %}
+	
+	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+		<br>
+		<table align="center">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Price</th>
+					<th>Month</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in value %}
+				<tr></tr>
+				{% if row[1] > 0 %}
+				<td class="w3-green" style="width: 30%">{{row[1]}}</td>
+				{% elif row[1] < 0 %}
+				<td class="w3-gym11" style="width: 30%">{{row[1]}}</td>
+				{% else %}
+				<td class="w3-gray" style="width: 30%">{{row[1]}}</td>
+				{% endif %}
+				<td class="w3-gray" >{{row[0]}}</td>
+				<td class="w3-gray" style="width: 40%">{{row[2]}}</td>
+				<td class="w3-gray" style="width: 30%">{{row[3]}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+					<!------------------------BORCLAR + MUHASEBE MUHASEBE------------------------- -->
+	{% if sums == 0 %}
+		<div class="w3-margin w3-center w3-gray"><h1 class=""> All income with dept is {{sums}}₺</h1></div>
+		{% elif sums > 0 %}
+		<div class="w3-margin w3-center w3-green"><h1 class="">You are good! Your current state with dept is +{{sums}}₺</h1></div>
+		{% else %}
+		<div class="w3-margin w3-center w3-gym11"><h1>There are problems! Your current state with dept is {{sums}}₺</h1></div>
+		{% endif %}
+	
+	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+		<br>
+		<table align="center">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Price</th>
+					<th>Month</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in value %}
+				<tr></tr>
+				{% if row[1] > 0 %}
+				<td class="w3-green" style="width: 30%">{{row[1]}}</td>
+				{% elif row[1] < 0 %}
+				<td class="w3-gym11" style="width: 30%">{{row[1]}}</td>
+				{% else %}
+				<td class="w3-gray" style="width: 30%">{{row[1]}}</td>
+				{% endif %}
+				<td class="w3-gray" >{{row[0]}}</td>
+				<td class="w3-gray" style="width: 40%">{{row[2]}}</td>
+				<td class="w3-gray" style="width: 30%">{{row[3]}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	
+	<!------------------------KAFE  MUHASEBE------------------------- -->
+	{% if sums == 0 %}
+		<div class="w3-margin w3-center w3-gray"><h1 class="">Your cafes current state is {{sums}}₺</h1></div>
+		{% elif sums > 0 %}
+		<div class="w3-margin w3-center w3-green"><h1 class="">You are good! Your current state of cafe is +{{sums}}₺</h1></div>
+		{% else %}
+		<div class="w3-margin w3-center w3-gym11"><h1>There are problems! Your current state of cafe is {{sums}}₺</h1></div>
 		{% endif %}
 	
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">

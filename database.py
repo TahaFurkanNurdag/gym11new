@@ -39,6 +39,25 @@ conn.execute('''CREATE TABLE `muhasebe` (
 	PRIMARY KEY(`id`)
 		)''')
 		
+conn.execute('''CREATE TABLE `cafemuhasebe` (
+	`id`	INTEGER,
+	`price` INTEGER,
+	`date`  DATE,
+	`explanation` TEXT,
+	PRIMARY KEY(`id`)
+		)''')
+		
+conn.execute('''CREATE TABLE `alacaklar` (
+	`id`	INTEGER,
+	`price` INTEGER,
+	`date`  DATE,
+	`explanation` TEXT,
+	PRIMARY KEY(`id`)
+		)''')
+
+		
+		
+		
 conn.execute('''CREATE TABLE `ogretmenler` (
 	`id`	INTEGER,
 	`ogretmenAdi` TEXT,
@@ -78,6 +97,24 @@ conn.execute('''CREATE TABLE `gelir` (
 	`aciklama`	TEXT,
 	PRIMARY KEY(`userId`)
 		)''')
+		
+conn.execute('''CREATE TABLE `cafe` (
+	`urunId`	INTEGER,
+	`urunAdi`	TEXT,
+	`urunStok`	TEXT,
+	`urunFiyat`	TEXT,
+	`satinAlanKisiAdi`	TEXT,
+	`date`	DATE,
+	PRIMARY KEY(`urunId`)
+		)''')
+		
+conn.execute('''CREATE TABLE `cafeUrunleri` (
+	`urunId`	INTEGER,
+	`urunAdi`	TEXT,
+	PRIMARY KEY(`urunId`)
+		)''')
+		
+
 
 conn.commit()
 

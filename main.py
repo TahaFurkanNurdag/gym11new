@@ -95,6 +95,14 @@ def loginForm():
         return render_template('login_page.html', error='')
 
 
+@app.route("/incomeForm")  # giris sayfasi
+def incomeForm():
+    if 'email' in session:  # kullanici giris yaptiysa anasayfa ekranina yonlendirir
+        return redirect(url_for('root'))
+    else:
+        return render_template('income_details.html', error='')
+
+
 # login_page.html sayfasindan cagirilir
 @app.route("/login", methods=['POST', 'GET'])
 def login():
@@ -378,6 +386,128 @@ def incomeDetails():
     con.close()
     return render_template('income_details.html',temp_deger=temp_deger, girildiMi=girildiMi, adi=adi,pakettipleri=pakettipleri)
 
+@app.route("/cafeIncomeDetails")
+def cafeIncomeDetails():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    userId, girildiMi, adi = getLoginDetails()
+    with sqlite3.connect('database.db') as con:
+        try:
+            cur = con.cursor()
+            cur.execute('SELECT paketadi FROM pakettipi')
+            pakettipleri = cur.fetchall()
+        except Exception as e:
+            con.rollback()
+            msg = "Hata olustu"
+            print(e)
+    con.close()
+    with sqlite3.connect('database.db') as con:
+                try:
+                    cur = con.cursor()
+                    cur.execute("select * from cafe")
+                    temp_deger = cur.fetchall()
+                    cur.execute("select urunAdi from cafeUrunleri")
+                    cafe_urunleri = cur.fetchall()
+                    con.commit()  # veritabanina kaydedildi
+                    msg = "Kayıt Başarılı"
+                except Exception as e:
+                    con.rollback()
+                    msg = "Hata olustu"
+                    print(e)
+    con.close()
+    return render_template('cafe_income_details.html' ,cafe_urunleri=cafe_urunleri,temp_deger=temp_deger, girildiMi=girildiMi, adi=adi,pakettipleri=pakettipleri)
+
+@app.route("/cafeIncome", methods=['GET', 'POST'])
+def cafeIncome():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    userId, girildiMi, adi = getLoginDetails()
+    if request.method == 'POST':
+        # burasi muhasebe kismi icin
+
+        date = request.form['date']
+        price = request.form['urunFiyat']
+        # end of muhasebe kismi
+
+        # new accounting kismi
+        howMany=request.form['howMany']
+        uyeadi=request.form['clientId']
+        urunAdi=request.form['uruntipi']
+        if price and date:
+            try:
+                 
+                print(int(price))
+            except Exception as e:
+                print(f"Hata {e}, girdi integer değil muhtemelen.")
+            with sqlite3.connect('database.db') as con:
+                try:
+                    cur = con.cursor()
+                    cur.execute(
+                        'INSERT INTO cafe (urunAdi,urunStok,urunFiyat,satinAlanKisiAdi,date) VALUES ( ?,?,?, ?,?)', (urunAdi,howMany,price,uyeadi, date))
+                    con.commit()  # veritabanina kaydedildi
+                    msg = "Kayıt Başarılı"
+                except Exception as e:
+                    con.rollback()
+                    msg = "Hata olustu"
+                    print(e)
+            con.close()
+        else:
+            msg = "Kayıt bilgileri eksik"
+        return render_template("cafe_income_details.html", error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi) and redirect(url_for('incomeDetails'))
+    else:
+        return redirect(url_for('incomeDetails'))
+
+@app.route("/searchCafe", methods=['GET', 'POST'])
+def searchCafe():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    userId, girildiMi, adi = getLoginDetails()
+    if request.method == 'POST':
+        id = request.form['name']
+        if True and True:
+            try:
+                5+2
+            except Exception as e:
+                print(f"Hata {e}, girdi integer değil muhtemelen.")
+            with sqlite3.connect('database.db') as con:
+                try:
+                    cur = con.cursor()
+                    cur.execute(
+                        'select * from kullanicilar where userId=?', (id))
+                    value=cur.fetchall()
+                    cur.execute(
+                        'select sum(urunFiyat) from cafe where satinAlanKisiAdi=? ', (id))
+                    dept=cur.fetchall()
+                    cur.execute("select * from cafe")
+                    temp_deger = cur.fetchall()
+                    con.commit()  # veritabanina kaydedildi
+                    msg = "Kayıt Başarılı"
+                except Exception as e:
+                    con.rollback()
+                    msg = "Hata olustu"
+                    print(e)
+            con.close()
+        else:
+            msg = "Kayıt bilgileri eksik"
+        render_template("cafe_income_details.html",temp_deger=temp_deger,dept=dept, value=value,error=msg, date=date, girildiMi=girildiMi, adi=adi)
+        return redirect(url_for('cafeIncomeDetails'))
+    else:
+        return redirect(url_for('root'))
 
 @app.route("/backupProcedure")
 def backupProcedure():
@@ -522,8 +652,37 @@ def income():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        return render_template("income_details.html",temp_deger=temp_deger, error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi)
+        return render_template("income_details.html",temp_deger=temp_deger, error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi) and redirect(url_for('incomeDetails'))
     else:
+        return redirect(url_for('incomeDetails'))
+
+
+@app.route("/deletePersonal", methods=['GET', 'POST'])
+def deletePersonal():
+    if request.method == "POST":
+        userId = request.form['userId']
+        userName = request.form['userName']
+        userSurname = request.form['userSurname']
+        price = request.form['price']
+        date = request.form['date']
+        paketadi = request.form['paketadi']
+        aciklama = request.form['aciklama']
+        with sqlite3.connect('database.db') as con:
+            try:
+                cur = con.cursor()
+                cur.execute(
+                    'delete  from gelir where userId=? and userSurname=? and price=? and date=? and paketadi=? and aciklama=?', (userId,userName,userSurname,price,date,paketadi,aciklama, ))
+                con.commit()  # veritabanina kaydedildi
+                cur.execute(
+                    'delete  from muhasebe where price=? and date=? and explanation=?', (price,date,aciklama, ))
+                con.commit()  # veritabanina kaydedildi
+            except Exception as e:
+                con.rollback()
+                print(e)
+        con.close()
+        return redirect(url_for('incomeDetails'))
+    else:
+        print("error")
         return redirect(url_for('root'))
 
 @app.route("/search", methods=['GET', 'POST'])
