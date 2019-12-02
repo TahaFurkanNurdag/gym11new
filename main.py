@@ -2,18 +2,25 @@ from flask import *
 from datetime import datetime
 from datetime import date
 import sqlite3
-import hashlib # sifreleme icin
-import os # upload islemleri icin
-from werkzeug.utils import secure_filename # dosya upload işlemleri için dahil edildi
+import hashlib  # sifreleme icin
+import os  # upload islemleri icin
+# dosya upload işlemleri için dahil edildi
+from werkzeug.utils import secure_filename
 from datetime import date, timedelta
 import calendar  # to check clients days
-import shutil # Backup lib
+import shutil  # Backup lib
 
 app = Flask(__name__)
 app.secret_key = 'random string'
-UPLOAD_FOLDER = 'static/uploads' # upload edilecek fotograflarin dosya konumu belirlendi
-ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif']) # upload edilecek fotograflarin uzantilari belirlendi
+# upload edilecek fotograflarin dosya konumu belirlendi
+UPLOAD_FOLDER = 'static/uploads'
+# upload edilecek fotograflarin uzantilari belirlendi
+ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# ERROR CODE 7
+# SUCCESS CODE 8
+# FAILURE CODE 9
 
 
 def getLoginDetails():
@@ -33,7 +40,39 @@ def getLoginDetails():
         except Exception as e:
             print(e)
     conn.close()  # connection kapatildi
-    return (userId, girildiMi,adi)  # fonksiyonun dondurdugu degiskenler
+    return (userId, girildiMi, adi)  # fonksiyonun dondurdugu degiskenler
+
+
+def is_valid(email, parola, adminMi):  # email ve parola dogru mu kiyasi
+    con = sqlite3.connect('database.db')
+    cur = con.cursor()
+    cur.execute('SELECT email, parola, adminMi FROM kullanicilar')
+    data = cur.fetchall()
+    for row in data:
+        if row[0] == email and row[1] == parola:
+            adminMi = row[2]
+            session['adminMi'] = adminMi
+            return True
+    return False
+
+
+def allowed_file(filename):  # fotograf isimlerini duzenli hale getirmek icin
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+def parse(data):  # urunleri listelememizde kullandigimiz fonksiyon. birden fazla ayni satir olmasin diye yazildi
+    ans = []
+    i = 0
+    while i < len(data):
+        curr = []
+        for j in range(7):
+            if i >= len(data):
+                break
+            curr.append(data[i])
+            i += 1
+        ans.append(curr)
+    return ans
 
 
 @app.route("/")
@@ -42,7 +81,7 @@ def root():
         adminMi = 0  # admin mi degiskeni sifir olacak
         session['adminMi'] = adminMi  # bu session icine aktarilacak
     # yukarida olusturulan fonksiyondan degerler cekiliyor
-    girildiMi, adi = getLoginDetails()[1:] # userid gereksiz
+    girildiMi, adi = getLoginDetails()[1:]  # userid gereksiz
     return render_template('root.html', girildiMi=girildiMi, adi=adi)
 
 
@@ -55,8 +94,7 @@ def addcategory():
         girildiMi, adi = getLoginDetails()[1:]
         return render_template('package_add.html', girildiMi=girildiMi, adi=adi)
     else:
-        girildiMi, adi = getLoginDetails()[1:]
-        return render_template('ERROR.html', msg="You are not authorized. Error Code: 701", girildiMi=girildiMi, adi=adi)
+        return render_template('ERROR.html', msg="You are not authorized. Error Code: 701")
 
 
 # package_add.html icinden bu sayfa cagiriliyor
@@ -66,20 +104,17 @@ def addcategoryitem():
         paketadi = request.form['paketadi']
         paketfiyati = request.form['paketfiyati']
         paketaciklamasi = request.form['paketaciklamasi']
-
         with sqlite3.connect('database.db') as conn:
             try:
                 cur = conn.cursor()
                 cur.execute('''INSERT INTO pakettipi (paketadi,paketfiyati,paketaciklamasi) VALUES (?,?,?)''',
                             (paketadi, paketfiyati, paketaciklamasi,))
                 conn.commit()  # burada kategori veritabanina ekleniyor
-                msg = "Basarili"
+                print("Success. Success Code: 801")
             except:
-                msg = "Hata olustu"
                 conn.rollback()
-                return redirect(url_for('root'))
+                return render_template('ERROR.html', msg="Local connection error. Error Code: 702")
         conn.close()
-        print(msg)
         return redirect(url_for('root'))
     else:
         return redirect(url_for('root'))
@@ -90,15 +125,17 @@ def loginForm():
     if 'email' in session:  # kullanici giris yaptiysa anasayfa ekranina yonlendirir
         return redirect(url_for('root'))
     else:
-        return render_template('login_page.html', error='')
+        return render_template('login_page.html')
 
 
 @app.route("/incomeForm")  # giris sayfasi
 def incomeForm():
-    if 'email' in session:  # kullanici giris yaptiysa anasayfa ekranina yonlendirir
-        return redirect(url_for('root'))
-    else:
-        return render_template('income_details.html', error='')
+    if 'email' not in session:  # kisi admin degilse yapilacaklar
+        adminMi = 0
+        session['adminMi'] = adminMi
+    else:  # kisi adminse yapilacaklar
+        girildiMi, adi = getLoginDetails()[1:]
+        return render_template('income_details.html', girildiMi=girildiMi, adi=adi)
 
 
 # login_page.html sayfasindan cagirilir
@@ -114,8 +151,7 @@ def login():
             # giris yapildiginda anasayfaya yonlendirme
             return redirect(url_for('root'))
         else:
-            error = 'Geçersiz kullanıcı adı veya şifre!'
-            return render_template('login_page.html', error=error)
+            return render_template('ERROR.html', msg="Login failure. Error Code: 703")
     else:
         # url'ye login yazilirsa loginForm'a yonlendirme
         return redirect(url_for('loginForm'))
@@ -125,33 +161,9 @@ def login():
 def logout():
     if 'email' not in session:  # kisi eger giris yapmamissa anasayfaya yonlendirilir
         return redirect(url_for('root'))
-    email = session['email']
-    with sqlite3.connect('database.db') as conn:
-        cur = conn.cursor()
-        cur.execute(
-            "SELECT userId FROM kullanicilar WHERE email = ?", (email, ))
-        userId = cur.fetchone()[0]  # bu kisim usttekilerle ayni mantik
-        try:
-            cur.execute("DELETE FROM sepet WHERE sepet.userId = ?", (userId, ))
-            conn.commit()  # cikis yaparken sepeti silme
-        except:
-            conn.rollback()
-    conn.close()
-    session.pop('email', None)  # giris yapan kisiyi hafizadan atma
-    return redirect(url_for('root'))  # anasayfaya donus
-
-
-def is_valid(email, parola, adminMi):  # email ve parola dogru mu kiyasi
-    con = sqlite3.connect('database.db')
-    cur = con.cursor()
-    cur.execute('SELECT email, parola, adminMi FROM kullanicilar')
-    data = cur.fetchall()
-    for row in data:
-        if row[0] == email and row[1] == parola:
-            adminMi = row[2]
-            session['adminMi'] = adminMi
-            return True
-    return False
+    else:
+        session.pop('email', None)  # giris yapan kisiyi hafizadan atma
+        return redirect(url_for('root'))  # anasayfaya donus
 
 
 @app.route("/register", methods=['GET', 'POST'])  # sign_up.html'den cagirilir
@@ -181,18 +193,17 @@ def register():
             try:
                 cur = con.cursor()
                 cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,ekstrapaketler,paketkalangunsayisi,aktifmi,katilim,arkadassayisi, odeme,ogretmenMi,adminMi) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,0, ?, 0, ?, 30,?,1)', (
-                    parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel, boy, kilo, kayitgunu, pakettipi,ekstrapaketler, aktifmi, arkadassayisi,ogretmenMi))
+                    parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel, boy, kilo, kayitgunu, pakettipi, ekstrapaketler, aktifmi, arkadassayisi, ogretmenMi))
                 con.commit()  # veritabanina kaydedildi
-
-                msg = "Kayıt Başarılı"
+                print("Success. Success Code: 802")
             except Exception as e:
                 con.rollback()
-                msg = "Hata olustu"
-                print(e)
+                print(f"Failure. Failure Code: 901. Failure is {e}")
+                return render_template("ERROR.html", msg="Insertion Failure. Error Code: 704")
         con.close()
-        return render_template("login_page.html", error=msg)
-    else:
         return redirect(url_for('root'))
+    else:
+        return render_template("ERROR.html", msg="Request Method Violation. Error Code: 705")
 
 
 @app.route("/registerationForm")  # kaydolma sayfasi
@@ -210,33 +221,14 @@ def registrationForm():
             data = cur.fetchall()
         except Exception as e:
             con.rollback()
-            msg = "Hata olustu"
-            print(e)
+            print(f"Failure. Failure Code: 902. Failure is {e}")
+            return render_template("ERROR.html", msg="Insertion Failure. Error Code: 706")
     con.close()
     if session['adminMi'] == 1:
         return render_template("sign_up.html", userId=userId, girildiMi=girildiMi, adi=adi, data=data)
     else:
         # giris yaptiysa kaydolma sayfasi acilmaz anasayfaya yonlendirilir
         return redirect(url_for('root'))
-
-
-def allowed_file(filename):  # fotograf isimlerini duzenli hale getirmek icin
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-
-def parse(data):  # urunleri listelememizde kullandigimiz fonksiyon. birden fazla ayni satir olmasin diye yazildi
-    ans = []
-    i = 0
-    while i < len(data):
-        curr = []
-        for j in range(7):
-            if i >= len(data):
-                break
-            curr.append(data[i])
-            i += 1
-        ans.append(curr)
-    return ans
 
 
 @app.route("/clientsDetails")
@@ -255,15 +247,15 @@ def clientsDetails():
             pakettipleri = cur.fetchall()
         except Exception as e:
             con.rollback()
-            msg = "Hata olustu"
-            print(e)
+            print(f"Failure. Failure Code: 903. Failure is {e}")
+            return render_template("ERROR.html", msg="Fetching Failure. Error Code: 707")
     con.close()
     userId, girildiMi, adi = getLoginDetails()
     con = sqlite3.connect('database.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM kullanicilar ORDER BY odeme ASC")
     data = cur.fetchall()  # data from database
-    return render_template("clients_details.html", value=data, userId=userId, girildiMi=girildiMi, adi=adi,pakettipleri=pakettipleri)
+    return render_template("clients_details.html", value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
 
 
 @app.route("/teachersDetails")
@@ -275,7 +267,7 @@ def teachersDetails():
         return redirect(url_for('root'))
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
-    msg=""
+    msg = ""
     with sqlite3.connect('database.db') as con:
         try:
             cur = con.cursor()
@@ -311,7 +303,7 @@ def teachersDetails():
     cur = con.cursor()
     cur.execute("SELECT * FROM ogretmenler")
     data = cur.fetchall()  # data from database
-    return render_template("teacher_details.html", ogretmenMi=ogretmenMi,ogretmenAdi=ogretmenAdi, value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri, msg=msg)
+    return render_template("teacher_details.html", ogretmenMi=ogretmenMi, ogretmenAdi=ogretmenAdi, value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri, msg=msg)
 
 
 @app.route("/accountingDetails")
@@ -334,12 +326,10 @@ def accountingDetails():
 
     cur.execute("select * from alacaklar")
     alacaklar = cur.fetchall()  # data from database
-    
+
     cur.execute("select price from muhasebe")
     temp_deger_muhasebe = cur.fetchall()
 
-   
-    
     deger = []
     for i in range(len(temp_deger_muhasebe)):
         deger.append(int(str(temp_deger_muhasebe[i])[1:-2]))
@@ -347,8 +337,7 @@ def accountingDetails():
 
     cur.execute("select price from cafemuhasebe")
     temp_deger_cafemuhasebe = cur.fetchall()
-   
-    
+
     degerCafe = []
     for i in range(len(temp_deger_cafemuhasebe)):
         degerCafe.append(int(str(temp_deger_cafemuhasebe[i])[1:-2]))
@@ -357,16 +346,15 @@ def accountingDetails():
     cur.execute("select price from alacaklar")
     temp_deger_alacaklar = cur.fetchall()
     con.close()
-    
+
     degerAlacaklar = []
     for i in range(len(temp_deger_alacaklar)):
         degerAlacaklar.append(int(str(temp_deger_alacaklar[i])[1:-2]))
     degerAlacaklar = sum(degerAlacaklar)
     print(degerAlacaklar)
 
-    
+    return render_template("accounting_details.html", degerCafe=degerCafe, degerAlacaklar=degerAlacaklar, cafedata=cafedata, alacaklar=alacaklar, temp_deger_muhasebe=temp_deger_muhasebe, temp_deger_cafemuhasebe=temp_deger_cafemuhasebe, temp_deger_alacaklar=temp_deger_alacaklar, value=data, deger=deger, userId=userId, girildiMi=girildiMi, adi=adi)
 
-    return render_template("accounting_details.html",degerCafe=degerCafe,degerAlacaklar=degerAlacaklar,cafedata=cafedata,alacaklar=alacaklar ,temp_deger_muhasebe=temp_deger_muhasebe, temp_deger_cafemuhasebe=temp_deger_cafemuhasebe,temp_deger_alacaklar=temp_deger_alacaklar, value=data, deger=deger, userId=userId, girildiMi=girildiMi, adi=adi)
 
 @app.route("/copyingPage")
 def copyingPage():
@@ -379,6 +367,7 @@ def copyingPage():
         return redirect(url_for('loginForm'))
     userId, girildiMi, adi = getLoginDetails()
     return render_template('copyingPage.html', girildiMi=girildiMi, adi=adi)
+
 
 @app.route("/incomeDetails")
 def incomeDetails():
@@ -401,18 +390,19 @@ def incomeDetails():
             print(e)
     con.close()
     with sqlite3.connect('database.db') as con:
-                try:
-                    cur = con.cursor()
-                    cur.execute("select * from gelir")
-                    temp_deger = cur.fetchall()
-                    con.commit()  # veritabanina kaydedildi
-                    msg = "Kayıt Başarılı"
-                except Exception as e:
-                    con.rollback()
-                    msg = "Hata olustu"
-                    print(e)
+        try:
+            cur = con.cursor()
+            cur.execute("select * from gelir")
+            temp_deger = cur.fetchall()
+            con.commit()  # veritabanina kaydedildi
+            msg = "Kayıt Başarılı"
+        except Exception as e:
+            con.rollback()
+            msg = "Hata olustu"
+            print(e)
     con.close()
-    return render_template('income_details.html',temp_deger=temp_deger, girildiMi=girildiMi, adi=adi,pakettipleri=pakettipleri)
+    return render_template('income_details.html', temp_deger=temp_deger, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
+
 
 @app.route("/cafeIncomeDetails")
 def cafeIncomeDetails():
@@ -435,20 +425,21 @@ def cafeIncomeDetails():
             print(e)
     con.close()
     with sqlite3.connect('database.db') as con:
-                try:
-                    cur = con.cursor()
-                    cur.execute("select * from cafe")
-                    temp_deger = cur.fetchall()
-                    cur.execute("select urunAdi from cafeUrunleri")
-                    cafe_urunleri = cur.fetchall()
-                    con.commit()  # veritabanina kaydedildi
-                    msg = "Kayıt Başarılı"
-                except Exception as e:
-                    con.rollback()
-                    msg = "Hata olustu"
-                    print(e)
+        try:
+            cur = con.cursor()
+            cur.execute("select * from cafe")
+            temp_deger = cur.fetchall()
+            cur.execute("select urunAdi from cafeUrunleri")
+            cafe_urunleri = cur.fetchall()
+            con.commit()  # veritabanina kaydedildi
+            msg = "Kayıt Başarılı"
+        except Exception as e:
+            con.rollback()
+            msg = "Hata olustu"
+            print(e)
     con.close()
-    return render_template('cafe_income_details.html' ,cafe_urunleri=cafe_urunleri,temp_deger=temp_deger, girildiMi=girildiMi, adi=adi,pakettipleri=pakettipleri)
+    return render_template('cafe_income_details.html', cafe_urunleri=cafe_urunleri, temp_deger=temp_deger, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
+
 
 @app.route("/cafeIncome", methods=['GET', 'POST'])
 def cafeIncome():
@@ -468,21 +459,21 @@ def cafeIncome():
         # end of muhasebe kismi
 
         # new accounting kismi
-        howMany=request.form['howMany']
-        uyeadi=request.form['clientId']
-        urunAdi=request.form['uruntipi']
+        howMany = request.form['howMany']
+        uyeadi = request.form['clientId']
+        urunAdi = request.form['uruntipi']
         if price and date:
             try:
-                 
+
                 print(int(price))
             except Exception as e:
                 print(f"Hata {e}, girdi integer değil muhtemelen.")
             with sqlite3.connect('database.db') as con:
                 try:
                     cur = con.cursor()
-                    
+
                     cur.execute(
-                        'INSERT INTO cafe (urunAdi,urunStok,urunFiyat,satinAlanKisiAdi,date) VALUES ( ?,?,?, ?,?)', (urunAdi,howMany,price,uyeadi, date))
+                        'INSERT INTO cafe (urunAdi,urunStok,urunFiyat,satinAlanKisiAdi,date) VALUES ( ?,?,?, ?,?)', (urunAdi, howMany, price, uyeadi, date))
                     con.commit()  # veritabanina kaydedildi
                     msg = "Kayıt Başarılı"
                 except Exception as e:
@@ -495,6 +486,7 @@ def cafeIncome():
         return render_template("cafe_income_details.html", error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi) and redirect(url_for('incomeDetails'))
     else:
         return redirect(url_for('incomeDetails'))
+
 
 @app.route("/searchCafe", methods=['GET', 'POST'])
 def searchCafe():
@@ -518,10 +510,10 @@ def searchCafe():
                     cur = con.cursor()
                     cur.execute(
                         'select * from kullanicilar where userId=?', (id))
-                    value=cur.fetchall()
+                    value = cur.fetchall()
                     cur.execute(
                         'select sum(urunFiyat) from cafe where satinAlanKisiAdi=? ', (id))
-                    dept=cur.fetchall()
+                    dept = cur.fetchall()
                     cur.execute("select * from cafe")
                     temp_deger = cur.fetchall()
                     con.commit()  # veritabanina kaydedildi
@@ -533,10 +525,12 @@ def searchCafe():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        render_template("cafe_income_details.html",temp_deger=temp_deger,dept=dept, value=value,error=msg, date=date, girildiMi=girildiMi, adi=adi)
+        render_template("cafe_income_details.html", temp_deger=temp_deger, dept=dept,
+                        value=value, error=msg, date=date, girildiMi=girildiMi, adi=adi)
         return redirect(url_for('cafeIncomeDetails'))
     else:
         return redirect(url_for('root'))
+
 
 @app.route("/backupProcedure")
 def backupProcedure():
@@ -548,27 +542,29 @@ def backupProcedure():
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
     try:
-        today=date.today()
+        today = date.today()
         now = date.today().weekday()
-        if(now==0):
-            now="Pazartesi"
-        if(now==1):
-            now="Sali"
-        if(now==2):
-            now="Carsamba"
-        if(now==3):
-            now="Persembe"
-        if(now==4):
-            now="Cuma"
-        if(now==5):
-            now="Cumartesi"
-        if(now==6):
-            now="Pazar"
-        shutil.copyfile('./database.db', './database_backup_'+ str(today) +'_'+str(now)+'_.db')
+        if(now == 0):
+            now = "Pazartesi"
+        if(now == 1):
+            now = "Sali"
+        if(now == 2):
+            now = "Carsamba"
+        if(now == 3):
+            now = "Persembe"
+        if(now == 4):
+            now = "Cuma"
+        if(now == 5):
+            now = "Cumartesi"
+        if(now == 6):
+            now = "Pazar"
+        shutil.copyfile('./database.db', './database_backup_' +
+                        str(today) + '_'+str(now)+'_.db')
     except Exception as e:
         print(f"Hata oluştu: {e}")
     userId, girildiMi, adi = getLoginDetails()
     return render_template('root.html', girildiMi=girildiMi, adi=adi)
+
 
 @app.route("/backupAccounting")
 def backupAccounting():
@@ -591,29 +587,30 @@ def backupAccounting():
         for i in range(len(temp_deger)):
             deger.append(int(str(temp_deger[i])[1:-2]))
         deger = sum(deger)
-        today=date.today()
+        today = date.today()
         now = date.today().weekday()
-        if(now==0):
-            now="Pazartesi"
-        if(now==1):
-            now="Sali"
-        if(now==2):
-            now="Carsamba"
-        if(now==3):
-            now="Persembe"
-        if(now==4):
-            now="Cuma"
-        if(now==5):
-            now="Cumartesi"
-        if(now==6):
-            now="Pazar"
-        
-        textfile = open("accountingBackup_"+str(today)+"_"+str(now)+".txt","w", encoding="utf-8")
+        if(now == 0):
+            now = "Pazartesi"
+        if(now == 1):
+            now = "Sali"
+        if(now == 2):
+            now = "Carsamba"
+        if(now == 3):
+            now = "Persembe"
+        if(now == 4):
+            now = "Cuma"
+        if(now == 5):
+            now = "Cumartesi"
+        if(now == 6):
+            now = "Pazar"
+
+        textfile = open("accountingBackup_"+str(today)+"_" +
+                        str(now)+".txt", "w", encoding="utf-8")
         textfile.write(f"Toplam: {deger};")
         for i in data:
             textfile.write(f"\n{i}")
         textfile.close()
-        cur.execute("DELETE FROM muhasebe") # Remove all data
+        cur.execute("DELETE FROM muhasebe")  # Remove all data
         con.commit()
         con.close()
 
@@ -621,6 +618,7 @@ def backupAccounting():
         print(f"Hata oluştu: {e}")
     userId, girildiMi, adi = getLoginDetails()
     return render_template('root.html', girildiMi=girildiMi, adi=adi)
+
 
 @app.route("/accountingForm")  # kaydolma sayfasi
 def accountingForm():
@@ -654,12 +652,12 @@ def income():
         # end of muhasebe kismi
 
         # new accounting kismi
-        uyeadi=request.form['uyeAdi']
-        uyeSoyadi=request.form['uyeSoyadi']
-        pakettipi=request.form['pakettipi']
+        uyeadi = request.form['uyeAdi']
+        uyeSoyadi = request.form['uyeSoyadi']
+        pakettipi = request.form['pakettipi']
         if price and date:
             try:
-                 
+
                 print(int(price))
             except Exception as e:
                 print(f"Hata {e}, girdi integer değil muhtemelen.")
@@ -668,15 +666,15 @@ def income():
                     cur = con.cursor()
                     if int(price) < 0:
                         cur.execute(
-                        'INSERT INTO alacaklar (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
+                            'INSERT INTO alacaklar (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
                         cur.execute(
-                        'INSERT INTO gelir(userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?)'  ,(uyeadi,uyeSoyadi,price,date,pakettipi,explanation))    
+                            'INSERT INTO gelir(userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?)', (uyeadi, uyeSoyadi, price, date, pakettipi, explanation))
 
                     else:
                         cur.execute(
-                        'INSERT INTO gelir(userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?)'  ,(uyeadi,uyeSoyadi,price,date,pakettipi,explanation))    
+                            'INSERT INTO gelir(userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?)', (uyeadi, uyeSoyadi, price, date, pakettipi, explanation))
                         cur.execute(
-                        'INSERT INTO muhasebe (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
+                            'INSERT INTO muhasebe (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
                     cur.execute("select * from gelir")
                     temp_deger = cur.fetchall()
                     con.commit()  # veritabanina kaydedildi
@@ -688,7 +686,7 @@ def income():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        return render_template("income_details.html",temp_deger=temp_deger, error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi)
+        return render_template("income_details.html", temp_deger=temp_deger, error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi)
     else:
         return redirect(url_for('incomeDetails'))
 
@@ -707,10 +705,10 @@ def deletePersonal():
             try:
                 cur = con.cursor()
                 cur.execute(
-                    'delete  from gelir where userId=? and userSurname=? and price=? and date=? and paketadi=? and aciklama=?', (userId,userName,userSurname,price,date,paketadi,aciklama, ))
+                    'delete  from gelir where userId=? and userSurname=? and price=? and date=? and paketadi=? and aciklama=?', (userId, userName, userSurname, price, date, paketadi, aciklama, ))
                 con.commit()  # veritabanina kaydedildi
                 cur.execute(
-                    'delete  from muhasebe where price=? and date=? and explanation=?', (price,date,aciklama, ))
+                    'delete  from muhasebe where price=? and date=? and explanation=?', (price, date, aciklama, ))
                 con.commit()  # veritabanina kaydedildi
             except Exception as e:
                 con.rollback()
@@ -720,6 +718,7 @@ def deletePersonal():
     else:
         print("error")
         return redirect(url_for('root'))
+
 
 @app.route("/search", methods=['GET', 'POST'])
 def search():
@@ -743,14 +742,14 @@ def search():
                 try:
                     cur = con.cursor()
                     cur.execute(
-                        'select * from gelir where userName=? and userSurname=?', (name,surname))
-                    value=cur.fetchall()
+                        'select * from gelir where userName=? and userSurname=?', (name, surname))
+                    value = cur.fetchall()
                     cur.execute(
                         'select * from gelir')
-                    temp_deger=cur.fetchall()
+                    temp_deger = cur.fetchall()
                     cur.execute(
-                        'select sum(price) from gelir where userName=? and userSurname=?', (name,surname))
-                    dept=cur.fetchall()
+                        'select sum(price) from gelir where userName=? and userSurname=?', (name, surname))
+                    dept = cur.fetchall()
                     con.commit()  # veritabanina kaydedildi
                     msg = "Kayıt Başarılı"
                 except Exception as e:
@@ -760,10 +759,9 @@ def search():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        return render_template("income_details.html",dept=dept,temp_deger=temp_deger, value=value,error=msg, date=date, girildiMi=girildiMi, adi=adi)
+        return render_template("income_details.html", dept=dept, temp_deger=temp_deger, value=value, error=msg, date=date, girildiMi=girildiMi, adi=adi)
     else:
         return redirect(url_for('root'))
-
 
 
 @app.route("/accounting", methods=['GET', 'POST'])
@@ -803,6 +801,7 @@ def totalAmount():
     else:
         return redirect(url_for('root'))
 
+
 @app.route("/increaseOneMonth", methods=['GET', 'POST'])
 def addOneMonthToTheUser():
     if request.method == 'POST':
@@ -822,6 +821,7 @@ def addOneMonthToTheUser():
     else:
         return redirect(url_for('root'))
 
+
 @app.route("/addExtraPacgage", methods=['GET', 'POST'])
 def addExtraPacgage():
     if request.method == 'POST':
@@ -840,7 +840,8 @@ def addExtraPacgage():
         return redirect(url_for('clientsDetails'))
     else:
         return redirect(url_for('root'))
-        
+
+
 @app.route("/decreaseOneDay")
 def decreaseOneDay():
     if True == True:
@@ -858,7 +859,8 @@ def decreaseOneDay():
     else:
         print("error")
         return redirect(url_for('root'))
-        
+
+
 @app.route("/increaseOneDay")
 def increaseOneDay():
     if True == True:
@@ -877,7 +879,8 @@ def increaseOneDay():
         print("error")
         return redirect(url_for('root'))
 
-@app.route("/increaseOne", methods = ['GET', 'POST'])
+
+@app.route("/increaseOne", methods=['GET', 'POST'])
 def increaseOne():
     if request.method == 'POST':
         no = request.form['no']
@@ -885,37 +888,39 @@ def increaseOne():
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute('UPDATE kullanicilar SET katilim = katilim + ? WHERE userId = ?',(gunsayisi,no))
-                con.commit() #veritabanina kaydedildi
-            except  Exception as e:
+                cur.execute(
+                    'UPDATE kullanicilar SET katilim = katilim + ? WHERE userId = ?', (gunsayisi, no))
+                con.commit()  # veritabanina kaydedildi
+            except Exception as e:
                 con.rollback()
-                print (e)
+                print(e)
         con.close()
         return redirect(url_for('clientsDetails'))
     else:
         return redirect(url_for('root'))
 
 ############################################################################# Teacher Functions ########
-@app.route("/addTeacherDetails", methods = ['GET', 'POST'])
+@app.route("/addTeacherDetails", methods=['GET', 'POST'])
 def addTeacherDetails():
     if request.method == 'POST':
-        id = request.form ['uyeadi']
+        id = request.form['uyeadi']
         ogretmenAdi = request.form['ogretmenAdi']
-        date=request.form['date']
+        date = request.form['date']
         pakettipi = request.form['pakettipi']
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute('INSERT INTO ogretmenler (id,ogretmenAdi,date,pakettipi) VALUES ( ?,?, ?,?)', (id,ogretmenAdi,date,pakettipi))
-                con.commit() #veritabanina kaydedildi
-            except  Exception as e:
+                cur.execute('INSERT INTO ogretmenler (id,ogretmenAdi,date,pakettipi) VALUES ( ?,?, ?,?)',
+                            (id, ogretmenAdi, date, pakettipi))
+                con.commit()  # veritabanina kaydedildi
+            except Exception as e:
                 con.rollback()
-                print (e)
+                print(e)
         con.close()
         return redirect(url_for('teachersDetails'))
     else:
         return redirect(url_for('root'))
-		
+
 ############################################################################# Package Functions ########
 @app.route("/increaseOneMonthForExtraPackage", methods=['GET', 'POST'])
 def increaseOneMonthForExtraPackage():
@@ -935,7 +940,8 @@ def increaseOneMonthForExtraPackage():
         return redirect(url_for('clientsDetails'))
     else:
         return redirect(url_for('root'))
-		
+
+
 @app.route("/decreaseOneDayForExtraPackage")
 def decreaseOneDayForExtraPackage():
     if True == True:
@@ -953,6 +959,7 @@ def decreaseOneDayForExtraPackage():
     else:
         print("error")
         return redirect(url_for('root'))
+
 
 @app.route("/increaseOneDayForExtraPackage")
 def increaseOneDayForExtraPackage():
