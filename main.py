@@ -2,20 +2,17 @@ from flask import *
 from datetime import datetime
 from datetime import date
 import sqlite3
-import hashlib
-import os  # hashlib sifreleme icin, os upload islemleri icin
-# dosya upload işlemleri için dahil edildi
-from werkzeug.utils import secure_filename
+import hashlib # sifreleme icin
+import os # upload islemleri icin
+from werkzeug.utils import secure_filename # dosya upload işlemleri için dahil edildi
 from datetime import date, timedelta
 import calendar  # to check clients days
 import shutil # Backup lib
 
 app = Flask(__name__)
 app.secret_key = 'random string'
-# upload edilecek fotograflarin dosya konumu belirlendi
-UPLOAD_FOLDER = 'static/uploads'
-# upload edilecek fotograflarin uzantilari belirlendi
-ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
+UPLOAD_FOLDER = 'static/uploads' # upload edilecek fotograflarin dosya konumu belirlendi
+ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif']) # upload edilecek fotograflarin uzantilari belirlendi
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -25,7 +22,7 @@ def getLoginDetails():
         try:
             if 'email' not in session:  # emaile gore giris yapildi mi? yapilmadiysa alttaki satilar
                 girildiMi = False  # girilmedigi icin false
-                adi = '!'  # sitede isim goruntulenmeyec
+                adi = 'Giriş Yapılmadı'  # sitede isim goruntulenmeyec
                 userId = '!'
             else:  # giris yapildiysa alttaki satirlar
                 girildiMi = True  # giris yapildigi icin true
@@ -45,7 +42,7 @@ def root():
         adminMi = 0  # admin mi degiskeni sifir olacak
         session['adminMi'] = adminMi  # bu session icine aktarilacak
     # yukarida olusturulan fonksiyondan degerler cekiliyor
-    userId, girildiMi, adi = getLoginDetails()
+    girildiMi, adi = getLoginDetails()[1:] # userid gereksiz
     return render_template('root.html', girildiMi=girildiMi, adi=adi)
 
 
@@ -55,10 +52,11 @@ def addcategory():
         adminMi = 0
         session['adminMi'] = adminMi
     if session['adminMi'] == 1:  # kisi adminse yapilacaklar
-        userId, girildiMi, adi = getLoginDetails()
+        girildiMi, adi = getLoginDetails()[1:]
         return render_template('package_add.html', girildiMi=girildiMi, adi=adi)
     else:
-        return "Bu sayfaya sadece adminler erisebilir..."
+        girildiMi, adi = getLoginDetails()[1:]
+        return render_template('ERROR.html', msg="You are not authorized. Error Code: 701", girildiMi=girildiMi, adi=adi)
 
 
 # package_add.html icinden bu sayfa cagiriliyor

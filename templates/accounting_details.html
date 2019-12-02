@@ -10,67 +10,29 @@
 </head>
 
 <!-- Navbar -->
-<header style="font-family: 'Roboto', sans-serif;">
-	<div>
-		<div class="w3-bar w3-gym11 w3-card w3-left-align w3-large">
-			<a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-gym11"
-				href="javascript:void(0);" onclick="toggleMenu()" title="Toggle Navigation Menu">Menu</a>
-			<a href="/">
-				<img class="w3-bar-item w3-image w3-circle" style="height: 50px; width: auto"
-					src="{{ url_for('static', filename='images/sitelogo.png') }}" />
-			</a>
-			<a class="w3-bar-item w3-hide-small w3-padding-large w3-black"><b>
-					{% if adi %}
-					{{adi}}
-					{% else %}
-					!
-					{% endif %}
-				</b></a>
-			{% if not girildiMi %}
-			<a class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-gym11" href="/loginForm">Giriş
-				Yap</a>
-			{% else %}
-			<a href="/accountingMain"
-				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Accounting</a>
-			<a href="/clientMain" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Client</a>
-			<a href="/addcategory" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Add
-				Packages</a>
-			<a href="/logout"
-				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Logout</a>
-			{% endif %}
-		</div>
-
-		<!-- Navbar on small screens -->
-		<div id="navBar" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-			{% if not girildiMi %}
-			<a class="w3-bar-item w3-button w3-padding-large w3-hover-gym11" href="/loginForm">Giriş
-				Yap</a>
-			{% else %}
-			<a href="/account/profile" class="w3-bar-item w3-button w3-padding-large">Accounting</a>
-			<a href="/references" class="w3-bar-item w3-button w3-padding-large">Client</a>
-			<a href="/adminPage" class="w3-bar-item w3-button w3-padding-large">Add Packages</a>
-			<a href="/logout" class="w3-bar-item w3-button w3-padding-large">Logout</a>
-			{% endif %}
-		</div>
-	</div>
-	<br class="w3-margin-bottom">
-	<br class="w3-margin-bottom">
-</header>
-<!-- Navbar End -->
+{% include 'HEADER.html' %}
 
 <!-- Content -->
+<body
+	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
+	<!-- NORMAL MUHASEBE -->
+	<div class="w3-margin w3-center w3-gym11">
+		<h1>Total balance is {{(-1 * degerAlacaklar)+deger}}₺</h1>
+	</div>
+	{% if deger == 0 %}
+	<div class="w3-margin w3-center w3-gray">
+		<h1 class="">All income without depts {{deger}}₺</h1>
+	</div>
+	{% elif deger > 0 %}
+	<div class="w3-margin w3-center w3-green">
+		<h1 class="">You are good! Your current state without depts is +{{deger}}₺</h1>
+	</div>
+	{% else %}
+	<div class="w3-margin w3-center w3-gym11">
+		<h1>There are problems! Your current state without depts is {{deger}}₺</h1>
+	</div>
+	{% endif %}
 
-<body style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
-					<!------------------------NORMAL MUHASEBE------------------------- -->
-		<div class="w3-margin w3-center w3-gym11"><h1>Total balance is {{(-1 * degerAlacaklar)+deger}}₺</h1></div>
-		{% if deger == 0 %}
-		<div class="w3-margin w3-center w3-gray"><h1 class="">All income without depts {{deger}}₺</h1></div>
-		{% elif deger > 0 %}
-		<div class="w3-margin w3-center w3-green"><h1 class="">You are good! Your current state without depts is +{{deger}}₺</h1></div>
-		{% else %}
-		<div class="w3-margin w3-center w3-gym11"><h1>There are problems! Your current state without depts is {{deger}}₺</h1></div>
-		{% endif %}
-	
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
 		<table align="center">
@@ -85,7 +47,7 @@
 			<tbody>
 				{% for row in value %}
 				<tr></tr>
-				<td class="w3-gray" >{{row[0]}}</td>
+				<td class="w3-gray">{{row[0]}}</td>
 				{% if row[1] > 0 %}
 				<td class="w3-green" style="width: 30%">{{row[1]}}</td>
 				{% elif row[1] < 0 %}
@@ -93,7 +55,7 @@
 				{% else %}
 				<td class="w3-gray" style="width: 30%">{{row[1]}}</td>
 				{% endif %}
-				
+
 				<td class="w3-gray" style="width: 40%">{{row[2]}}</td>
 				<td class="w3-gray" style="width: 30%">{{row[3]}}</td>
 				</tr>
@@ -101,21 +63,27 @@
 			</tbody>
 		</table>
 	</div>
-					<!------------------------BORCLAR + MUHASEBE MUHASEBE------------------------- -->
+	<!-- BORCLAR + MUHASEBE MUHASEBE -->
 	{% if degerAlacaklar == 0 %}
-		<div class="w3-margin w3-center w3-gray"><h1 class=""> All income with dept is {{degerAlacaklar}}₺</h1></div>
-		{% elif degerAlacaklar > 0 %}
-		<div class="w3-margin w3-center w3-green"><h1 class="">You are good! Your current state with dept is +{{degerAlacaklar}}₺</h1></div>
-		{% else %}
-		<div class="w3-margin w3-center w3-gym11"><h1>There are problems! Your current state with dept is {{degerAlacaklar}}₺</h1></div>
-		{% endif %}
-	
+	<div class="w3-margin w3-center w3-gray">
+		<h1 class=""> All income with dept is {{degerAlacaklar}}₺</h1>
+	</div>
+	{% elif degerAlacaklar > 0 %}
+	<div class="w3-margin w3-center w3-green">
+		<h1 class="">You are good! Your current state with dept is +{{degerAlacaklar}}₺</h1>
+	</div>
+	{% else %}
+	<div class="w3-margin w3-center w3-gym11">
+		<h1>There are problems! Your current state with dept is {{degerAlacaklar}}₺</h1>
+	</div>
+	{% endif %}
+
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
 		<table align="center">
 			<thead>
 				<tr>
-					
+
 					<th>Id</th>
 					<th>Price</th>
 					<th>Month</th>
@@ -125,7 +93,7 @@
 			<tbody>
 				{% for row in alacaklar %}
 				<tr></tr>
-				<td class="w3-gray" >{{row[0]}}</td>
+				<td class="w3-gray">{{row[0]}}</td>
 				{% if row[1] > 0 %}
 				<td class="w3-green" style="width: 30%">{{row[1]}}</td>
 				{% elif row[1] < 0 %}
@@ -133,7 +101,7 @@
 				{% else %}
 				<td class="w3-gray" style="width: 30%">{{row[1]}}</td>
 				{% endif %}
-				
+
 				<td class="w3-gray" style="width: 40%">{{row[2]}}</td>
 				<td class="w3-gray" style="width: 30%">{{row[3]}}</td>
 				</tr>
@@ -141,15 +109,21 @@
 			</tbody>
 		</table>
 	</div>
-	
-	<!------------------------KAFE  MUHASEBE------------------------- -->
+
+	<!-- KAFE MUHASEBE -->
 	{% if degerCafe == 0 %}
-		<div class="w3-margin w3-center w3-gray"><h1 class="">Your cafes current state is {{degerCafe}}₺</h1></div>
-		{% elif degerCafe > 0 %}
-		<div class="w3-margin w3-center w3-green"><h1 class="">You are good! Your current state of cafe is +{{degerCafe}}₺</h1></div>
-		{% else %}
-		<div class="w3-margin w3-center w3-gym11"><h1>There are problems! Your current state of cafe is {{degerCafe}}₺</h1></div>
-		{% endif %}
+	<div class="w3-margin w3-center w3-gray">
+		<h1 class="">Your cafes current state is {{degerCafe}}₺</h1>
+	</div>
+	{% elif degerCafe > 0 %}
+	<div class="w3-margin w3-center w3-green">
+		<h1 class="">You are good! Your current state of cafe is +{{degerCafe}}₺</h1>
+	</div>
+	{% else %}
+	<div class="w3-margin w3-center w3-gym11">
+		<h1>There are problems! Your current state of cafe is {{degerCafe}}₺</h1>
+	</div>
+	{% endif %}
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
 		<table align="center">
@@ -164,7 +138,7 @@
 			<tbody>
 				{% for row in cafedata %}
 				<tr></tr>
-				<td class="w3-gray" >{{row[0]}}</td>
+				<td class="w3-gray">{{row[0]}}</td>
 				{% if row[1] > 0 %}
 				<td class="w3-green" style="width: 30%">{{row[1]}}</td>
 				{% elif row[1] < 0 %}
@@ -172,7 +146,7 @@
 				{% else %}
 				<td class="w3-gray" style="width: 30%">{{row[1]}}</td>
 				{% endif %}
-				
+
 				<td class="w3-gray" style="width: 40%">{{row[2]}}</td>
 				<td class="w3-gray" style="width: 30%">{{row[3]}}</td>
 				</tr>
