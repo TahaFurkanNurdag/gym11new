@@ -264,46 +264,27 @@ def teachersDetails():
         adminMi = 0
         session['adminMi'] = adminMi
     if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
-        return redirect(url_for('root'))
+        return render_template("ERROR.html", msg="You are not authorized. Error Code: 708")
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
-    msg = ""
     with sqlite3.connect('database.db') as con:
         try:
             cur = con.cursor()
             cur.execute('SELECT paketadi FROM pakettipi')
             pakettipleri = cur.fetchall()
-        except Exception as e:
-            con.rollback()
-            msg = "Hata olustu"
-            print(e)
-    con.close()
-    with sqlite3.connect('database.db') as con:
-        try:
-            cur = con.cursor()
-            cur.execute('SELECT adi FROM kullanicilar where ogretmenMi =1')
+            cur.execute('SELECT adi FROM kullanicilar where ogretmenMi = 1')
             ogretmenAdi = cur.fetchall()
-        except Exception as e:
-            con.rollback()
-            msg = "Hata olustu"
-            print(e)
-    con.close()
-    with sqlite3.connect('database.db') as con:
-        try:
-            cur = con.cursor()
             cur.execute('SELECT * FROM kullanicilar where ogretmenMi =1')
             ogretmenMi = cur.fetchall()
+            cur.execute("SELECT * FROM ogretmenler")
+            data = cur.fetchall()  # data from database
         except Exception as e:
             con.rollback()
-            msg = "Hata olustu"
-            print(e)
+            print(f"Failure. Failure Code: 904. Failure is {e}")
+            return render_template("ERROR.html", msg="Fetching Failure. Error Code: 709")
     con.close()
     userId, girildiMi, adi = getLoginDetails()
-    con = sqlite3.connect('database.db')
-    cur = con.cursor()
-    cur.execute("SELECT * FROM ogretmenler")
-    data = cur.fetchall()  # data from database
-    return render_template("teacher_details.html", ogretmenMi=ogretmenMi, ogretmenAdi=ogretmenAdi, value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri, msg=msg)
+    return render_template("teacher_details.html", ogretmenMi=ogretmenMi, ogretmenAdi=ogretmenAdi, value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
 
 
 @app.route("/accountingDetails")
@@ -361,11 +342,10 @@ def copyingPage():
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         adminMi = 0
         session['adminMi'] = adminMi
+        return redirect(url_for('loginForm'))
     if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('root'))
-    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
-        return redirect(url_for('loginForm'))
-    userId, girildiMi, adi = getLoginDetails()
+    girildiMi, adi = getLoginDetails()[1:]
     return render_template('copyingPage.html', girildiMi=girildiMi, adi=adi)
 
 
@@ -374,32 +354,21 @@ def incomeDetails():
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         adminMi = 0
         session['adminMi'] = adminMi
+        return redirect(url_for('loginForm'))
     if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('root'))
-    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
-        return redirect(url_for('loginForm'))
-    userId, girildiMi, adi = getLoginDetails()
+    girildiMi, adi = getLoginDetails()[1:]
     with sqlite3.connect('database.db') as con:
         try:
             cur = con.cursor()
             cur.execute('SELECT paketadi FROM pakettipi')
             pakettipleri = cur.fetchall()
-        except Exception as e:
-            con.rollback()
-            msg = "Hata olustu"
-            print(e)
-    con.close()
-    with sqlite3.connect('database.db') as con:
-        try:
-            cur = con.cursor()
             cur.execute("select * from gelir")
             temp_deger = cur.fetchall()
-            con.commit()  # veritabanina kaydedildi
-            msg = "Kayıt Başarılı"
         except Exception as e:
             con.rollback()
-            msg = "Hata olustu"
-            print(e)
+            print(f"Failure. Failure Code: 905. Failure is {e}")
+            return render_template("ERROR.html", msg="Fetching Failure. Error Code: 710")
     con.close()
     return render_template('income_details.html', temp_deger=temp_deger, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
 
@@ -409,34 +378,23 @@ def cafeIncomeDetails():
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         adminMi = 0
         session['adminMi'] = adminMi
+        return redirect(url_for('loginForm'))
     if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('root'))
-    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
-        return redirect(url_for('loginForm'))
-    userId, girildiMi, adi = getLoginDetails()
+    girildiMi, adi = getLoginDetails()[1:]
     with sqlite3.connect('database.db') as con:
         try:
             cur = con.cursor()
             cur.execute('SELECT paketadi FROM pakettipi')
             pakettipleri = cur.fetchall()
-        except Exception as e:
-            con.rollback()
-            msg = "Hata olustu"
-            print(e)
-    con.close()
-    with sqlite3.connect('database.db') as con:
-        try:
-            cur = con.cursor()
             cur.execute("select * from cafe")
             temp_deger = cur.fetchall()
             cur.execute("select urunAdi from cafeUrunleri")
             cafe_urunleri = cur.fetchall()
-            con.commit()  # veritabanina kaydedildi
-            msg = "Kayıt Başarılı"
         except Exception as e:
             con.rollback()
-            msg = "Hata olustu"
-            print(e)
+            print(f"Failure. Failure Code: 906. Failure is {e}")
+            return render_template("ERROR.html", msg="Fetching Failure. Error Code: 711")
     con.close()
     return render_template('cafe_income_details.html', cafe_urunleri=cafe_urunleri, temp_deger=temp_deger, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
 
@@ -446,11 +404,10 @@ def cafeIncome():
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         adminMi = 0
         session['adminMi'] = adminMi
+        return redirect(url_for('loginForm'))
     if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('root'))
-    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
-        return redirect(url_for('loginForm'))
-    userId, girildiMi, adi = getLoginDetails()
+    girildiMi, adi = getLoginDetails()[1:]
     if request.method == 'POST':
         # burasi muhasebe kismi icin
 
