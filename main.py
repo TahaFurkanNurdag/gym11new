@@ -571,6 +571,83 @@ def backupAccounting():
         con.commit()
         con.close()
 
+######################################################################
+
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("select * from alacaklar")
+        data = cur.fetchall()  # data from database
+        cur.execute("select price from alacaklar")
+        temp_deger2 = cur.fetchall()
+        deger2 = []
+        for i in range(len(temp_deger2)):
+            deger2.append(int(str(temp_deger2[i])[1:-2]))
+        deger2 = sum(deger2)
+        today = date.today()
+        now = date.today().weekday()
+        if(now == 0):
+            now = "Pazartesi"
+        if(now == 1):
+            now = "Sali"
+        if(now == 2):
+            now = "Carsamba"
+        if(now == 3):
+            now = "Persembe"
+        if(now == 4):
+            now = "Cuma"
+        if(now == 5):
+            now = "Cumartesi"
+        if(now == 6):
+            now = "Pazar"
+
+        textfile = open("accountingBackupAlacaklar_"+str(today)+"_" +
+                        str(now)+".txt", "w", encoding="utf-8")
+        textfile.write(f"Toplam: {deger};")
+        for i in data:
+            textfile.write(f"\n{i}")
+        textfile.close()
+        cur.execute("DELETE FROM alacaklar")  # Remove all data
+        con.commit()
+        con.close()
+########################################
+
+        con = sqlite3.connect('database.db')
+        cur = con.cursor()
+        cur.execute("select * from cafemuhasebe")
+        data = cur.fetchall()  # data from database
+        cur.execute("select price from cafemuhasebe")
+        temp_deger3 = cur.fetchall()
+        deger3 = []
+        for i in range(len(temp_deger3)):
+            deger3.append(int(str(temp_deger3[i])[1:-2]))
+        deger3 = sum(deger3)
+        today = date.today()
+        now = date.today().weekday()
+        if(now == 0):
+            now = "Pazartesi"
+        if(now == 1):
+            now = "Sali"
+        if(now == 2):
+            now = "Carsamba"
+        if(now == 3):
+            now = "Persembe"
+        if(now == 4):
+            now = "Cuma"
+        if(now == 5):
+            now = "Cumartesi"
+        if(now == 6):
+            now = "Pazar"
+
+        textfile = open("accountingBackupCafeMuhasebe_"+str(today)+"_" +
+                        str(now)+".txt", "w", encoding="utf-8")
+        textfile.write(f"Toplam: {deger};")
+        for i in data:
+            textfile.write(f"\n{i}")
+        textfile.close()
+        cur.execute("DELETE FROM cafemuhasebe")  # Remove all data
+        con.commit()
+        con.close()
+
     except Exception as e:
         print(f"Hata oluştu: {e}")
     userId, girildiMi, adi = getLoginDetails()
