@@ -13,90 +13,81 @@
 <!-- Navbar -->
 {% include 'HEADER.html' %}
 
+<style>
+	#myInput {
+		background-image: url('/css/searchicon.png');
+		background-position: 10px 10px;
+		background-repeat: no-repeat;
+		width: 100%;
+		font-size: 16px;
+		padding: 12px 20px 12px 40px;
+		border: 1px solid #ddd;
+		margin-bottom: 12px;
+	}
+
+	#myTable {
+		border-collapse: collapse;
+		width: 100%;
+		border: 1px solid #ddd;
+		font-size: 18px;
+	}
+
+	#myTable th,
+	#myTable td {
+		text-align: left;
+		padding: 12px;
+	}
+
+	#myTable tr {
+		border-bottom: 1px solid #ddd;
+	}
+
+	#myTable tr.header,
+	#myTable tr:hover {
+		background-color: #f1f1f1;
+	}
+</style>
+
 <!-- Content -->
+
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
 	<div class="w3-padding">
 		{% if msg %}
 		<p class="w3-gym11">{{msg}}</p>
 		{% endif %}
-			<form class="form-style-10" action="/income" method="POST">
-				<div class="section"><span>1</span>Extra Details</div>
-				<div class="inner-wrap">
+		<form class="form-style-10" action="/income" method="POST">
+			<div class="section"><span>1</span>Extra Details</div>
+			<div class="inner-wrap">
 				<p>Client Name<input type="text" name="uyeAdi"></p>
 				<p>Client Surname<input type="text" name="uyeSoyadi"></p>
 				<p>Price<input type="text" name="ucret"></p>
 				<p>Date<input type="date" name="date"></p>
 				<p>Type of package</p>
-					<select class="w3-input" name="pakettipi">
-							{% for row in pakettipleri %}
-							<option value="{{row[0]}}">{{row[0]}}</option>
-							{% endfor %}
-						</select>
-				<p>Description<input type="text" name="explanation"></p>		
-				</div>
-				
-				<input type="submit" value="Add details">
-			</form>
-			
-			<form class="form-style-10" action="/search" method="POST">
-				<div class="section"><span>1</span>Search</div>
-				<div class="inner-wrap">
-					<p>Name<input type="text" name="name" placeholder="Search from name"></p>
-					<p>Surname<input type="text" name="surname" placeholder="Search from surname"></p>
-				</div>
-				
-				<input type="submit" value="Search Client">
-			</form>
-		</div>
+				<select class="w3-input" name="pakettipi">
+					{% for row in pakettipleri %}
+					<option value="{{row[0]}}">{{row[0]}}</option>
+					{% endfor %}
+				</select>
+				<p>Description<input type="text" name="explanation"></p>
+			</div>
+
+			<input type="submit" value="Add details">
+		</form>
+
+		
+	</div>
 	</div>
 	<hr>
-	
-		<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
-		<br>
-		<table style="width: 100%">
-			<thead>
-				<tr>
-					
-					<th>Id</th>
-					<th>Client Name</th>
-					<th>Client Surname</th>
-					<th>Price</th>
-					<th>Date</th>
-					<th>Package type</th>
-					<th>Description</th>
-				
-				</tr>
-			</thead>
-			<tbody>
-				{% for row in value %}
-				<tr>
-					<td class="w3-gray">{{row[0]}}</td>
-					<td class="w3-gray">{{row[1]}}</td>
-					<td class="w3-gray">{{row[2]}}</td>
-					<td class="w3-gray">{{row[3]}}</td>
-					<td class="w3-gray">{{row[4]}}</td>
-					<td class="w3-gray">{{row[5]}}</td>
-					<td class="w3-gray">{{row[6]}}</td>
-					
-					 
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-	
-		<Label>Plus = {{dept}}</Label>
-		<Label>Dept = {{dept}}</Label>
-	
-		<br>
-	</div>
-	
+
+	<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+
+
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
-		<table style="width: 100%">
+		<table id="myTable" style="width: 100%">
 			<thead>
 				<tr>
-					
 					<th>Id</th>
 					<th>Client Name</th>
 					<th>Client Surname</th>
@@ -104,7 +95,6 @@
 					<th>Date</th>
 					<th>Package type</th>
 					<th>Description</th>
-				
 				</tr>
 			</thead>
 			<tbody>
@@ -117,15 +107,39 @@
 					<td class="w3-gray">{{row[4]}}</td>
 					<td class="w3-gray">{{row[5]}}</td>
 					<td class="w3-gray">{{row[6]}}</td>
-					
-					 
 				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
+		Total debt is : 
+		<div id="jsvals"></div>
 		<br>
 	</div>
 
 </body>
+
+<script>
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  values = []
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[1];
+    if (td && tx) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+		values.push(tr[i].getElementsByTagName("td")[3].innerText)
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+  document.getElementById("jsvals").innerHTML = values.map(Number).reduce((a,b) => a + b, 0);
+}
+</script>
 
 </html>

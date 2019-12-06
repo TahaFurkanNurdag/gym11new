@@ -676,7 +676,7 @@ def income():
         return redirect(url_for('root'))
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
-    userId, girildiMi, adi = getLoginDetails()
+    girildiMi, adi = getLoginDetails()[1:]
     if request.method == 'POST':
         # burasi muhasebe kismi icin
 
@@ -720,7 +720,7 @@ def income():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        return render_template("income_details.html", temp_deger=temp_deger, error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi)
+        return redirect(url_for('incomeDetails'))
     else:
         return redirect(url_for('incomeDetails'))
 
@@ -752,51 +752,6 @@ def deletePersonal():
     else:
         print("error")
         return redirect(url_for('root'))
-
-
-@app.route("/search", methods=['GET', 'POST'])
-def search():
-    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
-        adminMi = 0
-        session['adminMi'] = adminMi
-    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
-        return redirect(url_for('root'))
-    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
-        return redirect(url_for('loginForm'))
-    userId, girildiMi, adi = getLoginDetails()
-    if request.method == 'POST':
-        name = request.form['name']
-        surname = request.form['surname']
-        if True and True:
-            try:
-                5+2
-            except Exception as e:
-                print(f"Hata {e}, girdi integer değil muhtemelen.")
-            with sqlite3.connect('database.db') as con:
-                try:
-                    cur = con.cursor()
-                    cur.execute(
-                        'select * from gelir where userName=? and userSurname=?', (name, surname))
-                    value = cur.fetchall()
-                    cur.execute(
-                        'select * from gelir')
-                    temp_deger = cur.fetchall()
-                    cur.execute(
-                        'select sum(price) from gelir where userName=? and userSurname=?', (name, surname))
-                    dept = cur.fetchall()
-                    con.commit()  # veritabanina kaydedildi
-                    msg = "Kayıt Başarılı"
-                except Exception as e:
-                    con.rollback()
-                    msg = "Hata olustu"
-                    print(e)
-            con.close()
-        else:
-            msg = "Kayıt bilgileri eksik"
-        return render_template("income_details.html", dept=dept, temp_deger=temp_deger, value=value, error=msg, date=date, girildiMi=girildiMi, adi=adi)
-    else:
-        return redirect(url_for('root'))
-
 
 @app.route("/accounting", methods=['GET', 'POST'])
 def totalAmount():

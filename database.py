@@ -88,6 +88,7 @@ conn.execute('''CREATE TABLE `kategoriler` (
 		)''')
 		
 conn.execute('''CREATE TABLE `gelir` (
+	`id` INTEGER,
 	`userId`	INTEGER,
 	`userName`	TEXT,
 	`userSurname`	TEXT,
@@ -95,7 +96,8 @@ conn.execute('''CREATE TABLE `gelir` (
 	`date`	DATE,
 	`paketadi`	TEXT,
 	`aciklama`	TEXT,
-	PRIMARY KEY(`userId`)
+	FOREIGN KEY(`userId`) REFERENCES `kullanicilar`(`userId`),
+	PRIMARY KEY(`id`)
 		)''')
 		
 conn.execute('''CREATE TABLE `cafe` (
