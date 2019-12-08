@@ -33,29 +33,45 @@ conn.execute('''CREATE TABLE `kullanicilar` (
 
 conn.execute('''CREATE TABLE `muhasebe` (
 	`id`	INTEGER,
+	`userId` INTEGER,
+	`userName` TEXT,
+	`userSurname` TEXT,
 	`price` INTEGER,
 	`date`  DATE,
 	`explanation` TEXT,
+	FOREIGN KEY(`userId`) REFERENCES `kullanicilar`(`userId`),
+	FOREIGN KEY(`userName`) REFERENCES `kullanicilar`(`adi`),
+	FOREIGN KEY(`userSurname`) REFERENCES `kullanicilar`(`soyadi`),
 	PRIMARY KEY(`id`)
 		)''')
 		
 conn.execute('''CREATE TABLE `cafemuhasebe` (
 	`id`	INTEGER,
+	`userId` INTEGER,
+	`userName` TEXT,
+	`userSurname` TEXT,
 	`price` INTEGER,
 	`date`  DATE,
 	`explanation` TEXT,
+	FOREIGN KEY(`userId`) REFERENCES `kullanicilar`(`userId`),
+	FOREIGN KEY(`userName`) REFERENCES `kullanicilar`(`adi`),
+	FOREIGN KEY(`userSurname`) REFERENCES `kullanicilar`(`soyadi`),
 	PRIMARY KEY(`id`)
 		)''')
 		
 conn.execute('''CREATE TABLE `alacaklar` (
 	`id`	INTEGER,
+	`userId` INTEGER,
+	`userName` TEXT,
+	`userSurname` TEXT,
 	`price` INTEGER,
 	`date`  DATE,
 	`explanation` TEXT,
+	FOREIGN KEY(`userId`) REFERENCES `kullanicilar`(`userId`),
+	FOREIGN KEY(`userName`) REFERENCES `kullanicilar`(`adi`),
+	FOREIGN KEY(`userSurname`) REFERENCES `kullanicilar`(`soyadi`),
 	PRIMARY KEY(`id`)
 		)''')
-
-		
 		
 		
 conn.execute('''CREATE TABLE `ogretmenler` (
@@ -116,9 +132,8 @@ conn.execute('''CREATE TABLE `cafeUrunleri` (
 	PRIMARY KEY(`urunId`)
 		)''')
 		
-conn.execute('''INSERT INTO kullanicilar` (userId,parola,email,adi,soyadi,adres1,adres2,il,ilce,ulke,tel,boy,kilo,kayitgunu,pakettipi,ekstrapaketler,paketkalangunsayisi,aktifmi,katilim,arkadassayisi,odeme,ogretmenMi,adminMi,)
-VALUES ('tfn', 'tfn@tfn', 'tfn', 'tfn','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1','1' ''')
-
+conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "adres1", "adres2", "il", "ilce", "ulke", "tel", "boy", "kilo", "kayitgunu", "pakettipi", "ekstrapaketler", "paketkalangunsayisi", "aktifmi", "katilim", "arkadassayisi", "odeme", "ogretmenMi", "adminMi") VALUES ('1', 'tfn', 'tfn@tfn', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1')''')
+conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "adres1", "adres2", "il", "ilce", "ulke", "tel", "boy", "kilo", "kayitgunu", "pakettipi", "ekstrapaketler", "paketkalangunsayisi", "aktifmi", "katilim", "arkadassayisi", "odeme", "ogretmenMi", "adminMi") VALUES ('2', 'tfn', 'client@tfn', '2', '2', '1', '1', '1', '1', '1', '1', '2', '2', '2019-12-02', '1', '1', '0', '1', '0', '1', '30', '0', '0')''')
 conn.commit()
 
 conn.close()

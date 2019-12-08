@@ -39,6 +39,9 @@
 			<thead>
 				<tr>
 					<th>Id</th>
+					<th>User Id</th>
+					<th>User Name</th>
+					<th>User Surname</th>
 					<th>Price</th>
 					<th>Month</th>
 					<th>Description</th>
@@ -48,16 +51,24 @@
 				{% for row in value %}
 				<tr></tr>
 				<td class="w3-gray">{{row[0]}}</td>
-				{% if row[1] > 0 %}
-				<td class="w3-green" style="width: 30%">{{row[1]}}</td>
-				{% elif row[1] < 0 %}
-				<td class="w3-gym11" style="width: 30%">{{row[1]}}</td>
-				{% else %}
-				<td class="w3-gray" style="width: 30%">{{row[1]}}</td>
-				{% endif %}
+				
+				<td class="w3-gray" style="width: 10%">{{row[1]}}</td>
+				<td class="w3-gray" style="width: 10%">{{row[2]}}</td>
+				<td class="w3-gray" style="width: 10%">{{row[3]}}</td>
 
-				<td class="w3-gray" style="width: 40%">{{row[2]}}</td>
-				<td class="w3-gray" style="width: 30%">{{row[3]}}</td>
+
+				{% if row[4] > 0 %}
+				<td class="w3-green" style="width: 30%">{{row[4]}}</td>
+				{% elif row[4] < 0 %}
+				<td class="w3-gym11" style="width: 30%">{{row[4]}}</td>
+				{% else %}
+				<td class="w3-gray" style="width: 30%">{{row[4]}}</td>
+				{% endif %}
+				
+				<td class="w3-gray" style="width: 10%">{{row[5]}}</td>
+				<td class="w3-gray" style="width: 10%">{{row[6]}}</td>
+				<td class="w3-gray" style="width: 10%">{{row[7]}}</td>
+
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -84,27 +95,36 @@
 			<thead>
 				<tr>
 
-					<th>Id</th>
-					<th>Price</th>
-					<th>Month</th>
-					<th>Description</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for row in alacaklar %}
-				<tr></tr>
-				<td class="w3-gray">{{row[0]}}</td>
-				{% if row[1] > 0 %}
-				<td class="w3-green" style="width: 30%">{{row[1]}}</td>
-				{% elif row[1] < 0 %}
-				<td class="w3-gym11" style="width: 30%">{{row[1]}}</td>
-				{% else %}
-				<td class="w3-gray" style="width: 30%">{{row[1]}}</td>
-				{% endif %}
-
-				<td class="w3-gray" style="width: 40%">{{row[2]}}</td>
-				<td class="w3-gray" style="width: 30%">{{row[3]}}</td>
-				</tr>
+						<th>Id</th>
+						<th>User Id</th>
+						<th>User Name</th>
+						<th>User Surname</th>
+						<th>Price</th>
+						<th>Month</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for row in alacaklar  %}
+					<tr></tr>
+					<td class="w3-gray">{{row[0]}}</td>
+					
+					<td class="w3-gray" style="width: 10%">{{row[1]}}</td>
+					<td class="w3-gray" style="width: 10%">{{row[2]}}</td>
+					<td class="w3-gray" style="width: 10%">{{row[3]}}</td>
+	
+	
+					{% if row[4] > 0 %}
+					<td class="w3-green" style="width: 30%">{{row[4]}}</td>
+					{% elif row[4] < 0 %}
+					<td class="w3-gym11" style="width: 30%">{{row[4]}}</td>
+					{% else %}
+					<td class="w3-gray" style="width: 30%">{{row[4]}}</td>
+					{% endif %}
+					
+					<td class="w3-gray" style="width: 10%">{{row[5]}}</td>
+					<td class="w3-gray" style="width: 10%">{{row[6]}}</td>
+					<td class="w3-gray" style="width: 10%">{{row[7]}}</td>
 				{% endfor %}
 			</tbody>
 		</table>
@@ -128,28 +148,36 @@
 		<br>
 		<table align="center">
 			<thead>
-				<tr>
 					<th>Id</th>
+					<th>User Id</th>
+					<th>User Name</th>
+					<th>User Surname</th>
 					<th>Price</th>
 					<th>Month</th>
 					<th>Description</th>
 				</tr>
 			</thead>
 			<tbody>
-				{% for row in cafedata %}
+				{% for row in cafedata  %}
 				<tr></tr>
 				<td class="w3-gray">{{row[0]}}</td>
-				{% if row[1] > 0 %}
-				<td class="w3-green" style="width: 30%">{{row[1]}}</td>
-				{% elif row[1] < 0 %}
-				<td class="w3-gym11" style="width: 30%">{{row[1]}}</td>
-				{% else %}
-				<td class="w3-gray" style="width: 30%">{{row[1]}}</td>
-				{% endif %}
+				
+				<td class="w3-gray" style="width: 10%">{{row[1]}}</td>
+				<td class="w3-gray" style="width: 10%">{{row[2]}}</td>
+				<td class="w3-gray" style="width: 10%">{{row[3]}}</td>
 
-				<td class="w3-gray" style="width: 40%">{{row[2]}}</td>
-				<td class="w3-gray" style="width: 30%">{{row[3]}}</td>
-				</tr>
+
+				{% if row[4] > 0 %}
+				<td class="w3-green" style="width: 30%">{{row[4]}}</td>
+				{% elif row[4] < 0 %}
+				<td class="w3-gym11" style="width: 30%">{{row[4]}}</td>
+				{% else %}
+				<td class="w3-gray" style="width: 30%">{{row[4]}}</td>
+				{% endif %}
+				
+				<td class="w3-gray" style="width: 10%">{{row[5]}}</td>
+				<td class="w3-gray" style="width: 10%">{{row[6]}}</td>
+				<td class="w3-gray" style="width: 10%">{{row[7]}}</td>
 				{% endfor %}
 			</tbody>
 		</table>

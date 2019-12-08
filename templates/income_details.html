@@ -59,8 +59,24 @@
 		<form class="form-style-10" action="/income" method="POST">
 			<div class="section"><span>1</span>Extra Details</div>
 			<div class="inner-wrap">
-				<p>Client Name<input type="text" name="uyeAdi"></p>
-				<p>Client Surname<input type="text" name="uyeSoyadi"></p>
+					<p>Id</p>
+					<select class="w3-input" name="id">
+						{% for row in idler %}
+						<option value="{{row[0]}}">{{row[0]}}</option>
+						{% endfor %}
+					</select>
+					<p>Name</p>
+					<select class="w3-input" name="uyeAdi">
+						{% for row in isimler %}
+						<option value="{{row[0]}}">{{row[0]}}</option>
+						{% endfor %}
+					</select>
+					<p>Surname</p>
+					<select class="w3-input" name="uyeSoyadi">
+						{% for row in soyadlar %}
+						<option value="{{row[0]}}">{{row[0]}}</option>
+						{% endfor %}
+					</select>
 				<p>Price<input type="text" name="ucret"></p>
 				<p>Date<input type="date" name="date"></p>
 				<p>Type of package</p>

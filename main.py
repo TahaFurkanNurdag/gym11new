@@ -135,7 +135,7 @@ def incomeForm():
         session['adminMi'] = adminMi
     else:  # kisi adminse yapilacaklar
         girildiMi, adi = getLoginDetails()[1:]
-        return render_template('income_details.html', girildiMi=girildiMi, adi=adi)
+        return render_template('income_details.html',girildiMi=girildiMi, adi=adi)
 
 
 # login_page.html sayfasindan cagirilir
@@ -365,12 +365,18 @@ def incomeDetails():
             pakettipleri = cur.fetchall()
             cur.execute("select * from gelir")
             temp_deger = cur.fetchall()
+            cur.execute('select userId from kullanicilar')
+            idler = cur.fetchall()
+            cur.execute('select adi from kullanicilar ')
+            isimler = cur.fetchall()
+            cur.execute('select soyadi from kullanicilar')
+            soyadlar = cur.fetchall()
         except Exception as e:
             con.rollback()
             print(f"Failure. Failure Code: 905. Failure is {e}")
             return render_template("ERROR.html", msg="Fetching Failure. Error Code: 710")
     con.close()
-    return render_template('income_details.html', temp_deger=temp_deger, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
+    return render_template('income_details.html',idler=idler,isimler=isimler,soyadlar=soyadlar, temp_deger=temp_deger, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
 
 
 @app.route("/cafeIncomeDetails")
@@ -664,7 +670,21 @@ def accountingForm():
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
     userId, girildiMi, adi = getLoginDetails()
-    return render_template("accounting.html", girildiMi=girildiMi, adi=adi)
+    with sqlite3.connect('database.db') as con:
+            try:
+                cur = con.cursor()
+                cur.execute('select userId from kullanicilar')
+                idler = cur.fetchall()
+                cur.execute('select adi from kullanicilar ')
+                isimler = cur.fetchall()
+                cur.execute('select soyadi from kullanicilar')
+                soyadlar = cur.fetchall()
+            except Exception as e:
+                con.rollback()
+                msg = "Hata olustu"
+                print(e)
+    con.close()
+    return render_template("accounting.html", idler=idler , isimler=isimler ,soyadlar=soyadlar,girildiMi=girildiMi, adi=adi)
 
 
 @app.route("/income", methods=['GET', 'POST'])
@@ -686,6 +706,7 @@ def income():
         # end of muhasebe kismi
 
         # new accounting kismi
+        userId = request.form['id']
         uyeadi = request.form['uyeAdi']
         uyeSoyadi = request.form['uyeSoyadi']
         pakettipi = request.form['pakettipi']
@@ -700,15 +721,15 @@ def income():
                     cur = con.cursor()
                     if int(price) < 0:
                         cur.execute(
-                            'INSERT INTO alacaklar (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
+                            'INSERT INTO alacaklar (userId,userName,userSurname,price,date,explanation) VALUES (?,?,?,?, ?,?)', (userId , uyeadi , uyeSoyadi , price , date , explanation))
                         cur.execute(
-                            'INSERT INTO gelir(userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?)', (uyeadi, uyeSoyadi, price, date, pakettipi, explanation))
+                            'INSERT INTO gelir(userId , userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?,?)', (userId,uyeadi, uyeSoyadi, price, date, pakettipi, explanation))
 
                     else:
                         cur.execute(
-                            'INSERT INTO gelir(userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?)', (uyeadi, uyeSoyadi, price, date, pakettipi, explanation))
+                            'INSERT INTO gelir(userId ,userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?,?)', (userId,uyeadi, uyeSoyadi, price, date, pakettipi, explanation))
                         cur.execute(
-                            'INSERT INTO muhasebe (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
+                            'INSERT INTO muhasebe (userId,userName,userSurname,price,date,explanation) VALUES (?,?,?,?, ?,?)', (userId , uyeadi , uyeSoyadi , price , date , explanation))
                     cur.execute("select * from gelir")
                     temp_deger = cur.fetchall()
                     con.commit()  # veritabanina kaydedildi
@@ -764,6 +785,9 @@ def totalAmount():
         return redirect(url_for('loginForm'))
     userId, girildiMi, adi = getLoginDetails()
     if request.method == 'POST':
+        idx = request.form['id']
+        name = request.form['name']
+        surname = request.form['surname']
         price = request.form['price']
         date = request.form['date']
         explanation = request.form['explanation']
@@ -775,10 +799,21 @@ def totalAmount():
             with sqlite3.connect('database.db') as con:
                 try:
                     cur = con.cursor()
-                    cur.execute(
-                        'INSERT INTO muhasebe (price,date,explanation) VALUES ( ?, ?,?)', (price, date, explanation))
-                    con.commit()  # veritabanina kaydedildi
-                    msg = "Kayıt Başarılı"
+                    cur.execute('select adi from kullanicilar where adi=?',(name ,))
+                    getName = cur.fetchall()
+                    cur.execute('select soyadi from kullanicilar where soyadi=?',(surname ,))
+                    getSurname = cur.fetchall()
+                    cur.execute('select userId from kullanicilar where userId=?',(idx , ))
+                    getId = cur.fetchall()
+                    if getName and getSurname and getId:
+                        print("ifinicinde")
+                        cur.execute(
+                            'INSERT INTO muhasebe (userId,userName,userSurname,price,date,explanation) VALUES ( ? , ? , ? , ? , ? , ?)', (idx,name,surname,price, date, explanation))
+                        con.commit()  # veritabanina kaydedildi
+                        msg = "Kayıt Başarılı"
+                    else:
+                        con.rollback()
+                        return render_template('ERROR.html', msg="Wrong input values. Error Code: 702")
                 except Exception as e:
                     con.rollback()
                     msg = "Hata olustu"
@@ -786,7 +821,7 @@ def totalAmount():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        return render_template("accounting.html", error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi)
+        return redirect(url_for('accountingForm'))
     else:
         return redirect(url_for('root'))
 
