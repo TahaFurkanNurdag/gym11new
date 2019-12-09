@@ -104,7 +104,8 @@
 		<table id="myTable" style="width: 100%">
 			<thead>
 				<tr>
-					<th>Id</th>
+					<th>Value</th>
+					<th>User ID</th>
 					<th>Client Name</th>
 					<th>Client Surname</th>
 					<th>Price</th>
@@ -123,12 +124,14 @@
 					<td class="w3-gray">{{row[4]}}</td>
 					<td class="w3-gray">{{row[5]}}</td>
 					<td class="w3-gray">{{row[6]}}</td>
+					
+					<td class="w3-gray">{{row[7]}}</td>
 				</tr>
 				{% endfor %}
 			</tbody>
 		</table>
-		Total debt is : 
-		<div id="jsvals"></div>
+		Total debt is :
+		<label id="jsvals"></label>
 		<br>
 	</div>
 
@@ -136,25 +139,26 @@
 
 <script>
 function myFunction() {
+  // Declare variables
   var input, filter, table, tr, td, i, txtValue;
   input = document.getElementById("myInput");
   filter = input.value.toUpperCase();
   table = document.getElementById("myTable");
   tr = table.getElementsByTagName("tr");
-  values = []
+
+  // Loop through all table rows, and hide those who don't match the search query
   for (i = 0; i < tr.length; i++) {
     td = tr[i].getElementsByTagName("td")[1];
-    if (td && tx) {
+    if (td) {
       txtValue = td.textContent || td.innerText;
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
         tr[i].style.display = "";
-		values.push(tr[i].getElementsByTagName("td")[3].innerText)
       } else {
         tr[i].style.display = "none";
       }
-    }       
+    }
   }
-  document.getElementById("jsvals").innerHTML = values.map(Number).reduce((a,b) => a + b, 0);
+  document.getElementById("jsvals").innerHTML = values.map(Number).reduce((a,b) => a + b, 4);
 }
 </script>
 

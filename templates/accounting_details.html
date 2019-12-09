@@ -17,7 +17,7 @@
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
 	<!-- NORMAL MUHASEBE -->
 	<div class="w3-margin w3-center w3-gym11">
-		<h1>OZGUR+ - BISI DEGISTIRICEKTIN Total balance is {{(-1 * degerAlacaklar)+deger}}₺</h1>
+		<h1>OZGUR+ - BISI DEGISTIRICEKTIN Total balance is {{(-1 * degerAlacaklar)+deger + degerCafe}}₺</h1>
 	</div>
 	{% if deger == 0 %}
 	<div class="w3-margin w3-center w3-gray">
@@ -67,7 +67,6 @@
 				
 				<td class="w3-gray" style="width: 10%">{{row[5]}}</td>
 				<td class="w3-gray" style="width: 10%">{{row[6]}}</td>
-				<td class="w3-gray" style="width: 10%">{{row[7]}}</td>
 
 				</tr>
 				{% endfor %}
@@ -124,7 +123,6 @@
 					
 					<td class="w3-gray" style="width: 10%">{{row[5]}}</td>
 					<td class="w3-gray" style="width: 10%">{{row[6]}}</td>
-					<td class="w3-gray" style="width: 10%">{{row[7]}}</td>
 				{% endfor %}
 			</tbody>
 		</table>
@@ -177,7 +175,6 @@
 				
 				<td class="w3-gray" style="width: 10%">{{row[5]}}</td>
 				<td class="w3-gray" style="width: 10%">{{row[6]}}</td>
-				<td class="w3-gray" style="width: 10%">{{row[7]}}</td>
 				{% endfor %}
 			</tbody>
 		</table>

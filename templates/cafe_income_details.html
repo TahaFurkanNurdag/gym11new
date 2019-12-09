@@ -85,6 +85,39 @@
 		</table>
 		<br>
 	</div>
+
+	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+		<br>
+		<table style="width: 100%">
+			<thead>
+				<tr>
+					
+					<th>Id</th>
+					<th>Name of product</th>
+					<th>Total stock of item</th>
+
+				
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in tumcafe_urunleri %}
+				<tr>
+					<td class="w3-gray">{{row[0]}}</td>
+					<td class="w3-gray">{{row[1]}}</td>
+					<td class="w3-gray">{{row[2]}}</td>
+
+					
+					 
+				</tr>
+				{% endfor %}
+			
+			</tbody>
+
+		</table>
+		<br>
+	</div>
+
+
 	
 		<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>

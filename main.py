@@ -120,6 +120,25 @@ def addcategoryitem():
         return redirect(url_for('root'))
 
 
+@app.route("/addcategoryCafe", methods=["GET", "POST"])
+def addcategoryCafe():
+    if request.method == "POST":
+        nameOfProduct = request.form['nameOfProduct']
+        stock = request.form['stock']
+        with sqlite3.connect('database.db') as conn:
+            try:
+                cur = conn.cursor()
+                cur.execute('''INSERT INTO cafeUrunleri (urunAdi,totalStok) VALUES (?,?)''',(nameOfProduct, stock))
+                conn.commit()  # burada kategori veritabanina ekleniyor
+                print("Success. Success Code: 801")
+            except:
+                conn.rollback()
+                return render_template('ERROR.html', msg="Local connection error. Error Code: 702")
+        conn.close()
+        return redirect(url_for('addcategory'))
+    else:
+        return redirect(url_for('root'))
+
 @app.route("/loginForm")  # giris sayfasi
 def loginForm():
     if 'email' in session:  # kullanici giris yaptiysa anasayfa ekranina yonlendirir
@@ -276,15 +295,21 @@ def teachersDetails():
             ogretmenAdi = cur.fetchall()
             cur.execute('SELECT * FROM kullanicilar where ogretmenMi =1')
             ogretmenMi = cur.fetchall()
-            cur.execute("SELECT * FROM ogretmenler")
+            cur.execute("SELECT * FROM ogretmenlerinDersleri")
             data = cur.fetchall()  # data from database
+            cur.execute('select userId from kullanicilar')
+            idler = cur.fetchall()
+            cur.execute('select adi from kullanicilar ')
+            isimler = cur.fetchall()
+            cur.execute('select soyadi from kullanicilar')
+            soyadlar = cur.fetchall()
         except Exception as e:
             con.rollback()
             print(f"Failure. Failure Code: 904. Failure is {e}")
             return render_template("ERROR.html", msg="Fetching Failure. Error Code: 709")
     con.close()
     userId, girildiMi, adi = getLoginDetails()
-    return render_template("teacher_details.html", ogretmenMi=ogretmenMi, ogretmenAdi=ogretmenAdi, value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
+    return render_template("teacher_details.html",idler=idler,isimler=isimler,soyadlar=soyadlar, ogretmenMi=ogretmenMi, ogretmenAdi=ogretmenAdi, value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
 
 
 @app.route("/accountingDetails")
@@ -397,12 +422,14 @@ def cafeIncomeDetails():
             temp_deger = cur.fetchall()
             cur.execute("select urunAdi from cafeUrunleri")
             cafe_urunleri = cur.fetchall()
+            cur.execute("select * from cafeUrunleri")
+            tumcafe_urunleri = cur.fetchall()
         except Exception as e:
             con.rollback()
             print(f"Failure. Failure Code: 906. Failure is {e}")
             return render_template("ERROR.html", msg="Fetching Failure. Error Code: 711")
     con.close()
-    return render_template('cafe_income_details.html', cafe_urunleri=cafe_urunleri, temp_deger=temp_deger, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
+    return render_template('cafe_income_details.html',tumcafe_urunleri=tumcafe_urunleri, cafe_urunleri=cafe_urunleri, temp_deger=temp_deger, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
 
 
 @app.route("/cafeIncome", methods=['GET', 'POST'])
@@ -423,7 +450,7 @@ def cafeIncome():
 
         # new accounting kismi
         howMany = request.form['howMany']
-        uyeadi = request.form['clientId']
+        uyeID = request.form['clientId']
         urunAdi = request.form['uruntipi']
         if price and date:
             try:
@@ -436,8 +463,22 @@ def cafeIncome():
                     cur = con.cursor()
 
                     cur.execute(
-                        'INSERT INTO cafe (urunAdi,urunStok,urunFiyat,satinAlanKisiAdi,date) VALUES ( ?,?,?, ?,?)', (urunAdi, howMany, price, uyeadi, date))
-                    con.commit()  # veritabanina kaydedildi
+                        'INSERT INTO cafe (urunAdi,satilanUrunSayisi,urunFiyat,satinAlanKisiAdi,date) VALUES ( ?,?,?, ?,?)', (urunAdi, howMany, price, uyeID, date))
+                    cur.execute('select adi from kullanicilar where userId = ?' , uyeID)
+                    satinAlanUyeninIsmi = cur.fetchall()
+                    cur.execute('select soyadi from kullanicilar where userId = ?' , uyeID)
+                    satinAlanUyeninSoyadi = cur.fetchall()
+                    newIsim = str(satinAlanUyeninIsmi)[3:-4]
+                    newSoyad = str(satinAlanUyeninSoyadi)[3:-4]
+                    if int(price) > 0:
+                        cur.execute(
+                            'INSERT INTO cafemuhasebe (userId,userName,userSurname,price,date,explanation) VALUES (?, ?,?,?, ?,"KAFE")', (uyeID,newIsim , newSoyad, price, date))  
+                        cur.execute('update cafeUrunleri SET  totalStok=totalStok- ? where urunAdi = ?', (howMany, urunAdi))
+                        con.commit()  # veritabanina kaydedildi
+                    else:
+                        cur.execute(
+                            'INSERT INTO alacaklar (userId,userName,userSurname,price,date,explanation) VALUES (?, ?,?,?, ?,"KAFE")', (uyeID,newIsim , newSoyad, price, date))  
+                        con.commit()  # veritabanina kaydedildi
                     msg = "Kayıt Başarılı"
                 except Exception as e:
                     con.rollback()
@@ -446,9 +487,9 @@ def cafeIncome():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        return render_template("cafe_income_details.html", error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi) and redirect(url_for('incomeDetails'))
+        return render_template("cafe_income_details.html", error=msg, price=price, date=date, girildiMi=girildiMi, adi=adi) and redirect(url_for('cafeIncomeDetails'))
     else:
-        return redirect(url_for('incomeDetails'))
+        return redirect(url_for('cafeIncomeDetails'))
 
 
 @app.route("/searchCafe", methods=['GET', 'POST'])
@@ -488,9 +529,8 @@ def searchCafe():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-        render_template("cafe_income_details.html", temp_deger=temp_deger, dept=dept,
-                        value=value, error=msg, date=date, girildiMi=girildiMi, adi=adi)
-        return redirect(url_for('cafeIncomeDetails'))
+            
+        return render_template("cafe_income_details.html", temp_deger=temp_deger, dept=dept,value=value, error=msg, date=date, girildiMi=girildiMi, adi=adi)
     else:
         return redirect(url_for('root'))
 
@@ -927,15 +967,24 @@ def increaseOne():
 @app.route("/addTeacherDetails", methods=['GET', 'POST'])
 def addTeacherDetails():
     if request.method == 'POST':
-        id = request.form['uyeadi']
         ogretmenAdi = request.form['ogretmenAdi']
         date = request.form['date']
         pakettipi = request.form['pakettipi']
+        clientName = request.form['clientName']
+        surname = request.form['clientSurname']
+        idx = request.form['clientId']
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute('INSERT INTO ogretmenler (id,ogretmenAdi,date,pakettipi) VALUES ( ?,?, ?,?)',
-                            (id, ogretmenAdi, date, pakettipi))
+                cur.execute('select adi from kullanicilar where adi=?',(clientName ,))
+                getName = cur.fetchall()
+                cur.execute('select soyadi from kullanicilar where soyadi=?',(surname ,))
+                getSurname = cur.fetchall()
+                cur.execute('select userId from kullanicilar where userId=?',(idx , ))
+                getId = cur.fetchall()
+                if getName and getSurname and getId:
+                    print("ifinicinde")
+                cur.execute('INSERT INTO ogretmenlerinDersleri (userId,userName,userSurname,ogretmenAdi,date,pakettipi) VALUES (?,?,?,?, ?,?)', (idx,clientName,surname, ogretmenAdi, date, pakettipi))
                 con.commit()  # veritabanina kaydedildi
             except Exception as e:
                 con.rollback()
