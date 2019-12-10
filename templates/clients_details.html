@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Client Details</title>
+	<title>Müşteri detayları</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
@@ -14,64 +14,65 @@
 {% include 'HEADER.html' %}
 
 <!-- Content -->
+
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
 	<div class="w3-container">
 		<div class="w3-padding w3-quarter">
 			<form class="form-style-10" action="/increaseOne" method="POST">
-				<div class="section">Attencance</div>
+				<div class="section">Katılım</div>
 				<div class="inner-wrap">
-					<p>Client Number<input type="text" name="no"></p>
-					<p>Number of Days<input type="text" name="odemegunu"></p>
+					<p>Üye numarası<input type="text" name="no"></p>
+					<p>Eklemek istediğiniz gün sayısı<input type="text" name="odemegunu"></p>
 				</div>
-				<input type="submit" value="Increase attendance">
+				<input type="submit" value="Katılımı arttır">
 			</form>
 		</div>
 		<div class="w3-padding w3-quarter">
 			<form class="form-style-10" action="/increaseOneMonth" method="POST">
 				<div class="section">Payment</div>
 				<div class="inner-wrap">
-					<p>Client Number<input type="text" name="no"></p>
-					<p>Number of Days<input type="text" name="odemegunu"></p>
+					<p>Üye numarası<input type="text" name="no"></p>
+					<p>Arttırmak veya azaltmak için gereken gün sayısı<input type="text" name="odemegunu"></p>
 				</div>
-				<input type="submit" value="Increase or Decrease">
+				<input type="submit" value="Arttır veya azalt">
 				<hr>
 				<input type="button" onclick="location.href='/increaseOneDay'" value="+1"
 					style="font-size: 24pt!important">
 				<input type="button" onclick="location.href='/decreaseOneDay'" value="-1"
 					style="font-size: 24pt!important">
-				from all
+				herkesten.
 			</form>
 		</div>
 		<div class="w3-padding w3-quarter">
 			<form class="form-style-10" action="/addExtraPacgage" method="POST">
-				<div class="section">Extra Packages</div>
+				<div class="section">Extra paketler</div>
 				<div class="inner-wrap">
-					<p>Client Number<input type="text" name="no"></p>
-					<p>Type of package</p>
+					<p>Üye numarası<input type="text" name="no"></p>
+					<p>Paket adı</p>
 					<select class="w3-input" name="ekstrapaketler">
 						{% for row in pakettipleri %}
 						<option value="{{row[0]}}">{{row[0]}}</option>
 						{% endfor %}
 					</select>
 				</div>
-				<input type="submit" value="Add extra package">
+				<input type="submit" value="Üyeye ekstra paket ekle.">
 			</form>
 		</div>
 		<div class="w3-padding w3-quarter">
 			<form class="form-style-10" action="/increaseOneMonthForExtraPackage" method="POST">
 				<div class="section">Extra Package Days</div>
 				<div class="inner-wrap">
-					<p>Client Number<input type="text" name="no"></p>
-					<p>Number of Days<input type="text" name="odemegunu"></p>
+					<p>Üye numarası<input type="text" name="no"></p>
+					<p>Arttırmak veya azaltmak için gereken gün sayısı<input type="text" name="odemegunu"></p>
 				</div>
-				<input type="submit" value="Increase or Decrease From extra packages">
+				<input type="submit" value="Ekstra paketlerden gün sayısını azalt yada arttır.">
 				<hr>
 				<input type="button" onclick="location.href='/increaseOneDayForExtraPackage'" value="+1"
 					style="font-size: 24pt!important">
 				<input type="button" onclick="location.href='/decreaseOneDayForExtraPackage'" value="-1"
 					style="font-size: 24pt!important">
-				from extra packages
+				herkesin ekstra paketlerinden.
 			</form>
 		</div>
 	</div>
@@ -82,27 +83,27 @@
 		<table style="width: 100%">
 			<thead>
 				<tr>
-					<th>Client No</th>
+					<th>Üye numarası</th>
 					<th>E-Mail</th>
-					<th>Name</th>
-					<th>Surname</th>
+					<th>İsim</th>
+					<th>Soyisim</th>
 					<th>Adress-1</th>
 					<th>Adress-2</th>
-					<th>City</th>
-					<th>District</th>
-					<th>Country</th>
-					<th>Phone</th>
-					<th>Height</th>
-					<th>Weight</th>
-					<th>Registration Date </th>
-					<th>Type of packet</th>
-					<th>Extra packet</th>
-					<th>isActive</th>
-					<th>Attendance</th>
-					<th>Number of Friends</th>
-					<th>Remaining Packet Days</th>
-					<th>Remaining Payment Days</th>
-					<th>isTeacher</th>
+					<th>Şehir</th>
+					<th>Mahalle</th>
+					<th>Ülke</th>
+					<th>Telefon numarası</th>
+					<th>Boy</th>
+					<th>Kilo</th>
+					<th>Kayıt günü </th>
+					<th>Paket türü</th>
+					<th>Extra paketi</th>
+					<th>Aktif üye mi</th>
+					<th>Katılım</th>
+					<th>Arkadaş sayısı</th>
+					<th>Paketlerden kalan gün sayısı</th>
+					<th>Ödemeye kalan gün</th>
+					<th>Öğretmen mi</th>
 				</tr>
 			</thead>
 			<tbody>

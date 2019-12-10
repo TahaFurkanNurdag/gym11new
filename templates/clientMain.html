@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Client</title>
+	<title>Üyeler</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
@@ -18,12 +18,9 @@
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
 	<div>
 		<div class="w3-center">
-			<a href="/registerationForm" class="w3-gym11 w3-button w3-hide-small w3-padding-large w3-hover-white">Add
-				Client</a>
-			<a href="/clientsDetails" class="w3-gym11 w3-button w3-hide-small w3-padding-large w3-hover-white">Display
-				Clients</a>
-			<a href="/teachersDetails" class="w3-gym11 w3-button w3-hide-small w3-padding-large w3-hover-white">Display
-				Teachers</a>
+			<a href="/registerationForm" class="w3-gym11 w3-button w3-hide-small w3-padding-large w3-hover-white">Üye kayıt et</a>
+			<a href="/clientsDetails" class="w3-gym11 w3-button w3-hide-small w3-padding-large w3-hover-white">Üyeleri görüntüle</a>
+			<a href="/teachersDetails" class="w3-gym11 w3-button w3-hide-small w3-padding-large w3-hover-white">Öğretmenlerin verdiği dersleri görüntüle</a>
 		</div>
 	</div>
 	<hr>

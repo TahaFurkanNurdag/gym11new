@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Income Details</title>
+	<title>Gelir detayları</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
@@ -21,30 +21,30 @@
 		<p class="w3-gym11">{{msg}}</p>
 		{% endif %}
 			<form class="form-style-10" action="/cafeIncome" method="POST">
-				<div class="section"><span>1</span>Extra Details</div>
+				<div class="section"><span>1</span>Ürün bilgileri.</div>
 				<div class="inner-wrap">
-				<p>Name Of product</p>
+				<p>Ürünün adı</p>
 					<select class="w3-input" name="uruntipi">
 							{% for row in cafe_urunleri %}
 							<option value="{{row[0]}}">{{row[0]}}</option>
 							{% endfor %}
 						</select>
-				<p>How many did he/she bought<input type="text" name="howMany"></p>
-				<p>Price of product<input type="text" name="urunFiyat"></p>
-				<p>Id of the client<input type="text" name="clientId"></p>
-				<p>Date<input type="date" name="date"></p>
+				<p>Satın alan kişi kaç adet satın aldı.<input type="text" name="howMany"></p>
+				<p>Ürünün fiyatı<input type="text" name="urunFiyat"></p>
+				<p>Üye numarası<input type="text" name="clientId"></p>
+				<p>Gün<input type="date" name="date"></p>
 				</div>
 				
-				<input type="submit" value="Add">
+				<input type="submit" value="Ekle">
 			</form>
 			
 			<form class="form-style-10" action="/searchCafe" method="POST">
-				<div class="section"><span>1</span>Search</div>
+				<div class="section"><span>1</span>Arama</div>
 				<div class="inner-wrap">
-					<p>Name<input type="text" name="name" placeholder="Search from ID"></p>
+					<p>İsim<input type="text" name="name" placeholder="Id ye göre arat"></p>
 				</div>
 				
-				<input type="submit" value="Search Client">
+				<input type="submit" value="Üye ara ">
 			</form>
 		</div>
 	</div>
@@ -57,12 +57,12 @@
 			<thead>
 				<tr>
 					
-					<th>Id</th>
-					<th>Name of product</th>
-					<th>How many did he/she bought</th>
-					<th>Price</th>
-					<th>ID of buyer</th>
-					<th>Date</th>
+					<th>Sipariş sayısı</th>
+					<th>Ürünün adı</th>
+					<th>Satın alan kişi kaç adet satın aldı.</th>
+					<th>Ürünün fiyatı</th>
+					<th>Üye numarası</th>
+					<th>Gün</th>
 				
 				</tr>
 			</thead>
@@ -92,9 +92,9 @@
 			<thead>
 				<tr>
 					
-					<th>Id</th>
-					<th>Name of product</th>
-					<th>Total stock of item</th>
+					<th>Ürün numarası</th>
+					<th>Ürünün adı</th>
+					<th>Ürünün stok sayısı</th>
 
 				
 				</tr>
@@ -124,13 +124,12 @@
 		<table style="width: 100%">
 			<thead>
 				<tr>
-					
-					<th>Id</th>
-					<th>Name of product</th>
-					<th>How many did he/she bought</th>
-					<th>Price</th>
-					<th>ID of buyer</th>
-					<th>Date</th>
+					<th>Sipariş sayısı</th>
+					<th>Ürünün adı</th>
+					<th>Satın alan kişi kaç adet satın aldı.</th>
+					<th>Ürünün fiyatı</th>
+					<th>Üye numarası</th>
+					<th>Gün</th>
 				
 				</tr>
 			</thead>

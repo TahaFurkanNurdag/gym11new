@@ -2,7 +2,7 @@
 	<div>
 		<div class="w3-bar w3-gym11 w3-card w3-left-align w3-large">
 			<a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-gym11"
-				href="javascript:void(0);" onclick="toggleMenu()" title="Toggle Navigation Menu">Menu</a>
+				href="javascript:void(0);" onclick="toggleMenu()" title="Toggle Navigation Menu">Menü</a>
 			<a href="/">
 				<img class="w3-bar-item w3-image w3-circle" style="height: 50px; width: auto"
 					src="{{ url_for('static', filename='images/sitelogo.png') }}" />
@@ -19,13 +19,12 @@
 				Yap</a>
 			{% else %}
 			<a href="/accountingMain"
-				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Accounting</a>
-			<a href="/clientMain" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Client</a>
-			<a href="/addcategory" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Add
-				Packages</a>
-			<a href="/copyingPage" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Backup!</a>
+				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Muhasebe</a>
+			<a href="/clientMain" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Üyeler</a>
+			<a href="/addcategory" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Paket ve Ürün ekle</a>
+			<a href="/copyingPage" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Yedekleme yap!</a>
 			<a href="/logout"
-				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Logout</a>
+				class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white w3-right">Çıkış</a>
 			{% endif %}
 		</div>
 
@@ -35,11 +34,11 @@
 			<a class="w3-bar-item w3-button w3-padding-large w3-hover-gym11" href="/loginForm">Giriş
 				Yap</a>
 			{% else %}
-			<a href="/accountingMain" class="w3-bar-item w3-button w3-padding-large">Accounting</a>
-			<a href="/clientMain" class="w3-bar-item w3-button w3-padding-large">Client</a>
-			<a href="/addcategory" class="w3-bar-item w3-button w3-padding-large">Add Packages</a>
-			<a href="/copyingPage" class="w3-bar-item w3-button w3-padding-large">Backup!</a>
-			<a href="/logout" class="w3-bar-item w3-button w3-padding-large">Logout</a>
+			<a href="/accountingMain" class="w3-bar-item w3-button w3-padding-large">Muhasebe</a>
+			<a href="/clientMain" class="w3-bar-item w3-button w3-padding-large">Üyeler</a>
+			<a href="/addcategory" class="w3-bar-item w3-button w3-padding-large">Paket ve Ürün ekles</a>
+			<a href="/copyingPage" class="w3-bar-item w3-button w3-padding-large">Yedekleme yap!</a>
+			<a href="/logout" class="w3-bar-item w3-button w3-padding-large">Çıkış</a>
 			{% endif %}
 		</div>
 	</div>

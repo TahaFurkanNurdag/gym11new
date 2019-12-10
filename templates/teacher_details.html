@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Trainer Details</title>
+	<title>Öğretmenlerin Detayları</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
@@ -21,41 +21,41 @@
 		<p class="w3-gym11">{{msg}}</p>
 		{% endif %}
 			<form class="form-style-10" action="/addTeacherDetails" method="POST">
-				<div class="section"><span>1</span>Extra Details</div>
+				<div class="section"><span>1</span>Ders detayları</div>
 				<div class="inner-wrap">
-					<p>Name of the Teacher</p>
+					<p>Öğretmenin adı</p>
 					<select class="w3-input" name="ogretmenAdi">
 							{% for row in ogretmenAdi %}
 							<option value="{{row[0]}}">{{row[0]}}</option>
 							{% endfor %}
 					</select>
-					<p>Client Id</p>
+					<p>Üye numarası</p>
 					<select class="w3-input" name="clientId">
 						{% for row in idler %}
 						<option value="{{row[0]}}">{{row[0]}}</option>
 						{% endfor %}
 					</select>
-				<p>Client Name</p>
+				<p>Üye adı</p>
 				<select class="w3-input" name="clientName">
 					{% for row in isimler %}
 					<option value="{{row[0]}}">{{row[0]}}</option>
 					{% endfor %}
 				</select>
-				<p>Client Surname</p>
+				<p>Üye soyadı</p>
 				<select class="w3-input" name="clientSurname">
 					{% for row in soyadlar %}
 					<option value="{{row[0]}}">{{row[0]}}</option>
 					{% endfor %}
 				</select>
-				<p>Date<input type="date" name="date"></p>
-				<p>Type of package</p>
+				<p>Gün<input type="date" name="date"></p>
+				<p>Paket türü</p>
 					<select class="w3-input" name="pakettipi">
 							{% for row in pakettipleri %}
 							<option value="{{row[0]}}">{{row[0]}}</option>
 							{% endfor %}
 						</select>
 				</div>
-				<input type="submit" value="Add details">
+				<input type="submit" value="Kaydet">
 			</form>
 		</div>
 	</div>
@@ -65,13 +65,13 @@
 		<table style="width: 100%">
 			<thead>
 				<tr>
-					<th>Id</th>
-					<th>Client No</th>
-					<th>Client Name</th>
-					<th>Client Surname</th>
-					<th>Name of Teacher</th>
-					<th>Date</th>
-					<th>Package type</th>
+					<th>Ders numarası</th>
+					<th>Üye numarası</th>
+					<th>Üye adı</th>
+					<th>Üye soyadı</th>
+					<th>Öğretmenin adı</th>
+					<th>Gün</th>
+					<th>Paket türü</th>
 				
 				</tr>
 			</thead>
