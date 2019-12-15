@@ -10,6 +10,8 @@ conn.execute('''CREATE TABLE `kullanicilar` (
 	`email`	TEXT,
 	`adi`	TEXT,
 	`soyadi`	TEXT,
+	`kayitEdeninAdi` TEXT,
+	`hastalik` TEXT,
 	`adres1`	TEXT,
 	`adres2`	TEXT,
 	`il`	TEXT,
@@ -137,8 +139,8 @@ conn.execute('''CREATE TABLE `cafeUrunleri` (
 	PRIMARY KEY(`urunId`)
 		)''')
 		
-conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "adres1", "adres2", "il", "ilce", "ulke", "tel", "boy", "kilo", "kayitgunu", "pakettipi", "ekstrapaketler", "paketkalangunsayisi", "aktifmi", "katilim", "arkadassayisi", "odeme", "ogretmenMi", "adminMi") VALUES ('1', 'tfn', 'tfn@tfn', 'TFN', 'TFN', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1')''')
-conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "adres1", "adres2", "il", "ilce", "ulke", "tel", "boy", "kilo", "kayitgunu", "pakettipi", "ekstrapaketler", "paketkalangunsayisi", "aktifmi", "katilim", "arkadassayisi", "odeme", "ogretmenMi", "adminMi") VALUES ('2', 'tfn', 'ozgur@ozgur', 'OZGUR', 'OZGUR', '1', '1', '1', '1', '1', '1', '2', '2', '2019-12-02', '1', '1', '0', '1', '0', '1', '30', '0', '0')''')
+conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi","kayitEdeninAdi","hastalik", "adres1", "adres2", "il", "ilce", "ulke", "tel", "boy", "kilo", "kayitgunu", "pakettipi", "ekstrapaketler", "paketkalangunsayisi", "aktifmi", "katilim", "arkadassayisi", "odeme", "ogretmenMi", "adminMi") VALUES ('1', 'tfn', 'tfn@tfn', 'TFN', 'TFN','TFN','-' ,'1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1')''')
+conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi","kayitEdeninAdi","hastalik", "adres1", "adres2", "il", "ilce", "ulke", "tel", "boy", "kilo", "kayitgunu", "pakettipi", "ekstrapaketler", "paketkalangunsayisi", "aktifmi", "katilim", "arkadassayisi", "odeme", "ogretmenMi", "adminMi") VALUES ('2', 'tfn', 'ozgur@ozgur', 'OZGUR', 'OZGUR','TFN','-', '1', '1', '1', '1', '1', '1', '2', '2', '2019-12-02', '1', '1', '0', '1', '0', '1', '30', '0', '0')''')
 conn.execute('''INSERT INTO "main"."pakettipi" ("id", "paketadi", "paketfiyati", "paketaciklamasi") VALUES ('1', 'Spinning', '200', 'xxx tl yeni')''')
 conn.execute('''INSERT INTO "main"."ogretmenlerinDersleri" ("id", "userId", "userName", "userSurname", "ogretmenAdi", "date", "pakettipi") VALUES ('1', '2', 'OZGUR', 'OZGUR', 'TFN', '0222-02-22', 'Spinning')''')
 conn.execute('''INSERT INTO "main"."cafeUrunleri" ("urunId", "urunAdi", "totalStok") VALUES ('1', 'Makarna', '100')''')

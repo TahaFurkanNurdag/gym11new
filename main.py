@@ -207,12 +207,26 @@ def register():
         ogretmenMi = request.form['ogretmenMi']
         aktifmi = request.form['aktifmi']
         arkadassayisi = request.form['arkadassayisi']
+        kayitEdeninAdi = request.form['kayitEdeninAdi']
+        hastalik = request.form['hastalik']
+
+
+        if ogretmenMi =='Evet':
+            ogretmenMi=1
+        elif ogretmenMi=='Hayir':
+            ogretmenMi=0
+
+        if aktifmi =='Evet':
+            aktifmi=1
+        elif aktifmi=='Hayir':
+            aktifmi=0
+
 
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,ekstrapaketler,paketkalangunsayisi,aktifmi,katilim,arkadassayisi, odeme,ogretmenMi,adminMi) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,0, ?, 0, ?, 30,?,1)', (
-                    parola, email, adi, soyadi, adres1, adres2, ilce, il, ulke, tel, boy, kilo, kayitgunu, pakettipi, ekstrapaketler, aktifmi, arkadassayisi, ogretmenMi))
+                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi,kayitEdeninAdi,hastalik, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,ekstrapaketler,paketkalangunsayisi,aktifmi,katilim,arkadassayisi, odeme,ogretmenMi,adminMi) VALUES (?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,0, ?, 0, ?, 30,?,1)', (
+                    parola, email, adi, soyadi,kayitEdeninAdi,hastalik, adres1, adres2, ilce, il, ulke, tel, boy, kilo, kayitgunu, pakettipi, ekstrapaketler, aktifmi, arkadassayisi, ogretmenMi))
                 con.commit()  # veritabanina kaydedildi
                 print("Success. Success Code: 802")
             except Exception as e:
@@ -238,13 +252,15 @@ def registrationForm():
             cur = con.cursor()
             cur.execute('SELECT paketadi FROM pakettipi')
             data = cur.fetchall()
+            cur.execute('SELECT adi FROM kullanicilar where ogretmenMi=1')
+            ogretmenIsimleri = cur.fetchall()
         except Exception as e:
             con.rollback()
             print(f"Failure. Failure Code: 902. Failure is {e}")
             return render_template("ERROR.html", msg="Insertion Failure. Error Code: 706")
     con.close()
     if session['adminMi'] == 1:
-        return render_template("sign_up.html", userId=userId, girildiMi=girildiMi, adi=adi, data=data)
+        return render_template("sign_up.html", ogretmenIsimleri=ogretmenIsimleri ,userId=userId, girildiMi=girildiMi, adi=adi, data=data)
     else:
         # giris yaptiysa kaydolma sayfasi acilmaz anasayfaya yonlendirilir
         return redirect(url_for('root'))

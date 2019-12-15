@@ -87,6 +87,8 @@
 					<th>E-Mail</th>
 					<th>İsim</th>
 					<th>Soyisim</th>
+					<th>Kayıt eden kişi</th>
+					<th>Hastalık</th>
 					<th>Adress-1</th>
 					<th>Adress-2</th>
 					<th>Şehir</th>
@@ -124,36 +126,14 @@
 					<td class="w3-gray">{{row[13]}}</td>
 					<td class="w3-gray">{{row[14]}}</td>
 					<td class="w3-gray">{{row[15]}}</td>
-					<!-- 16 DA REMAININ EXTRA PACKETS VAR !-->
+					<td class="w3-gray">{{row[16]}}</td>
 					<td class="w3-gray">{{row[17]}}</td>
 					<td class="w3-gray">{{row[18]}}</td>
 					<td class="w3-gray">{{row[19]}}</td>
-
-
-
-					{% if row[16] <= 0 %}
-					<td class="w3-red">{{row[16]}}</td>
-					{% elif row[16] > 0 and row[16] <= 7 %}
-					<td class="w3-orange">{{row[16]}}</td>
-					{% elif row[16] > 7 and row[16] <= 14 %}
-					<td class="w3-yellow">{{row[16]}}</td>
-					{% else %}
-					<td class="w3-green">{{row[20]}}</td>
-					{% endif %}
-
-					{% if row[20] <= 0 %}
-					<td class="w3-red">{{row[20]}}</td>
-					{% elif row[20] > 0 and row[20] <= 7 %}
-					<td class="w3-orange">{{row[20]}}</td>
-					{% elif row[20] > 7 and row[20] <= 14 %}
-					<td class="w3-yellow">{{row[20]}}</td>
-					{% else %}
-					<td class="w3-green">{{row[20]}}</td>
-					{% endif %}
-
-
+					<td class="w3-gray">{{row[20]}}</td>
 					<td class="w3-gray">{{row[21]}}</td>
-
+					<td class="w3-gray">{{row[22]}}</td>
+					<td class="w3-gray">{{row[23]}}</td>
 
 
 

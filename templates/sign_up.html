@@ -29,7 +29,14 @@
 				<p>Soyisim: <input type="text" name="soyadi"></p>
 				<p>Boy: <input type="text" name="boy"></p>
 				<p>Kilo:<input type="text" name="kilo"></p>
-				<p>Öğretmen mi:<input type="text" name="ogretmenMi"></p>
+				Hastalık<textarea name="hastalik" rows=5 placeholder="Hastalık :"></textarea>
+				<tr>
+					<th>Öğretmen mi:</th>
+					<td><select class="w3-input" name="ogretmenMi">
+							<option value="Evet">Evet</option>
+							<option value="Hayir">Hayir</option>
+						</select></td>
+				</tr>
 				<tr>
 					<th>Kategori:</th>
 					<td><select class="w3-input" name="pakettipi">
@@ -46,9 +53,23 @@
 							{% endfor %}
 						</select></td>
 				</tr>
-				<p>Aktif üye mi:<input type="text" name="aktifmi"></p>
+				<tr>
+					<th>Aktif üye mi:</th>
+					<td><select class="w3-input" name="aktifmi">
+							<option value="Evet">Evet</option>
+							<option value="Hayir">Hayir</option>
+						</select></td>
+				</tr>
 				<p>Kayıt günü :<input type="date" name="kayitgunu"></p>
 				<p>Arkadaş sayısı:<input type="text" name="arkadassayisi"></p>
+				<tr>
+					<th>Kayıt eden kişinin ismi:</th>
+					<td><select class="w3-input" name="kayitEdeninAdi">
+							{% for row in ogretmenIsimleri %}
+							<option value="{{row[0]}}">{{row[0]}}</option>
+							{% endfor %}
+						</select></td>
+				</tr>
 			</div>
 			<div class="section"><span>2</span>Address Information</div>
 			<div class="inner-wrap">
