@@ -103,15 +103,19 @@ def addcategoryitem():
     if request.method == "POST":
         paketadi = request.form['paketadi']
         paketfiyati = request.form['paketfiyati']
+        paketgunu = request.form['paketgunu']
+        paketsaati = request.form['paketsaati']
         paketaciklamasi = request.form['paketaciklamasi']
         with sqlite3.connect('database.db') as conn:
             try:
                 cur = conn.cursor()
-                cur.execute('''INSERT INTO pakettipi (paketadi,paketfiyati,paketaciklamasi) VALUES (?,?,?)''',
-                            (paketadi, paketfiyati, paketaciklamasi,))
+                cur.execute('''INSERT INTO pakettipi (paketadi,paketgunu,paketsaati,paketfiyati,paketaciklamasi) VALUES (?,?,?,?,?)''',(paketadi,paketgunu,paketsaati, paketfiyati, paketaciklamasi,))
+                cur.execute('ALTER TABLE kullanicilar ADD '+paketadi +'GunSayisi  varchar(255) default 0')
+                cur.execute('ALTER TABLE kullanicilar ADD '+paketadi +'DersSayisi  varchar(255) default 0')
                 conn.commit()  # burada kategori veritabanina ekleniyor
                 print("Success. Success Code: 801")
-            except:
+            except Exception as e:
+                print(e)
                 conn.rollback()
                 return render_template('ERROR.html', msg="Local connection error. Error Code: 702")
         conn.close()
@@ -901,7 +905,7 @@ def addOneMonthToTheUser():
     else:
         return redirect(url_for('root'))
 
-
+"""
 @app.route("/addExtraPacgage", methods=['GET', 'POST'])
 def addExtraPacgage():
     if request.method == 'POST':
@@ -910,8 +914,7 @@ def addExtraPacgage():
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute(
-                    'update kullanicilar SET  ekstrapaketler=? where userId = ?', (ekstrapaketler, no))
+                cur.execute('ALTER TABLE kullanicilar ADD ? varchar(255) where' , (ekstrapaketler))
                 con.commit()  # veritabanina kaydedildi
             except Exception as e:
                 con.rollback()
@@ -920,6 +923,8 @@ def addExtraPacgage():
         return redirect(url_for('clientsDetails'))
     else:
         return redirect(url_for('root'))
+"""
+        
 
 
 @app.route("/decreaseOneDay")
@@ -1001,6 +1006,7 @@ def addTeacherDetails():
                 if getName and getSurname and getId:
                     print("ifinicinde")
                 cur.execute('INSERT INTO ogretmenlerinDersleri (userId,userName,userSurname,ogretmenAdi,date,pakettipi) VALUES (?,?,?,?, ?,?)', (idx,clientName,surname, ogretmenAdi, date, pakettipi))
+                cur.execute('UPDATE kullanicilar SET katilim = katilim + 1 , '+ pakettipi +'GunSayisi = '+pakettipi+'GunSayisi-1 ,'+ pakettipi +'DersSayisi = '+pakettipi+'DersSayisi-1 WHERE userId = ?', (idx))
                 con.commit()  # veritabanina kaydedildi
             except Exception as e:
                 con.rollback()

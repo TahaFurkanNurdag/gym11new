@@ -19,16 +19,6 @@
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
 	<div class="w3-container">
 		<div class="w3-padding w3-quarter">
-			<form class="form-style-10" action="/increaseOne" method="POST">
-				<div class="section">Katılım</div>
-				<div class="inner-wrap">
-					<p>Üye numarası<input type="text" name="no"></p>
-					<p>Eklemek istediğiniz gün sayısı<input type="text" name="odemegunu"></p>
-				</div>
-				<input type="submit" value="Katılımı arttır">
-			</form>
-		</div>
-		<div class="w3-padding w3-quarter">
 			<form class="form-style-10" action="/increaseOneMonth" method="POST">
 				<div class="section">Payment</div>
 				<div class="inner-wrap">
@@ -99,7 +89,6 @@
 					<th>Kilo</th>
 					<th>Kayıt günü </th>
 					<th>Paket türü</th>
-					<th>Extra paketi</th>
 					<th>Aktif üye mi</th>
 					<th>Katılım</th>
 					<th>Arkadaş sayısı</th>
@@ -128,7 +117,6 @@
 					<td class="w3-gray">{{row[15]}}</td>
 					<td class="w3-gray">{{row[16]}}</td>
 					<td class="w3-gray">{{row[17]}}</td>
-					<td class="w3-gray">{{row[18]}}</td>
 					<td class="w3-gray">{{row[19]}}</td>
 					<td class="w3-gray">{{row[20]}}</td>
 					<td class="w3-gray">{{row[21]}}</td>
