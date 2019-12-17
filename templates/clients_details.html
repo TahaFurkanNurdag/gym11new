@@ -17,26 +17,11 @@
 
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
-	<div class="w3-container">
-		<div class="w3-padding w3-quarter">
-			<form class="form-style-10" action="/increaseOneMonth" method="POST">
-				<div class="section">Payment</div>
-				<div class="inner-wrap">
-					<p>Üye numarası<input type="text" name="no"></p>
-					<p>Arttırmak veya azaltmak için gereken gün sayısı<input type="text" name="odemegunu"></p>
-				</div>
-				<input type="submit" value="Arttır veya azalt">
-				<hr>
-				<input type="button" onclick="location.href='/increaseOneDay'" value="+1"
-					style="font-size: 24pt!important">
-				<input type="button" onclick="location.href='/decreaseOneDay'" value="-1"
-					style="font-size: 24pt!important">
-				herkesten.
-			</form>
-		</div>
-		<div class="w3-padding w3-quarter">
-			<form class="form-style-10" action="/addExtraPacgage" method="POST">
-				<div class="section">Extra paketler</div>
+<div class="w3-container w3-center" >	
+	<div class="w3-container " >
+		<div >
+			<form class="form-style-10" action="/increaseOneMonthForExtraPackage" method="POST">
+				<div class="section">Ekstra paket ekleme</div>
 				<div class="inner-wrap">
 					<p>Üye numarası<input type="text" name="no"></p>
 					<p>Paket adı</p>
@@ -45,16 +30,6 @@
 						<option value="{{row[0]}}">{{row[0]}}</option>
 						{% endfor %}
 					</select>
-				</div>
-				<input type="submit" value="Üyeye ekstra paket ekle.">
-			</form>
-		</div>
-		<div class="w3-padding w3-quarter">
-			<form class="form-style-10" action="/increaseOneMonthForExtraPackage" method="POST">
-				<div class="section">Extra Package Days</div>
-				<div class="inner-wrap">
-					<p>Üye numarası<input type="text" name="no"></p>
-					<p>Arttırmak veya azaltmak için gereken gün sayısı<input type="text" name="odemegunu"></p>
 				</div>
 				<input type="submit" value="Ekstra paketlerden gün sayısını azalt yada arttır.">
 				<hr>
@@ -65,81 +40,26 @@
 				herkesin ekstra paketlerinden.
 			</form>
 		</div>
-	</div>
-
+	
+</div>
 	<hr>
+
+
+
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
 		<table style="width: 100%">
 			<thead>
+				{% for key in columnIsimleri %}
 				<tr>
-					<th>Üye numarası</th>
-					<th>E-Mail</th>
-					<th>İsim</th>
-					<th>Soyisim</th>
-					<th>Kayıt eden kişi</th>
-					<th>Hastalık</th>
-					<th>Adress-1</th>
-					<th>Adress-2</th>
-					<th>Şehir</th>
-					<th>Mahalle</th>
-					<th>Ülke</th>
-					<th>Telefon numarası</th>
-					<th>Boy</th>
-					<th>Kilo</th>
-					<th>Kayıt günü </th>
-					<th>Paket türü</th>
-					<th>Aktif üye mi</th>
-					<th>Katılım</th>
-					<th>Arkadaş sayısı</th>
-					<th>Paketlerden kalan gün sayısı</th>
-					<th>Ödemeye kalan gün</th>
-					<th>Öğretmen mi</th>
+				  <th> {{ key }} </th>
+				  <td> {{ value }} </td>
 				</tr>
-			</thead>
-			<tbody>
-				{% for row in value %}
-				<tr>
-					<td class="w3-gym11">{{row[0]}}</td>
-					<td class="w3-gray">{{row[2]}}</td>
-					<td class="w3-gray">{{row[3]}}</td>
-					<td class="w3-gray">{{row[4]}}</td>
-					<td class="w3-gray">{{row[5]}}</td>
-					<td class="w3-gray">{{row[6]}}</td>
-					<td class="w3-gray">{{row[7]}}</td>
-					<td class="w3-gray">{{row[8]}}</td>
-					<td class="w3-gray">{{row[9]}}</td>
-					<td class="w3-gray">{{row[10]}}</td>
-					<td class="w3-gray">{{row[11]}}</td>
-					<td class="w3-gray">{{row[12]}}</td>
-					<td class="w3-gray">{{row[13]}}</td>
-					<td class="w3-gray">{{row[14]}}</td>
-					<td class="w3-gray">{{row[15]}}</td>
-					<td class="w3-gray">{{row[16]}}</td>
-					<td class="w3-gray">{{row[17]}}</td>
-					<td class="w3-gray">{{row[19]}}</td>
-					<td class="w3-gray">{{row[20]}}</td>
-					<td class="w3-gray">{{row[21]}}</td>
-					<td class="w3-gray">{{row[22]}}</td>
-					<td class="w3-gray">{{row[23]}}</td>
-
-
-
-
-
-
-
-
-
-
-
-				</tr>
-				{% endfor %}
+			  {% endfor %}
 			</tbody>
 		</table>
 		<br>
 	</div>
-
 </body>
 
 </html>

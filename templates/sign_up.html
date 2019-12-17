@@ -38,22 +38,6 @@
 						</select></td>
 				</tr>
 				<tr>
-					<th>Kategori:</th>
-					<td><select class="w3-input" name="pakettipi">
-							{% for row in data %}
-							<option value="{{row[0]}}">{{row[0]}}</option>
-							{% endfor %}
-						</select></td>
-				</tr>
-				<tr>
-					<th>Ekstra Kategoriler:</th>
-					<td><select class="w3-input" name="ekstrapaketler">
-							{% for row in data %}
-							<option value="{{row[0]}}">{{row[0]}}</option>
-							{% endfor %}
-						</select></td>
-				</tr>
-				<tr>
 					<th>Aktif üye mi:</th>
 					<td><select class="w3-input" name="aktifmi">
 							<option value="Evet">Evet</option>
@@ -75,9 +59,6 @@
 			<div class="inner-wrap">
 				<p>1. Adress: <input type="text" name="adres1"></p>
 				<p>2. Adress: <input type="text" name="adres2"></p>
-				<p>Şehir: <input type="text" name="il"></p>
-				<p>İlçe: <input type="text" name="ilce"></p>
-				<p>Ülke: <input type="text" name="ulke"></p>
 			</div>
 			<div class="section"><span>3</span>Telefon - Email</div>
 			<div class="inner-wrap">

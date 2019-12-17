@@ -198,16 +198,11 @@ def register():
         soyadi = request.form['soyadi']
         adres1 = request.form['adres1']
         adres2 = request.form['adres2']
-        ilce = request.form['ilce']
-        il = request.form['il']
-        ulke = request.form['ulke']
         # html'de doldurulan alanlar degiskenlere aktarildi
         tel = request.form['tel']
         boy = request.form['boy']
         kilo = request.form['kilo']
         kayitgunu = request.form['kayitgunu']
-        pakettipi = request.form['pakettipi']
-        ekstrapaketler = request.form['ekstrapaketler']
         ogretmenMi = request.form['ogretmenMi']
         aktifmi = request.form['aktifmi']
         arkadassayisi = request.form['arkadassayisi']
@@ -229,8 +224,8 @@ def register():
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi,kayitEdeninAdi,hastalik, adres1, adres2, ilce, il, ulke, tel,boy,kilo,kayitgunu,pakettipi,ekstrapaketler,paketkalangunsayisi,aktifmi,katilim,arkadassayisi, odeme,ogretmenMi,adminMi) VALUES (?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,0, ?, 0, ?, 30,?,1)', (
-                    parola, email, adi, soyadi,kayitEdeninAdi,hastalik, adres1, adres2, ilce, il, ulke, tel, boy, kilo, kayitgunu, pakettipi, ekstrapaketler, aktifmi, arkadassayisi, ogretmenMi))
+                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi,kayitEdeninAdi,hastalik, tel,boy,kilo, adres1, adres2,kayitgunu,aktifmi,katilim,arkadassayisi, ogretmenMi,adminMi) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,1)', (
+                    parola, email, adi, soyadi,kayitEdeninAdi,hastalik,  tel, boy, kilo,adres1, adres2, kayitgunu, aktifmi, arkadassayisi, ogretmenMi))
                 con.commit()  # veritabanina kaydedildi
                 print("Success. Success Code: 802")
             except Exception as e:
@@ -292,9 +287,15 @@ def clientsDetails():
     userId, girildiMi, adi = getLoginDetails()
     con = sqlite3.connect('database.db')
     cur = con.cursor()
-    cur.execute("SELECT * FROM kullanicilar ORDER BY odeme ASC")
+    cur.execute("SELECT * FROM kullanicilar")
     data = cur.fetchall()  # data from database
-    return render_template("clients_details.html", value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
+    cur.execute("select name from pragma_table_info('kullanicilar')")
+    columnName=cur.fetchall()
+    columnIsimleri = []
+    for i in range(len(columnName)):
+        columnIsimleri.append(str(columnName[i])[2:-3])
+
+    return render_template("clients_details.html", columnIsimleri=columnIsimleri , value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
 
 
 @app.route("/teachersDetails")
@@ -779,17 +780,31 @@ def income():
             with sqlite3.connect('database.db') as con:
                 try:
                     cur = con.cursor()
+                    cur.execute('select paketgunu  from pakettipi where paketadi = ? ' , (pakettipi,))
+                    paketgunu=cur.fetchall()
+                    paketGunuVerisi = []
+                    for i in range(len(paketgunu)):
+                        paketGunuVerisi.append(str(paketgunu[i])[2:-3])
+                    print(paketGunuVerisi[0])
+
+                    cur.execute('select paketsaati  from pakettipi where paketadi = ? ' , (pakettipi,))
+                    paketsaati=cur.fetchall()
+                    paketSaatiVerisi = []
+                    for i in range(len(paketsaati)):
+                        paketSaatiVerisi.append(str(paketsaati[i])[2:-3])
+                    print(paketSaatiVerisi[0])
                     if int(price) < 0:
                         cur.execute(
                             'INSERT INTO alacaklar (userId,userName,userSurname,price,date,explanation) VALUES (?,?,?,?, ?,?)', (userId , uyeadi , uyeSoyadi , price , date , explanation))
                         cur.execute(
                             'INSERT INTO gelir(userId , userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?,?)', (userId,uyeadi, uyeSoyadi, price, date, pakettipi, explanation))
-
+                        cur.execute('UPDATE kullanicilar SET ' + pakettipi + 'GunSayisi = ' + pakettipi +'GunSayisi + ? , ' + pakettipi + 'DersSayisi = ' + pakettipi +'DersSayisi + ?   where userId =?',(paketGunuVerisi[0],paketSaatiVerisi[0],userId))
                     else:
                         cur.execute(
                             'INSERT INTO gelir(userId ,userName,userSurname,price,date,paketadi,aciklama) values (?,?,?,?,?,?,?)', (userId,uyeadi, uyeSoyadi, price, date, pakettipi, explanation))
                         cur.execute(
                             'INSERT INTO muhasebe (userId,userName,userSurname,price,date,explanation) VALUES (?,?,?,?, ?,?)', (userId , uyeadi , uyeSoyadi , price , date , explanation))
+                        cur.execute('UPDATE kullanicilar SET ' + pakettipi + 'GunSayisi = ' + pakettipi +'GunSayisi + ? , ' + pakettipi + 'DersSayisi = ' + pakettipi +'DersSayisi + ?   where userId =?',(paketGunuVerisi[0],paketSaatiVerisi[0],userId))
                     cur.execute("select * from gelir")
                     temp_deger = cur.fetchall()
                     con.commit()  # veritabanina kaydedildi
@@ -904,28 +919,7 @@ def addOneMonthToTheUser():
         return redirect(url_for('clientsDetails'))
     else:
         return redirect(url_for('root'))
-
-"""
-@app.route("/addExtraPacgage", methods=['GET', 'POST'])
-def addExtraPacgage():
-    if request.method == 'POST':
-        no = request.form['no']
-        ekstrapaketler = request.form['ekstrapaketler']
-        with sqlite3.connect('database.db') as con:
-            try:
-                cur = con.cursor()
-                cur.execute('ALTER TABLE kullanicilar ADD ? varchar(255) where' , (ekstrapaketler))
-                con.commit()  # veritabanina kaydedildi
-            except Exception as e:
-                con.rollback()
-                print(e)
-        con.close()
-        return redirect(url_for('clientsDetails'))
-    else:
-        return redirect(url_for('root'))
-"""
         
-
 
 @app.route("/decreaseOneDay")
 def decreaseOneDay():
@@ -934,7 +928,7 @@ def decreaseOneDay():
             try:
                 cur = con.cursor()
                 cur.execute(
-                    'update kullanicilar SET  odeme=odeme-1 where userId > 1')
+                    'update kullanicilar SET  odeme=odeme-1  where userId > 1')
                 con.commit()  # veritabanina kaydedildi
             except Exception as e:
                 con.rollback()
@@ -1006,7 +1000,7 @@ def addTeacherDetails():
                 if getName and getSurname and getId:
                     print("ifinicinde")
                 cur.execute('INSERT INTO ogretmenlerinDersleri (userId,userName,userSurname,ogretmenAdi,date,pakettipi) VALUES (?,?,?,?, ?,?)', (idx,clientName,surname, ogretmenAdi, date, pakettipi))
-                cur.execute('UPDATE kullanicilar SET katilim = katilim + 1 , '+ pakettipi +'GunSayisi = '+pakettipi+'GunSayisi-1 ,'+ pakettipi +'DersSayisi = '+pakettipi+'DersSayisi-1 WHERE userId = ?', (idx))
+                cur.execute('UPDATE kullanicilar SET katilim = katilim + 1 , '+ pakettipi +'DersSayisi = '+pakettipi+'DersSayisi-1 WHERE userId = ?', (idx))
                 con.commit()  # veritabanina kaydedildi
             except Exception as e:
                 con.rollback()
@@ -1021,12 +1015,25 @@ def addTeacherDetails():
 def increaseOneMonthForExtraPackage():
     if request.method == 'POST':
         no = request.form['no']
-        gunsayisi = request.form['odemegunu']
+        ekstrapaketler= request.form['ekstrapaketler']
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute(
-                    'update kullanicilar SET  paketkalangunsayisi=paketkalangunsayisi+ ? where userId = ?', (gunsayisi, no))
+                cur.execute('select paketgunu  from pakettipi where paketadi = ? ' , (ekstrapaketler,))
+                paketgunu=cur.fetchall()
+                paketGunuVerisi = []
+                for i in range(len(paketgunu)):
+                    paketGunuVerisi.append(str(paketgunu[i])[2:-3])
+                print(paketGunuVerisi[0])
+
+                cur.execute('select paketsaati  from pakettipi where paketadi = ? ' , (ekstrapaketler,))
+                paketsaati=cur.fetchall()
+                paketSaatiVerisi = []
+                for i in range(len(paketsaati)):
+                    paketSaatiVerisi.append(str(paketsaati[i])[2:-3])
+                print(paketSaatiVerisi[0])
+
+                cur.execute('UPDATE kullanicilar SET ' + ekstrapaketler + 'GunSayisi = ' + ekstrapaketler +'GunSayisi + ? , ' + ekstrapaketler + 'DersSayisi = ' + ekstrapaketler +'DersSayisi + ?   where userId =?',(paketGunuVerisi[0],paketSaatiVerisi[0],no))
                 con.commit()  # veritabanina kaydedildi
             except Exception as e:
                 con.rollback()
@@ -1043,8 +1050,13 @@ def decreaseOneDayForExtraPackage():
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute(
-                    'update kullanicilar SET  paketkalangunsayisi=paketkalangunsayisi-1 where userId > 1')
+                cur.execute('select paketadi from pakettipi')
+                paketIsimleri = cur.fetchall()
+                paketIsimleriVerisi = []
+                for i in range(len(paketIsimleri)):
+                    paketIsimleriVerisi.append(str(paketIsimleri[i])[2:-3])
+                for counter in range(len(paketIsimleri)):
+                    cur.execute('UPDATE kullanicilar SET '+paketIsimleriVerisi[counter]+'Gunsayisi = '+paketIsimleriVerisi[counter]+'Gunsayisi -1' )
                 con.commit()  # veritabanina kaydedildi
             except Exception as e:
                 con.rollback()
@@ -1062,8 +1074,13 @@ def increaseOneDayForExtraPackage():
         with sqlite3.connect('database.db') as con:
             try:
                 cur = con.cursor()
-                cur.execute(
-                    'update kullanicilar SET  paketkalangunsayisi=paketkalangunsayisi+1 where userId > 1')
+                cur.execute('select paketadi from pakettipi')
+                paketIsimleri = cur.fetchall()
+                paketIsimleriVerisi = []
+                for i in range(len(paketIsimleri)):
+                    paketIsimleriVerisi.append(str(paketIsimleri[i])[2:-3])
+                for counter in range(len(paketIsimleri)):
+                    cur.execute('UPDATE kullanicilar SET '+paketIsimleriVerisi[counter]+'Gunsayisi = '+paketIsimleriVerisi[counter]+'Gunsayisi +1' )
                 con.commit()  # veritabanina kaydedildi
             except Exception as e:
                 con.rollback()
