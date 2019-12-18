@@ -22,9 +22,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # SUCCESS CODE 8
 # FAILURE CODE 9
 
+class DatabaseName:
+    databaseName = "database.db"
 
 def getLoginDetails():
-    with sqlite3.connect('database.db') as conn:
+    with sqlite3.connect(DatabaseName.databaseName) as conn:
         cur = conn.cursor()
         try:
             if 'email' not in session:  # emaile gore giris yapildi mi? yapilmadiysa alttaki satilar
@@ -44,7 +46,7 @@ def getLoginDetails():
 
 
 def is_valid(email, parola, adminMi):  # email ve parola dogru mu kiyasi
-    con = sqlite3.connect('database.db')
+    con = sqlite3.connect(DatabaseName.databaseName)
     cur = con.cursor()
     cur.execute('SELECT email, parola, adminMi FROM kullanicilar')
     data = cur.fetchall()
@@ -73,8 +75,19 @@ def parse(data):  # urunleri listelememizde kullandigimiz fonksiyon. birden fazl
             i += 1
         ans.append(curr)
     return ans
+'''
+@app.route("/changeDatabaseName")  # kategori ekleme sayfasi
+def addcategory():
+    if 'email' not in session:  # kisi admin degilse yapilacaklar
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 1:  # kisi adminse yapilacaklar
+        girildiMi, adi = getLoginDetails()[1:]
 
-
+        return redirect(url_for('changeDb'))
+    else:
+        return redirect(url_for('changeDb'))
+'''
 @app.route("/")
 def root():
     if 'email' not in session:  # giris yapilmadiysa
@@ -92,7 +105,17 @@ def addcategory():
         session['adminMi'] = adminMi
     if session['adminMi'] == 1:  # kisi adminse yapilacaklar
         girildiMi, adi = getLoginDetails()[1:]
-        return render_template('package_add.html', girildiMi=girildiMi, adi=adi)
+        with sqlite3.connect(DatabaseName.databaseName) as conn:
+            try:
+                cur = conn.cursor() 
+                cur.execute("select * from pakettipi")
+                tumPaketler = cur.fetchall()
+                conn.commit()  # burada kategori veritabanina ekleniyor
+            except Exception as e:
+                print(e)
+                conn.rollback()
+        conn.close()
+        return render_template('package_add.html',tumPaketler=tumPaketler, girildiMi=girildiMi, adi=adi)
     else:
         return render_template('ERROR.html', msg="You are not authorized. Error Code: 701")
 
@@ -106,7 +129,7 @@ def addcategoryitem():
         paketgunu = request.form['paketgunu']
         paketsaati = request.form['paketsaati']
         paketaciklamasi = request.form['paketaciklamasi']
-        with sqlite3.connect('database.db') as conn:
+        with sqlite3.connect(DatabaseName.databaseName) as conn:
             try:
                 cur = conn.cursor()
                 cur.execute('''INSERT INTO pakettipi (paketadi,paketgunu,paketsaati,paketfiyati,paketaciklamasi) VALUES (?,?,?,?,?)''',(paketadi,paketgunu,paketsaati, paketfiyati, paketaciklamasi,))
@@ -129,7 +152,7 @@ def addcategoryCafe():
     if request.method == "POST":
         nameOfProduct = request.form['nameOfProduct']
         stock = request.form['stock']
-        with sqlite3.connect('database.db') as conn:
+        with sqlite3.connect(DatabaseName.databaseName) as conn:
             try:
                 cur = conn.cursor()
                 cur.execute('''INSERT INTO cafeUrunleri (urunAdi,totalStok) VALUES (?,?)''',(nameOfProduct, stock))
@@ -221,7 +244,7 @@ def register():
             aktifmi=0
 
 
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi,kayitEdeninAdi,hastalik, tel,boy,kilo, adres1, adres2,kayitgunu,aktifmi,katilim,arkadassayisi, ogretmenMi,adminMi) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,1)', (
@@ -246,7 +269,7 @@ def registrationForm():
     if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('root'))
     userId, girildiMi, adi = getLoginDetails()
-    with sqlite3.connect('database.db') as con:
+    with sqlite3.connect(DatabaseName.databaseName) as con:
         try:
             cur = con.cursor()
             cur.execute('SELECT paketadi FROM pakettipi')
@@ -274,7 +297,7 @@ def clientsDetails():
         return redirect(url_for('root'))
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
-    with sqlite3.connect('database.db') as con:
+    with sqlite3.connect(DatabaseName.databaseName) as con:
         try:
             cur = con.cursor()
             cur.execute('SELECT paketadi FROM pakettipi')
@@ -285,7 +308,7 @@ def clientsDetails():
             return render_template("ERROR.html", msg="Fetching Failure. Error Code: 707")
     con.close()
     userId, girildiMi, adi = getLoginDetails()
-    con = sqlite3.connect('database.db')
+    con = sqlite3.connect(DatabaseName.databaseName)
     cur = con.cursor()
     cur.execute("SELECT * FROM kullanicilar")
     data = cur.fetchall()  # data from database
@@ -307,7 +330,7 @@ def teachersDetails():
         return render_template("ERROR.html", msg="You are not authorized. Error Code: 708")
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
-    with sqlite3.connect('database.db') as con:
+    with sqlite3.connect(DatabaseName.databaseName) as con:
         try:
             cur = con.cursor()
             cur.execute('SELECT paketadi FROM pakettipi')
@@ -343,7 +366,7 @@ def accountingDetails():
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
     userId, girildiMi, adi = getLoginDetails()
-    con = sqlite3.connect('database.db')
+    con = sqlite3.connect(DatabaseName.databaseName)
     cur = con.cursor()
     cur.execute("select * from muhasebe")
     data = cur.fetchall()  # data from database
@@ -404,7 +427,7 @@ def incomeDetails():
     if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('root'))
     girildiMi, adi = getLoginDetails()[1:]
-    with sqlite3.connect('database.db') as con:
+    with sqlite3.connect(DatabaseName.databaseName) as con:
         try:
             cur = con.cursor()
             cur.execute('SELECT paketadi FROM pakettipi')
@@ -434,7 +457,7 @@ def cafeIncomeDetails():
     if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('root'))
     girildiMi, adi = getLoginDetails()[1:]
-    with sqlite3.connect('database.db') as con:
+    with sqlite3.connect(DatabaseName.databaseName) as con:
         try:
             cur = con.cursor()
             cur.execute('SELECT paketadi FROM pakettipi')
@@ -479,7 +502,7 @@ def cafeIncome():
                 print(int(price))
             except Exception as e:
                 print(f"Hata {e}, girdi integer değil muhtemelen.")
-            with sqlite3.connect('database.db') as con:
+            with sqlite3.connect(DatabaseName.databaseName) as con:
                 try:
                     cur = con.cursor()
 
@@ -530,7 +553,7 @@ def searchCafe():
                 5+2
             except Exception as e:
                 print(f"Hata {e}, girdi integer değil muhtemelen.")
-            with sqlite3.connect('database.db') as con:
+            with sqlite3.connect(DatabaseName.databaseName) as con:
                 try:
                     cur = con.cursor()
                     cur.execute(
@@ -589,6 +612,20 @@ def backupProcedure():
     userId, girildiMi, adi = getLoginDetails()
     return render_template('root.html', girildiMi=girildiMi, adi=adi)
 
+    
+@app.route("/changeDb")
+def changeDb():
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        adminMi = 0
+        session['adminMi'] = adminMi
+    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('root'))
+    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+        return redirect(url_for('loginForm'))
+    userId, girildiMi, adi = getLoginDetails()
+    return render_template('change_db.html', girildiMi=girildiMi, adi=adi)
+
+
 
 @app.route("/backupAccounting")
 def backupAccounting():
@@ -601,7 +638,7 @@ def backupAccounting():
         return redirect(url_for('loginForm'))
     userId, girildiMi, adi = getLoginDetails()
     try:
-        con = sqlite3.connect('database.db')
+        con = sqlite3.connect(DatabaseName.databaseName)
         cur = con.cursor()
         cur.execute("select * from muhasebe")
         data = cur.fetchall()  # data from database
@@ -640,7 +677,7 @@ def backupAccounting():
 
 ######################################################################
 
-        con = sqlite3.connect('database.db')
+        con = sqlite3.connect(DatabaseName.databaseName)
         cur = con.cursor()
         cur.execute("select * from alacaklar")
         data = cur.fetchall()  # data from database
@@ -678,7 +715,7 @@ def backupAccounting():
         con.close()
 ########################################
 
-        con = sqlite3.connect('database.db')
+        con = sqlite3.connect(DatabaseName.databaseName)
         cur = con.cursor()
         cur.execute("select * from cafemuhasebe")
         data = cur.fetchall()  # data from database
@@ -731,7 +768,7 @@ def accountingForm():
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
     userId, girildiMi, adi = getLoginDetails()
-    with sqlite3.connect('database.db') as con:
+    with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute('select userId from kullanicilar')
@@ -777,7 +814,7 @@ def income():
                 print(int(price))
             except Exception as e:
                 print(f"Hata {e}, girdi integer değil muhtemelen.")
-            with sqlite3.connect('database.db') as con:
+            with sqlite3.connect(DatabaseName.databaseName) as con:
                 try:
                     cur = con.cursor()
                     cur.execute('select paketgunu  from pakettipi where paketadi = ? ' , (pakettipi,))
@@ -831,7 +868,7 @@ def deletePersonal():
         date = request.form['date']
         paketadi = request.form['paketadi']
         aciklama = request.form['aciklama']
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute(
@@ -871,7 +908,7 @@ def totalAmount():
                 print(int(price))
             except Exception as e:
                 print(f"Hata {e}, girdi integer değil muhtemelen.")
-            with sqlite3.connect('database.db') as con:
+            with sqlite3.connect(DatabaseName.databaseName) as con:
                 try:
                     cur = con.cursor()
                     cur.execute('select adi from kullanicilar where adi=?',(name ,))
@@ -906,7 +943,7 @@ def addOneMonthToTheUser():
     if request.method == 'POST':
         no = request.form['no']
         gunsayisi = request.form['odemegunu']
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute(
@@ -924,7 +961,7 @@ def addOneMonthToTheUser():
 @app.route("/decreaseOneDay")
 def decreaseOneDay():
     if True == True:
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute(
@@ -943,7 +980,7 @@ def decreaseOneDay():
 @app.route("/increaseOneDay")
 def increaseOneDay():
     if True == True:
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute(
@@ -964,7 +1001,7 @@ def increaseOne():
     if request.method == 'POST':
         no = request.form['no']
         gunsayisi = request.form['odemegunu']
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute(
@@ -988,7 +1025,7 @@ def addTeacherDetails():
         clientName = request.form['clientName']
         surname = request.form['clientSurname']
         idx = request.form['clientId']
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute('select adi from kullanicilar where adi=?',(clientName ,))
@@ -1016,7 +1053,7 @@ def increaseOneMonthForExtraPackage():
     if request.method == 'POST':
         no = request.form['no']
         ekstrapaketler= request.form['ekstrapaketler']
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute('select paketgunu  from pakettipi where paketadi = ? ' , (ekstrapaketler,))
@@ -1047,7 +1084,7 @@ def increaseOneMonthForExtraPackage():
 @app.route("/decreaseOneDayForExtraPackage")
 def decreaseOneDayForExtraPackage():
     if True == True:
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute('select paketadi from pakettipi')
@@ -1071,7 +1108,7 @@ def decreaseOneDayForExtraPackage():
 @app.route("/increaseOneDayForExtraPackage")
 def increaseOneDayForExtraPackage():
     if True == True:
-        with sqlite3.connect('database.db') as con:
+        with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
                 cur.execute('select paketadi from pakettipi')
