@@ -6,47 +6,14 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename = 'js/tableSearch.js') }}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
 
 <!-- Navbar -->
 {% include 'HEADER.html' %}
-
-<style>
-	#myInput {
-		background-image: url('/css/searchicon.png');
-		background-position: 10px 10px;
-		background-repeat: no-repeat;
-		width: 100%;
-		font-size: 16px;
-		padding: 12px 20px 12px 40px;
-		border: 1px solid #ddd;
-		margin-bottom: 12px;
-	}
-
-	#myTable {
-		border-collapse: collapse;
-		width: 100%;
-		border: 1px solid #ddd;
-		font-size: 18px;
-	}
-
-	#myTable th,
-	#myTable td {
-		text-align: left;
-		padding: 12px;
-	}
-
-	#myTable tr {
-		border-bottom: 1px solid #ddd;
-	}
-
-	#myTable tr.header,
-	#myTable tr:hover {
-		background-color: #f1f1f1;
-	}
-</style>
 
 <!-- Content -->
 
@@ -59,24 +26,24 @@
 		<form class="form-style-10" action="/income" method="POST">
 			<div class="section"><span>1</span>Extra Details</div>
 			<div class="inner-wrap">
-					<p>Id</p>
-					<select class="w3-input" name="id">
-						{% for row in idler %}
-						<option value="{{row[0]}}">{{row[0]}}</option>
-						{% endfor %}
-					</select>
-					<p>Name</p>
-					<select class="w3-input" name="uyeAdi">
-						{% for row in isimler %}
-						<option value="{{row[0]}}">{{row[0]}}</option>
-						{% endfor %}
-					</select>
-					<p>Surname</p>
-					<select class="w3-input" name="uyeSoyadi">
-						{% for row in soyadlar %}
-						<option value="{{row[0]}}">{{row[0]}}</option>
-						{% endfor %}
-					</select>
+				<p>Id</p>
+				<select class="w3-input" name="id">
+					{% for row in idler %}
+					<option value="{{row[0]}}">{{row[0]}}</option>
+					{% endfor %}
+				</select>
+				<p>Name</p>
+				<select class="w3-input" name="uyeAdi">
+					{% for row in isimler %}
+					<option value="{{row[0]}}">{{row[0]}}</option>
+					{% endfor %}
+				</select>
+				<p>Surname</p>
+				<select class="w3-input" name="uyeSoyadi">
+					{% for row in soyadlar %}
+					<option value="{{row[0]}}">{{row[0]}}</option>
+					{% endfor %}
+				</select>
 				<p>Price<input type="text" name="ucret"></p>
 				<p>Date<input type="date" name="date"></p>
 				<p>Type of package</p>
@@ -91,15 +58,14 @@
 			<input type="submit" value="Add details">
 		</form>
 
-		
+
 	</div>
 	</div>
 	<hr>
 
-	<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+	<input type="text" id="myInput" onkeyup="myFunction()" placeholder="User ID ile arama yapın." title="User ID girin">
 
-
-	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+	<div class="w3-padding w3-center w3-white" style="overflow-x:auto;">
 		<br>
 		<table id="myTable" style="width: 100%">
 			<thead>
@@ -124,7 +90,7 @@
 					<td class="w3-gray">{{row[4]}}</td>
 					<td class="w3-gray">{{row[5]}}</td>
 					<td class="w3-gray">{{row[6]}}</td>
-					
+
 					<td class="w3-gray">{{row[7]}}</td>
 				</tr>
 				{% endfor %}
@@ -136,30 +102,4 @@
 	</div>
 
 </body>
-
-<script>
-function myFunction() {
-  // Declare variables
-  var input, filter, table, tr, td, i, txtValue;
-  input = document.getElementById("myInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("myTable");
-  tr = table.getElementsByTagName("tr");
-
-  // Loop through all table rows, and hide those who don't match the search query
-  for (i = 0; i < tr.length; i++) {
-    td = tr[i].getElementsByTagName("td")[1];
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
-  document.getElementById("jsvals").innerHTML = values.map(Number).reduce((a,b) => a + b, 4);
-}
-</script>
-
 </html>

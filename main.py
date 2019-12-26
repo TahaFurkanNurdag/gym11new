@@ -401,7 +401,6 @@ def accountingDetails():
     for i in range(len(temp_deger_alacaklar)):
         degerAlacaklar.append(int(str(temp_deger_alacaklar[i])[1:-2]))
     degerAlacaklar = sum(degerAlacaklar)
-    print(degerAlacaklar)
 
     return render_template("accounting_details.html", degerCafe=degerCafe, degerAlacaklar=degerAlacaklar, cafedata=cafedata, alacaklar=alacaklar, temp_deger_muhasebe=temp_deger_muhasebe, temp_deger_cafemuhasebe=temp_deger_cafemuhasebe, temp_deger_alacaklar=temp_deger_alacaklar, value=data, deger=deger, userId=userId, girildiMi=girildiMi, adi=adi)
 

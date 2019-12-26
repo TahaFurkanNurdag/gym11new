@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
@@ -14,27 +15,28 @@
 {% include 'HEADER.html' %}
 
 <!-- Content -->
+
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
 	<div class="w3-padding">
 		{% if msg %}
 		<p class="w3-gym11">{{msg}}</p>
 		{% endif %}
-			<form class="form-style-10" action="/addTeacherDetails" method="POST">
-				<div class="section"><span>1</span>Ders detayları</div>
-				<div class="inner-wrap">
-					<p>Öğretmenin adı</p>
-					<select class="w3-input" name="ogretmenAdi">
-							{% for row in ogretmenAdi %}
-							<option value="{{row[0]}}">{{row[0]}}</option>
-							{% endfor %}
-					</select>
-					<p>Üye numarası</p>
-					<select class="w3-input" name="clientId">
-						{% for row in idler %}
-						<option value="{{row[0]}}">{{row[0]}}</option>
-						{% endfor %}
-					</select>
+		<form class="form-style-10" action="/addTeacherDetails" method="POST">
+			<div class="section"><span>1</span>Ders detayları</div>
+			<div class="inner-wrap">
+				<p>Öğretmenin adı</p>
+				<select class="w3-input" name="ogretmenAdi">
+					{% for row in ogretmenAdi %}
+					<option value="{{row[0]}}">{{row[0]}}</option>
+					{% endfor %}
+				</select>
+				<p>Üye numarası</p>
+				<select class="w3-input" name="clientId">
+					{% for row in idler %}
+					<option value="{{row[0]}}">{{row[0]}}</option>
+					{% endfor %}
+				</select>
 				<p>Üye adı</p>
 				<select class="w3-input" name="clientName">
 					{% for row in isimler %}
@@ -49,20 +51,20 @@
 				</select>
 				<p>Gün<input type="date" name="date"></p>
 				<p>Paket türü</p>
-					<select class="w3-input" name="pakettipi">
-							{% for row in pakettipleri %}
-							<option value="{{row[0]}}">{{row[0]}}</option>
-							{% endfor %}
-						</select>
-				</div>
-				<input type="submit" value="Kaydet">
-			</form>
-		</div>
+				<select class="w3-input" name="pakettipi">
+					{% for row in pakettipleri %}
+					<option value="{{row[0]}}">{{row[0]}}</option>
+					{% endfor %}
+				</select>
+			</div>
+			<input type="submit" value="Kaydet">
+		</form>
+	</div>
 	</div>
 	<hr>
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
-		<table style="width: 100%">
+		<table id="myTable" style="width: 100%">
 			<thead>
 				<tr>
 					<th>Ders numarası</th>
@@ -72,7 +74,6 @@
 					<th>Öğretmenin adı</th>
 					<th>Gün</th>
 					<th>Paket türü</th>
-				
 				</tr>
 			</thead>
 			<tbody>
@@ -85,7 +86,6 @@
 					<td class="w3-gray">{{row[4]}}</td>
 					<td class="w3-gray">{{row[5]}}</td>
 					<td class="w3-gray">{{row[6]}}</td>
-					 
 				</tr>
 				{% endfor %}
 			</tbody>

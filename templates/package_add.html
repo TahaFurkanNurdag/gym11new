@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
@@ -20,46 +21,41 @@
 	<div class="w3-content w3-padding" style="max-width:1564px">
 		<div class="display">
 
-			<form class="w3-panel w3-card w3-white form-style-10" action="/addcategoryitem" method="POST" align="center">
+			<form class="w3-panel w3-card w3-white form-style-10" action="/addcategoryitem" method="POST"
+				align="center">
 				<h2>Yeni paket ekle</h2>
 
 				<p>Paket adı<input name="paketadi" class="w3-input" type="text" placeholder="Paket adı"></p>
-				<p>Paket Günü<input name="paketgunu" class="w3-input" type="text"
-					placeholder="Paket ücreti"></p>
+				<p>Paket Günü<input name="paketgunu" class="w3-input" type="text" placeholder="Paket ücreti"></p>
 				<p>Paket saat sayısı<input name="paketsaati" class="w3-input" type="text"
 						placeholder="Paket saat sayısı"></p>
-				<p>Paket ücreti<input name="paketfiyati" class="w3-input" type="text"
-						placeholder="Paket ücreti"></p>
-				<p>Paket detayları<input name="paketaciklamasi" class="w3-input" type="text"
-						placeholder="Açıklama"></p>
+				<p>Paket ücreti<input name="paketfiyati" class="w3-input" type="text" placeholder="Paket ücreti"></p>
+				<p>Paket detayları<input name="paketaciklamasi" class="w3-input" type="text" placeholder="Açıklama"></p>
 				<input type="submit" value="Add"></button>
 			</form>
 		</div>
 	</div>
-
 	<div class="w3-content w3-padding" style="max-width:1564px">
 		<div class="display">
-
-			<form class="w3-panel w3-card w3-white form-style-10" action="/addcategoryCafe" method="POST" align="center">
-				<h2>Kafeye yeni ürün ekle</h2>	
+			<form class="w3-panel w3-card w3-white form-style-10" action="/addcategoryCafe" method="POST"
+				align="center">
+				<h2>Kafeye yeni ürün ekle</h2>
 				<p>Ürünün adı<input name="nameOfProduct" class="w3-input" type="text" placeholder="Ürünün adı"></p>
 				<p>Stok sayısı<input name="stock" class="w3-input" type="text" placeholder="Stok sayısı"></p>
 				<input type="submit" value="Add"></button>
 			</form>
 		</div>
 	</div>
-<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
-		<table style="width: 100%">
+		<table id="myTable" style="width: 100%">
 			<thead>
 				<tr>
-					
 					<th>Paket Adı</th>
 					<th>Paket Günü</th>
 					<th>Paket saati</th>
 					<th>Paket Fiyatı</th>
 					<th>Paket açıklaması</th>
-				
 				</tr>
 			</thead>
 			<tbody>
@@ -70,15 +66,9 @@
 					<td class="w3-gray">{{row[3]}}</td>
 					<td class="w3-gray">{{row[4]}}</td>
 					<td class="w3-gray">{{row[5]}}</td>
-
-
-					
-					 
 				</tr>
 				{% endfor %}
-			
 			</tbody>
-
 		</table>
 		<br>
 	</div>

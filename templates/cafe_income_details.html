@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
@@ -14,56 +15,50 @@
 {% include 'HEADER.html' %}
 
 <!-- Content -->
+
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
 	<div class="w3-padding">
 		{% if msg %}
 		<p class="w3-gym11">{{msg}}</p>
 		{% endif %}
-			<form class="form-style-10" action="/cafeIncome" method="POST">
-				<div class="section"><span>1</span>Ürün bilgileri.</div>
-				<div class="inner-wrap">
+		<form class="form-style-10" action="/cafeIncome" method="POST">
+			<div class="section"><span>1</span>Ürün bilgileri.</div>
+			<div class="inner-wrap">
 				<p>Ürünün adı</p>
-					<select class="w3-input" name="uruntipi">
-							{% for row in cafe_urunleri %}
-							<option value="{{row[0]}}">{{row[0]}}</option>
-							{% endfor %}
-						</select>
+				<select class="w3-input" name="uruntipi">
+					{% for row in cafe_urunleri %}
+					<option value="{{row[0]}}">{{row[0]}}</option>
+					{% endfor %}
+				</select>
 				<p>Satın alan kişi kaç adet satın aldı.<input type="text" name="howMany"></p>
 				<p>Ürünün fiyatı<input type="text" name="urunFiyat"></p>
 				<p>Üye numarası<input type="text" name="clientId"></p>
 				<p>Gün<input type="date" name="date"></p>
-				</div>
-				
-				<input type="submit" value="Ekle">
-			</form>
-			
-			<form class="form-style-10" action="/searchCafe" method="POST">
-				<div class="section"><span>1</span>Arama</div>
-				<div class="inner-wrap">
-					<p>İsim<input type="text" name="name" placeholder="Id ye göre arat"></p>
-				</div>
-				
-				<input type="submit" value="Üye ara ">
-			</form>
-		</div>
+			</div>
+			<input type="submit" value="Ekle">
+		</form>
+		<form class="form-style-10" action="/searchCafe" method="POST">
+			<div class="section"><span>1</span>Arama</div>
+			<div class="inner-wrap">
+				<p>İsim<input type="text" name="name" placeholder="Id ye göre arat"></p>
+			</div>
+			<input type="submit" value="Üye ara ">
+		</form>
+	</div>
 	</div>
 	<hr>
-
-	
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
-		<table style="width: 100%">
+		<table id="myTable" style="width: 100%">
 			<thead>
 				<tr>
-					
 					<th>Sipariş sayısı</th>
 					<th>Ürünün adı</th>
 					<th>Satın alan kişi kaç adet satın aldı.</th>
 					<th>Ürünün fiyatı</th>
 					<th>Üye numarası</th>
 					<th>Gün</th>
-				
 				</tr>
 			</thead>
 			<tbody>
@@ -75,28 +70,20 @@
 					<td class="w3-gray">{{row[3]}}</td>
 					<td class="w3-gray">{{row[4]}}</td>
 					<td class="w3-gray">{{row[5]}}</td>
-					
-					 
 				</tr>
 				{% endfor %}
-			
 			</tbody>
-
 		</table>
 		<br>
 	</div>
-
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
-		<table style="width: 100%">
+		<table id="myTable" style="width: 100%">
 			<thead>
 				<tr>
-					
 					<th>Ürün numarası</th>
 					<th>Ürünün adı</th>
 					<th>Ürünün stok sayısı</th>
-
-				
 				</tr>
 			</thead>
 			<tbody>
@@ -105,23 +92,15 @@
 					<td class="w3-gray">{{row[0]}}</td>
 					<td class="w3-gray">{{row[1]}}</td>
 					<td class="w3-gray">{{row[2]}}</td>
-
-					
-					 
 				</tr>
 				{% endfor %}
-			
 			</tbody>
-
 		</table>
 		<br>
 	</div>
-
-
-	
-		<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
-		<table style="width: 100%">
+		<table id="myTable" style="width: 100%">
 			<thead>
 				<tr>
 					<th>Sipariş sayısı</th>
@@ -130,7 +109,6 @@
 					<th>Ürünün fiyatı</th>
 					<th>Üye numarası</th>
 					<th>Gün</th>
-				
 				</tr>
 			</thead>
 			<tbody>
@@ -142,8 +120,6 @@
 					<td class="w3-gray">{{row[3]}}</td>
 					<td class="w3-gray">{{row[4]}}</td>
 					<td class="w3-gray">{{row[5]}}</td>
-					
-					 
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -151,9 +127,6 @@
 		<Label>Total = {{dept}}</Label>
 		<br>
 	</div>
-	
-	
-
 </body>
 
 </html>

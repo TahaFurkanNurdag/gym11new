@@ -5,6 +5,7 @@
 	<title>Details</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
@@ -13,11 +14,18 @@
 {% include 'HEADER.html' %}
 
 <!-- Content -->
+
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
+	<div class="w3-margin">
+		<a class="w3-button w3-white" href="#bakiye">Bakiye</a>
+		<a class="w3-button w3-white" href="#alacak">Alacak Tutar</a>
+		<a class="w3-button w3-white" href="#kafe">Kafe Muhasebesi</a>
+	</div>
+	
 	<!-- NORMAL MUHASEBE -->
-	<div class="w3-margin w3-center w3-gym11">
-		<h1>Bakiye + Alacakların tutarı : {{(-1 * degerAlacaklar)+deger + degerCafe}}₺</h1>
+	<div id="bakiye" class="w3-margin w3-center w3-blue">
+		<h1>Bakiye + Alacakların tutarı : {{degerAlacaklar + deger + degerCafe}}₺</h1>
 	</div>
 	{% if deger == 0 %}
 	<div class="w3-margin w3-center w3-gray">
@@ -35,7 +43,7 @@
 
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
-		<table align="center">
+		<table id="myTable">
 			<thead>
 				<tr>
 					<th>Muhasebe No</th>
@@ -51,22 +59,22 @@
 				{% for row in value %}
 				<tr></tr>
 				<td class="w3-gray">{{row[0]}}</td>
-				
-				<td class="w3-gray" style="width: 10%">{{row[1]}}</td>
-				<td class="w3-gray" style="width: 10%">{{row[2]}}</td>
-				<td class="w3-gray" style="width: 10%">{{row[3]}}</td>
+
+				<td class="w3-gray">{{row[1]}}</td>
+				<td class="w3-gray">{{row[2]}}</td>
+				<td class="w3-gray">{{row[3]}}</td>
 
 
 				{% if row[4] > 0 %}
-				<td class="w3-green" style="width: 30%">{{row[4]}}</td>
+				<td class="w3-green">{{row[4]}}</td>
 				{% elif row[4] < 0 %}
-				<td class="w3-gym11" style="width: 30%">{{row[4]}}</td>
+				<td class="w3-gym11">{{row[4]}}</td>
 				{% else %}
-				<td class="w3-gray" style="width: 30%">{{row[4]}}</td>
+				<td class="w3-gray">{{row[4]}}</td>
 				{% endif %}
-				
-				<td class="w3-gray" style="width: 10%">{{row[5]}}</td>
-				<td class="w3-gray" style="width: 10%">{{row[6]}}</td>
+
+				<td class="w3-gray">{{row[5]}}</td>
+				<td class="w3-gray">{{row[6]}}</td>
 
 				</tr>
 				{% endfor %}
@@ -74,78 +82,28 @@
 		</table>
 	</div>
 	<!-- BORCLAR + MUHASEBE MUHASEBE -->
-	{% if degerAlacaklar == 0 %}
-	<div class="w3-margin w3-center w3-gray">
-		<h1 class=""> Alacağın tutar : {{degerAlacaklar}}₺</h1>
+	<div id="alacak">
+		{% if degerAlacaklar == 0 %}
+		<div class="w3-margin w3-center w3-gray">
+			<h1 class=""> Alacağın tutar : {{degerAlacaklar}}₺</h1>
+		</div>
+		{% elif degerAlacaklar > 0 %}
+		<div class="w3-margin w3-center w3-green">
+			<h1 class="">Alacağın tutar : +{{degerAlacaklar}}₺</h1>
+		</div>
+		{% else %}
+		<div class="w3-margin w3-center w3-gym11">
+			<h1>Alacağın tutar {{degerAlacaklar}}₺</h1>
+		</div>
+		{% endif %}
 	</div>
-	{% elif degerAlacaklar > 0 %}
-	<div class="w3-margin w3-center w3-green">
-		<h1 class="">Alacağın tutar : +{{degerAlacaklar}}₺</h1>
-	</div>
-	{% else %}
-	<div class="w3-margin w3-center w3-gym11">
-		<h1>Alacağın tutar {{degerAlacaklar}}₺</h1>
-	</div>
-	{% endif %}
+
 
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
 		<br>
-		<table align="center">
+		<table id="myTable">
 			<thead>
 				<tr>
-
-						<th>Muhasebe No</th>
-						<th>Üye numarası</th>
-						<th>Üye ismi</th>
-						<th>Üye soyadı</th>
-						<th>Tutar</th>
-						<th>Tarih</th>
-						<th>Açıklama</th>
-					</tr>
-				</thead>
-				<tbody>
-					{% for row in alacaklar  %}
-					<tr></tr>
-					<td class="w3-gray">{{row[0]}}</td>
-					
-					<td class="w3-gray" style="width: 10%">{{row[1]}}</td>
-					<td class="w3-gray" style="width: 10%">{{row[2]}}</td>
-					<td class="w3-gray" style="width: 10%">{{row[3]}}</td>
-	
-	
-					{% if row[4] > 0 %}
-					<td class="w3-green" style="width: 30%">{{row[4]}}</td>
-					{% elif row[4] < 0 %}
-					<td class="w3-gym11" style="width: 30%">{{row[4]}}</td>
-					{% else %}
-					<td class="w3-gray" style="width: 30%">{{row[4]}}</td>
-					{% endif %}
-					
-					<td class="w3-gray" style="width: 10%">{{row[5]}}</td>
-					<td class="w3-gray" style="width: 10%">{{row[6]}}</td>
-				{% endfor %}
-			</tbody>
-		</table>
-	</div>
-
-	<!-- KAFE MUHASEBE -->
-	{% if degerCafe == 0 %}
-	<div class="w3-margin w3-center w3-gray">
-		<h1 class="">Kafenin bakiyesi : {{degerCafe}}₺</h1>
-	</div>
-	{% elif degerCafe > 0 %}
-	<div class="w3-margin w3-center w3-green">
-		<h1 class="">Kafenin bakiyesi : +{{degerCafe}}₺</h1>
-	</div>
-	{% else %}
-	<div class="w3-margin w3-center w3-gym11">
-		<h1>Kafenin bakiyesi : {{degerCafe}}₺</h1>
-	</div>
-	{% endif %}
-	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
-		<br>
-		<table align="center">
-			<thead>
 					<th>Muhasebe No</th>
 					<th>Üye numarası</th>
 					<th>Üye ismi</th>
@@ -156,25 +114,79 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for row in cafedata  %}
+				{% for row in alacaklar  %}
 				<tr></tr>
 				<td class="w3-gray">{{row[0]}}</td>
-				
-				<td class="w3-gray" style="width: 10%">{{row[1]}}</td>
-				<td class="w3-gray" style="width: 10%">{{row[2]}}</td>
-				<td class="w3-gray" style="width: 10%">{{row[3]}}</td>
+
+				<td class="w3-gray">{{row[1]}}</td>
+				<td class="w3-gray">{{row[2]}}</td>
+				<td class="w3-gray">{{row[3]}}</td>
 
 
 				{% if row[4] > 0 %}
-				<td class="w3-green" style="width: 30%">{{row[4]}}</td>
+				<td class="w3-green">{{row[4]}}</td>
 				{% elif row[4] < 0 %}
-				<td class="w3-gym11" style="width: 30%">{{row[4]}}</td>
+				<td class="w3-gym11">{{row[4]}}</td>
 				{% else %}
-				<td class="w3-gray" style="width: 30%">{{row[4]}}</td>
+				<td class="w3-gray">{{row[4]}}</td>
 				{% endif %}
-				
-				<td class="w3-gray" style="width: 10%">{{row[5]}}</td>
-				<td class="w3-gray" style="width: 10%">{{row[6]}}</td>
+
+				<td class="w3-gray">{{row[5]}}</td>
+				<td class="w3-gray">{{row[6]}}</td>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	<!-- KAFE MUHASEBE -->
+	<div id="kafe">
+		{% if degerCafe == 0 %}
+		<div class="w3-margin w3-center w3-gray">
+			<h1 class="">Kafenin bakiyesi : {{degerCafe}}₺</h1>
+		</div>
+		{% elif degerCafe > 0 %}
+		<div class="w3-margin w3-center w3-green">
+			<h1 class="">Kafenin bakiyesi : +{{degerCafe}}₺</h1>
+		</div>
+		{% else %}
+		<div class="w3-margin w3-center w3-gym11">
+			<h1>Kafenin bakiyesi : {{degerCafe}}₺</h1>
+		</div>
+		{% endif %}
+	</div>
+	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+		<br>
+		<table id="myTable">
+			<thead>
+				<th>Muhasebe No</th>
+				<th>Üye numarası</th>
+				<th>Üye ismi</th>
+				<th>Üye soyadı</th>
+				<th>Tutar</th>
+				<th>Tarih</th>
+				<th>Açıklama</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for row in cafedata  %}
+				<tr></tr>
+				<td class="w3-gray">{{row[0]}}</td>
+
+				<td class="w3-gray">{{row[1]}}</td>
+				<td class="w3-gray">{{row[2]}}</td>
+				<td class="w3-gray">{{row[3]}}</td>
+
+
+				{% if row[4] > 0 %}
+				<td class="w3-green">{{row[4]}}</td>
+				{% elif row[4] < 0 %}
+				<td class="w3-gym11">{{row[4]}}</td>
+				{% else %}
+				<td class="w3-gray">{{row[4]}}</td>
+				{% endif %}
+
+				<td class="w3-gray">{{row[5]}}</td>
+				<td class="w3-gray">{{row[6]}}</td>
 				{% endfor %}
 			</tbody>
 		</table>
