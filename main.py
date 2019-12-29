@@ -22,8 +22,10 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # SUCCESS CODE 8
 # FAILURE CODE 9
 
+
 class DatabaseName:
     databaseName = "database.db"
+
 
 def getLoginDetails():
     with sqlite3.connect(DatabaseName.databaseName) as conn:
@@ -75,6 +77,8 @@ def parse(data):  # urunleri listelememizde kullandigimiz fonksiyon. birden fazl
             i += 1
         ans.append(curr)
     return ans
+
+
 '''
 @app.route("/changeDatabaseName")  # kategori ekleme sayfasi
 def addcategory():
@@ -95,6 +99,17 @@ def root():
         session['adminMi'] = adminMi  # bu session icine aktarilacak
     # yukarida olusturulan fonksiyondan degerler cekiliyor
     girildiMi, adi = getLoginDetails()[1:]  # userid gereksiz
+    # KULLANICILARDA DOĞUM TARIHI YOK, VERITABANINDA ONU AYARLAMAK LAZIM
+    # with sqlite3.connect(DatabaseName.databaseName) as conn:
+    #     try:
+    #         cur = conn.cursor()
+    #         cur.execute("select * from pakettipi")
+    #         tumPaketler = cur.fetchall()
+    #         conn.commit()  # burada kategori veritabanina ekleniyor
+    #     except Exception as e:
+    #         print(e)
+    #         conn.rollback()
+    # conn.close()
     return render_template('root.html', girildiMi=girildiMi, adi=adi)
 
 
@@ -317,8 +332,8 @@ def clientsDetails():
     columnIsimleri = []
     for i in range(len(columnName)):
         columnIsimleri.append(str(columnName[i])[2:-3])
-
-    return render_template("clients_details.html", columnIsimleri=columnIsimleri , value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
+    print(data)
+    return render_template("clients_details.html", columnIsimleri=columnIsimleri , count=len(columnName), value=data, userId=userId, girildiMi=girildiMi, adi=adi, pakettipleri=pakettipleri)
 
 
 @app.route("/teachersDetails")
@@ -572,7 +587,6 @@ def searchCafe():
             con.close()
         else:
             msg = "Kayıt bilgileri eksik"
-            
         return render_template("cafe_income_details.html", temp_deger=temp_deger, dept=dept,value=value, error=msg, date=date, girildiMi=girildiMi, adi=adi)
     else:
         return redirect(url_for('root'))
@@ -1082,7 +1096,7 @@ def increaseOneMonthForExtraPackage():
 
 @app.route("/decreaseOneDayForExtraPackage")
 def decreaseOneDayForExtraPackage():
-    if True == True:
+    try:
         with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
@@ -1099,14 +1113,14 @@ def decreaseOneDayForExtraPackage():
                 print(e)
         con.close()
         return redirect(url_for('clientsDetails'))
-    else:
-        print("error")
+    except Exception as e:
+        print(e)
         return redirect(url_for('root'))
 
 
 @app.route("/increaseOneDayForExtraPackage")
 def increaseOneDayForExtraPackage():
-    if True == True:
+    try:
         with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
@@ -1123,8 +1137,8 @@ def increaseOneDayForExtraPackage():
                 print(e)
         con.close()
         return redirect(url_for('clientsDetails'))
-    else:
-        print("error")
+    except Exception as e:
+        print(e)
         return redirect(url_for('root'))
 
 ############################################################################# Package Functions ########

@@ -128,8 +128,8 @@ conn.execute('''CREATE TABLE `cafeUrunleri` (
 	PRIMARY KEY(`urunId`)
 		)''')
 		
-conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "kayitEdeninAdi", "hastalik", "tel", "boy", "kilo", "adres1", "adres2", "kayitgunu", "aktifmi", "katilim", "arkadassayisi", "ogretmenMi", "adminMi") VALUES ('1', 'tfn', 'tfn@tfn', 'Taha Furkan', 'Nurdag', 'TFN', 'Yok', '05350363646', '181', '85', 'EvAdresi', 'IsAdresi', '17.12.2019', '1', '0', '0', '1', '1')''')
-conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "kayitEdeninAdi", "hastalik", "tel", "boy", "kilo", "adres1", "adres2", "kayitgunu", "aktifmi", "katilim", "arkadassayisi", "ogretmenMi", "adminMi") VALUES ('2', 'ozgur', 'ozgur@ozbek', 'Ozgur', 'Ozbek', 'TFN', 'Yok', '05062545050', '180', '85', 'EvAdresi', 'IsAdresi', '17.12.2019', '1', '0', '1', '1', '1') ''')
+conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "kayitEdeninAdi", "hastalik", "tel", "boy", "kilo", "adres1", "adres2", "kayitgunu", "aktifmi", "katilim", "arkadassayisi", "ogretmenMi", "adminMi") VALUES ('1', 'tfn', 'tfn@tfn', 'Taha Furkan', 'Nurdag', 'TFN', 'Yok', '05350363646', '181', '85', 'EvAdresi', 'IsAdresi', '2019-12-17', '1', '0', '0', '1', '1')''')
+conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "kayitEdeninAdi", "hastalik", "tel", "boy", "kilo", "adres1", "adres2", "kayitgunu", "aktifmi", "katilim", "arkadassayisi", "ogretmenMi", "adminMi") VALUES ('2', 'ozgur', 'ozgur@ozbek', 'Ozgur', 'Ozbek', 'TFN', 'Yok', '05062545050', '180', '85', 'EvAdresi', 'IsAdresi', '2019-12-17', '1', '0', '1', '1', '1') ''')
 conn.commit()
 
 conn.close()

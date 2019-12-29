@@ -13,6 +13,7 @@ function myFunction() {
             txtValue = td.textContent || td.innerText;
             if (txtValue.toUpperCase().indexOf(filter) > -1) {
                 tr[i].style.display = "";
+                // i nin değerini alıp values arrayine atacak
             } else {
                 tr[i].style.display = "none";
             }

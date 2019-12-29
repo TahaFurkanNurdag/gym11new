@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
@@ -17,49 +18,56 @@
 
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
-<div class="w3-container w3-center" >	
-	<div class="w3-container " >
-		<div >
-			<form class="form-style-10" action="/increaseOneMonthForExtraPackage" method="POST">
-				<div class="section">Ekstra paket ekleme</div>
-				<div class="inner-wrap">
-					<p>Üye numarası<input type="text" name="no"></p>
-					<p>Paket adı</p>
-					<select class="w3-input" name="ekstrapaketler">
-						{% for row in pakettipleri %}
-						<option value="{{row[0]}}">{{row[0]}}</option>
-						{% endfor %}
-					</select>
-				</div>
-				<input type="submit" value="Ekstra paketlerden gün sayısını azalt yada arttır.">
-				<hr>
-				<input type="button" onclick="location.href='/increaseOneDayForExtraPackage'" value="+1"
-					style="font-size: 24pt!important">
-				<input type="button" onclick="location.href='/decreaseOneDayForExtraPackage'" value="-1"
-					style="font-size: 24pt!important">
-				herkesin ekstra paketlerinden.
-			</form>
+	<div class="w3-container w3-center">
+		<div class="w3-container ">
+			<div>
+				<form class="form-style-10" action="/increaseOneMonthForExtraPackage" method="POST">
+					<div class="section">Ekstra paket ekleme</div>
+					<div class="inner-wrap">
+						<p>Üye numarası<input type="text" name="no"></p>
+						<p>Paket adı</p>
+						<select class="w3-input" name="ekstrapaketler">
+							{% for row in pakettipleri %}
+							<option value="{{row[0]}}">{{row[0]}}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<input type="submit" value="Ekstra paketlerden gün sayısını azalt yada arttır.">
+					<hr>
+					<input type="button" onclick="location.href='/increaseOneDayForExtraPackage'" value="+1"
+						style="font-size: 24pt!important">
+					<input type="button" onclick="location.href='/decreaseOneDayForExtraPackage'" value="-1"
+						style="font-size: 24pt!important">
+					herkesin ekstra paketlerine.
+				</form>
+			</div>
+
 		</div>
-	
-</div>
-	<hr>
-
-
-
-	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
-		<br>
-		<table style="width: 100%">
-			<thead>
-				{% for key in columnIsimleri %}
-				<tr>
-				  <th> {{ key }} </th>
-				  <td> {{ value }} </td>
-				</tr>
-			  {% endfor %}
-			</tbody>
-		</table>
-		<br>
-	</div>
+		<hr>
+		<div class="w3-padding w3-center w3-white" style="overflow-x:auto;">
+			<br>
+			<table id="myTable" style="width: 100%">
+				<thead>
+					<tr>
+						{% for key in columnIsimleri %}
+						<th>{{key}}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+				<tbody>
+					{% for data in value %}
+					<tr>
+						{% for i in range(count)%}
+						<td class="w3-gray">{{data[i]}}</td>
+						{% endfor %}
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			Total debt is :
+			<label id="jsvals"></label>
+			<br>
+		</div>
 </body>
 
 </html>
