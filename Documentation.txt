@@ -1,0 +1,150 @@
+# Genel bakis
+
+Uygulamanın içerisinde yapabildiklerimiz müşterilerimizi ve muhasebemizi takip etmektir. Biz bu uygulamayı kullanırken
+gelir detaylarını ve kafenin gelir detaylarını inceleyebileceğiz aynı zamanda üyelerimizin paketlerinin kalan sürelerini
+ve bu sürelerin sonunda alacağımız ücreti sisteme girerek üyelerimizi takipte edebileceğiz.
+
+
+
+# Üyeler
+
+Üyeler kısmı 3 dala ayrılıyor;
+     -Üye kayıt et.
+     -Üyeleri görüntüle.
+     -Üyelerin hangi hocalarla ne ders yaptıkları.
+
+
+#### Üye Kayıt et.
+Üyeleri sisteme eklerken belli başlı verileri üyeden talep ederiz.Ettiğimiz bu verilerden sonra tüm üyeleri
+kontrol ettiğimiz kısma geçerek yeni kayıt ettiğimiz üyeye paketler ekleyeceğiz bu işlemi nasıl yapacağımızı
+"Üyeleri görüntüle" sayfasının dökümantasyon bölümünde göreceğiz. Üye kaydı esnasında karşımıza çıkacak olan
+hatalar olacaktır. Bu hatalar Kodlar ile belirtilmiştir ve bu kodların bir anlamı mevcuttur Kayıt için göreceğimiz
+Error numarası "704" , "705" ve "902" dir.  
+
+# 704 numaralı error
+
+704 numaralı hata kullanıcıyı kayıt ederken yazdığımız değerlerin içerisinde
+anlamsız,yanlış veya olağan dışı bir değer olduğunu söylemektedir eğer bu hata ile karşılaşırsanız
+lütfen kayıt ettiğiniz değerleri kontrol ediniz eğer kontrol ettiğinizde ve herhangi bir sorunla karşılaşmadıysanız
+yapmanız gereken tek şey uygulamayı yapan ekiple görüşmenizdir.
+
+# 705 numaralı error
+
+705 numaralı error bu error ile karşılaşırsanız bilgilerde bir hata değil fakat internetiniz ile ilgili bir problemden ötürü
+karşılaşabilirsiniz bu durumdada ulaşmanız gereken kişi almış olduğunuz sunucu eğer herhangi bir sunucu 
+alınmamış ise sunucu olarak kullandığınız bilgisayarın internet bağlantısını kontrol etmelisiniz.
+
+# 902 numaralı error 
+
+902 numaralı error aslında sizin kayıt ettiğiniz üyeyi kayıt ederken kullanacağınız bilgilere aslında
+erişemediğinizi ve bu değerlerin kayıt ederken ihtiyacınız olduğunu belirtir.Bunun ile ilgili veri tabanınızı
+doğru doldurmadığınızı veya internet ile ilgili bir kopma yaşadığınızı gösterir
+
+
+
+#### Üyeleri görüntüle
+Bu kısımda üyelerin tüm bilgilerine ulaşabilirsiniz ve eğer bir üyeyi yeni kayıt ettiyseniz bu üyenin
+id numarasını yazıp paket ismini seçerseniz o üyeye o paketi tanımlamış olursunuz .Ve bu paket
+tanımlamalarının üzerinde bulunan +1 ve -1 butonları kullanıcıların sahip olduğu paket değerlerini
+tıkladığınız değere göre arttırır veya azalır ve bunu her gün sonunda yapmanız gerekir. Bu manuel şekilde 
+yapılması gerekir , gün sonu olarak adlandırabiliriz. 
+Bu sayfadaki fonksiyonları kullanırken karşılaşabileceğiniz error kodları mevcuttur bunlar "903" , "707"dır
+
+# 903 numaralı error
+903 numaralı error kodunu görürseniz eğer paketleriniz database içerisinde doğru şekilde çalışmıyordur bu sorun
+internet bağlantısını kontrol etmelisiniz.
+
+# 707 numaralı error
+707 numaralı error değerleri databasinizden çekerken yaşanan hatadan dolayı gösterilir internet kaynaklı veya
+yanlış tarihli database kullanımından ötürü yaşanıyordur bunun için mevcut databasinizi kontrol etmeniz gerekir.
+
+
+#### Üyelerin hangi hocalarla ne ders yaptıkları
+
+Burada uygulama kullanan kişiye belli başı değerler sorar o gün derslere giren kişilerin isimleri ve o günün
+tarihi girildikten sonra , üye ile yapılan paket seçilir paket seçilip sisteme kaydedildikten sonra seçilen üyenin
+paket haklarından işlem yapılır ve bu sayfada aynı zamanda hangi hocaların hangi üyelerle yaptıkları dersleri takip
+edilip değerler analiz edilebilir bu sayfanın içerisinde üye ID ile arama yapılmaktadır o üyenin o dönem içerisinde
+hangi hocalarla hangi dersi yaptıklarını takip edebilirsiniz. Karşılabilme ihtimaliniz olan hata kodları
+"904" ve "709" dur
+
+# 904 numaralı error 
+904 numaralı error kodunu görürseniz eğer paketleriniz database içerisinde doğru şekilde çalışmıyordur bu sorun
+internet bağlantısını kontrol etmelisiniz.
+
+
+# 709 numaralı error
+
+709 numaralı error bu error ile karşılaşırsanız bilgilerde bir hata değil fakat internetiniz ile ilgili bir problemden ötürü
+karşılaşabilirsiniz bu durumdada ulaşmanız gereken kişi almış olduğunuz sunucu eğer herhangi bir sunucu 
+alınmamış ise sunucu olarak kullandığınız bilgisayarın internet bağlantısını kontrol etmelisiniz.Database verileri
+doğru çekilmediği zaman bu errorle karşılaşırsınız 
+
+
+# Muhasebe 
+
+Muhasebe 4 farklı dala ayrılıyor ;
+
+
+#### Muhasebe hareketi ekle
+
+Bu alanda sistem kullanıcıya belli başlı sorular soruyor burada kullanıcının yapması gerekenler örnek olarak verilmiştir;
+
+Mesela Spor salonu Tesisatçı Ahmet güneriye 600 tl kasadan ödeme yapacak
+
+Sistemde Ödeme diye bir kayıtlı üye olacak ve tüm ödemeler bu kişi seçilerek yapılacak ama bu işlemlerin 
+sonunda en kritik kısım açıklama çünkü açıklama kısmına Tesisatçı Ahmet Güneri -600 tl ödeme diye yazılacak
+ve yazılan bu değer kasadan düşecek bu örnek işlemin sonundan kasadan düşecek değer -600 tldir. Ve bir dönem sonra
+yapılmış olan ödeme arşive dönülerek . Bu sayfadaki fonksiyonlar kullanılırken karşımıza çıkacak hata kodları
+"702" dir.
+
+# 702 numaralı error 
+702 numaralı error, değerleri sisteme kaydederken yazmış olduğunuz değerlerin içerisinde yazım hataları veya
+yanlış olduğunu belirtir lütfen yazdığınız değerleri geri dönerek tekrar kontrol ediniz eğer herhangi bir yanlışınız
+olmadığını düşünüyorsanız lütfen bu durumun ekran görüntsünü veya hangi soru kalıplarının içerisine hangi değerleri
+yazdıysanız lütfen yazılım ekibine gösteriniz yazılım ekibi bu yazılan değerin nasıl olmasını gerektiğini veya
+bu değerin neden program tarafından yanlış olduğunu tespit edecek ve bu tespitin sonucunda hatayı giderecektir.
+
+
+
+#### Tüm muhasebeyi görüntüle 
+
+
+Tabloların üzerinde bulunan "Bakiye" , "Alacak Tutar" , "Kafe Muhasebesi" butonları ileride şişecek olan tablolar
+için koyulmuştur. İncelemek istediğiniz tabloya göre butonlara basarak o tablolara ulaşabileceksiniz . Dönem sonuna
+doğru bu tablolar sayfanın içerisinde büyük
+
+
+Bu sayfanın içerisinde tüm muhasebe değerlerininin toplamı ve sonucu göstermektedir, En üstte yazan mavi değer
+üyelerin size olan borçları ve kasanızın içerisindeki tutarın toplamını göstermektedir. Yeşil ile gösterilen
+bakiye aslında sizin kasanızın içerisinde olan tutardır . Eğer kasa içerisindeki tutar ile yeşil değer birbiri 
+ile uyuşmuyor ise ya kasanın içerisine eklenen tutar veya yapılan ödeme doğru girilmemiştir.
+En aşağıda kırmızı ile yazılan Alacağın tutarda insanların size olan borcudur . Örnek olarak Ahmet isimli kullanıcı
+sizden PT paketli üyelik satın aldı fakat parasını bir sonraki hafta ödemek istediğini söyledi , siz bu kullancıyı
+sisteme yüklerken borçlu olarak kaydedeceksiniz ve bu tutar borç olarak buraya eklenecek , siz parayı aldığınızı
+programa bildirdikten sonra bu alacağıniz tutar değeri tablodan manuel olarak silinecek bunun icin silmek istediginiz
+kişi ve tutar sırasına gelip sil butonuna basmanız yeterli olacaktır. En aşağıda bulunan tablolar ise kafenin
+geliri ve alacaklarına aittir . Bu gelir spor salonunun gelirinden daha farklı olduğu için farklı tabloda gösterilmiştir
+gösterilen bu tutarlar bakiyeye eklenmez alacaklarda ana bakiyeden bağımsızdır.Bu sayfada herhangi bir fonksiyonellik
+bulunmadığı için herhangi bir error kodu yoktur.
+
+
+#### Gelir Detayları
+
+Burada biz herhangi bir üye sahip olduğu paketi tamamladıktan sonra o üyeden tekrar ödeme aldığımızda kullanmamız
+gereken noktadır. Örnek olarak Ahmet isimli kullanıcı sahip olduğu 30 günlük 12 ders lik PT paketini bitirdi , 
+Ve size tekrar PT paketi almak istediğini söyledi . Siz direkt olarak bu kısıma giriyorsunuz ve üyenin üye numarasını
+sorarak isim ve soyismini giriyorsunuz eğer üye size bu işlemi yaparken direkt olarak paket ücretini yukarıdaki
+örneğe göre 1200 tl yi ödediyse "+1200" tl yazıyorsunuz ve o günü seçip açıklama olarak ÖDENDİ veya HAVALE İLE ÖDEDİ
+yazıyorsunuz. Bu yazdığınız açıklama tamamen sizin sonradan kontrolleriniz içindir gerekirse boşta bırakabilirsiniz , 
+Ama yazacağınız her açıklama ileride sizin bu işlemi hatırlamanızda yardımcı olacaktır . Ekle butonuna bastıktan sonra
+ödemeyi yapan üyenin hesabına seçtiğiniz paketin yani yukardaki örneğe göre 30 gün ve 12 derslik hakkı hesaplarına
+eklenecektir. Ödeme kontrollerinin detaylarını ekleme yaptığınız alanın altında ID ile kontrol ederek bulabilirsiniz
+Yukarıda örnek vermiş olduğumuz üyenin ID numarasını 5 olarak varsayarsak arama kısmına 5 yazarak o dönem içerisinde
+ne zaman ne kadar ve hangi dersler için ödeme yaptığını inceleyebilirsiniz. Ödeme kısmında 0 ın altında yazılmış
+değerler sizin muhasebe bölümünde alacaklar olarak tanımlanmıştır ve bu ödemeleri başka bir tarihte tekrar aldıktan
+sonra sisteme yazmanız gerekmektedir . Spesifik olarak üyelerin ödemelerini ve ödeme takiplerinide bu şekilde takip
+edebileceksiniz.
+
+
+
