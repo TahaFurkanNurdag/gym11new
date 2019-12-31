@@ -246,6 +246,7 @@ def register():
         arkadassayisi = request.form['arkadassayisi']
         kayitEdeninAdi = request.form['kayitEdeninAdi']
         hastalik = request.form['hastalik']
+        dogumtarihi= request.form['dogumtarihi']
 
 
         if ogretmenMi =='Evet':
@@ -262,8 +263,8 @@ def register():
         with sqlite3.connect(DatabaseName.databaseName) as con:
             try:
                 cur = con.cursor()
-                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi,kayitEdeninAdi,hastalik, tel,boy,kilo, adres1, adres2,kayitgunu,aktifmi,katilim,arkadassayisi, ogretmenMi,adminMi) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,1)', (
-                    parola, email, adi, soyadi,kayitEdeninAdi,hastalik,  tel, boy, kilo,adres1, adres2, kayitgunu, aktifmi, arkadassayisi, ogretmenMi))
+                cur.execute('INSERT INTO kullanicilar (parola, email, adi, soyadi,kayitEdeninAdi,hastalik,dogumtarihi, tel,boy,kilo, adres1, adres2,kayitgunu,aktifmi,katilim,arkadassayisi, ogretmenMi,adminMi) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,1)', (
+                    parola, email, adi, soyadi,kayitEdeninAdi,hastalik,dogumtarihi,  tel, boy, kilo,adres1, adres2, kayitgunu, aktifmi, arkadassayisi, ogretmenMi))
                 con.commit()  # veritabanina kaydedildi
                 print("Success. Success Code: 802")
             except Exception as e:

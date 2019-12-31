@@ -12,6 +12,7 @@ conn.execute('''CREATE TABLE `kullanicilar` (
 	`soyadi`	TEXT,
 	`kayitEdeninAdi` TEXT,
 	`hastalik` TEXT,
+	`dogumTarihi` DATE,
 	`tel`	TEXT,
 	`boy`   INTEGER,
 	`kilo`  INTEGER,
@@ -127,9 +128,27 @@ conn.execute('''CREATE TABLE `cafeUrunleri` (
 	`totalStok`	INTEGER,
 	PRIMARY KEY(`urunId`)
 		)''')
+
+
+conn.execute('''CREATE TABLE `cafealacaklar` (
+	`id`	INTEGER,
+	`userId` INTEGER,
+	`userName` TEXT,
+	`userSurname` TEXT,
+	`price` INTEGER,
+	`date`  DATE,
+	`explanation` TEXT,
+	FOREIGN KEY(`userId`) REFERENCES `kullanicilar`(`userId`),
+	FOREIGN KEY(`userName`) REFERENCES `kullanicilar`(`adi`),
+	FOREIGN KEY(`userSurname`) REFERENCES `kullanicilar`(`soyadi`),
+	PRIMARY KEY(`id`)
+		)''')
 		
-conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "kayitEdeninAdi", "hastalik", "tel", "boy", "kilo", "adres1", "adres2", "kayitgunu", "aktifmi", "katilim", "arkadassayisi", "ogretmenMi", "adminMi") VALUES ('1', 'tfn', 'tfn@tfn', 'Taha Furkan', 'Nurdag', 'TFN', 'Yok', '05350363646', '181', '85', 'EvAdresi', 'IsAdresi', '2019-12-17', '1', '0', '0', '1', '1')''')
-conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "kayitEdeninAdi", "hastalik", "tel", "boy", "kilo", "adres1", "adres2", "kayitgunu", "aktifmi", "katilim", "arkadassayisi", "ogretmenMi", "adminMi") VALUES ('2', 'ozgur', 'ozgur@ozbek', 'Ozgur', 'Ozbek', 'TFN', 'Yok', '05062545050', '180', '85', 'EvAdresi', 'IsAdresi', '2019-12-17', '1', '0', '1', '1', '1') ''')
+		
+conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "kayitEdeninAdi", "hastalik","dogumTarihi", "tel", "boy", "kilo", "adres1", "adres2", "kayitgunu", "aktifmi", "katilim", "arkadassayisi", "ogretmenMi", "adminMi") VALUES ('1', 'tfn', 'tfn@tfn', 'Taha Furkan', 'Nurdag', 'TFN', 'Yok',"1997-09-26", '05350363646', '181', '85', 'EvAdresi', 'IsAdresi', '2019-12-17', '1', '0', '0', '1', '1')''')
+conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "kayitEdeninAdi", "hastalik","dogumTarihi", "tel", "boy", "kilo", "adres1", "adres2", "kayitgunu", "aktifmi", "katilim", "arkadassayisi", "ogretmenMi", "adminMi") VALUES ('2', 'ozgur', 'ozgur@ozbek', 'Ozgur', 'Ozbek', 'TFN', 'Yok',"1997-09-26", '05062545050', '180', '85', 'EvAdresi', 'IsAdresi', '2019-12-17', '1', '0', '1', '1', '1') ''')
+conn.execute('''INSERT INTO "main"."kullanicilar" ("userId", "parola", "email", "adi", "soyadi", "kayitEdeninAdi", "hastalik","dogumTarihi", "tel", "boy", "kilo", "adres1", "adres2", "kayitgunu", "aktifmi", "katilim", "arkadassayisi", "ogretmenMi", "adminMi") VALUES ('3', 'DışKaynak', 'DışKaynak@DışKaynak', 'DışKaynak', 'DışKaynak', 'DışKaynak', 'DışKaynak',"1997-09-26", '0000000', '000', '0000', '0000', '0000', '12-12-12', '0', '0', '0', '0', '0') ''')
+
 conn.commit()
 
 conn.close()
