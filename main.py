@@ -99,18 +99,21 @@ def root():
         session['adminMi'] = adminMi  # bu session icine aktarilacak
     # yukarida olusturulan fonksiyondan degerler cekiliyor
     girildiMi, adi = getLoginDetails()[1:]  # userid gereksiz
-    # KULLANICILARDA DOĞUM TARIHI YOK, VERITABANINDA ONU AYARLAMAK LAZIM
-    # with sqlite3.connect(DatabaseName.databaseName) as conn:
-    #     try:
-    #         cur = conn.cursor()
-    #         cur.execute("select * from pakettipi")
-    #         tumPaketler = cur.fetchall()
-    #         conn.commit()  # burada kategori veritabanina ekleniyor
-    #     except Exception as e:
-    #         print(e)
-    #         conn.rollback()
-    # conn.close()
-    return render_template('root.html', girildiMi=girildiMi, adi=adi)
+    with sqlite3.connect(DatabaseName.databaseName) as conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("select adi, soyadi, dogumTarihi from kullanicilar")
+            adsoyadgun = cur.fetchall()
+            today = date.today()
+            people = []
+            for i in range(len(adsoyadgun)):
+                if str(adsoyadgun[i][2]) == str(today):
+                    people.append(adsoyadgun[i][0:2])
+            people = str(people).replace("'","").replace(",","").replace("(","").replace("[","").replace("]","")[:-1].split(")")
+        except Exception as e:
+            print(e)
+    conn.close()
+    return render_template('root.html', data=people, girildiMi=girildiMi, adi=adi)
 
 
 @app.route("/addcategory")  # kategori ekleme sayfasi
@@ -607,23 +610,41 @@ def backupProcedure():
         now = date.today().weekday()
         if(now == 0):
             now = "Pazartesi"
-        if(now == 1):
+        elif(now == 1):
             now = "Sali"
-        if(now == 2):
+        elif(now == 2):
             now = "Carsamba"
-        if(now == 3):
+        elif(now == 3):
             now = "Persembe"
-        if(now == 4):
+        elif(now == 4):
             now = "Cuma"
-        if(now == 5):
+        elif(now == 5):
             now = "Cumartesi"
-        if(now == 6):
+        else:
             now = "Pazar"
-        shutil.copyfile('./database.db', './database_backup_' +
-                        str(today) + '_'+str(now)+'_.db')
+        shutil.copyfile("./database.db",f"./database_backup_{str(today)}_{str(now)}.db")
+
+        with sqlite3.connect(DatabaseName.databaseName) as con:
+            try:
+                cur = con.cursor()
+                # Tabloları temizleme
+                cur.execute("DELETE FROM alacaklar")
+                cur.execute("DELETE FROM cafe")
+                cur.execute("DELETE FROM cafeUrunleri")
+                cur.execute("DELETE FROM cafealacaklar")
+                cur.execute("DELETE FROM cafemuhasebe")
+                cur.execute("DELETE FROM gelir")
+                cur.execute("DELETE FROM muhasebe")
+                cur.execute("DELETE FROM ogretmenlerinDersleri")
+                cur.execute("DELETE FROM hareketler")
+                con.commit()
+                con.close()
+            except Exception as e:
+                print(f"Hata oluştu: {e}")
+
     except Exception as e:
         print(f"Hata oluştu: {e}")
-    userId, girildiMi, adi = getLoginDetails()
+    girildiMi, adi = getLoginDetails()[1:]
     return render_template('root.html', girildiMi=girildiMi, adi=adi)
 
     
@@ -636,140 +657,140 @@ def changeDb():
         return redirect(url_for('root'))
     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
         return redirect(url_for('loginForm'))
-    userId, girildiMi, adi = getLoginDetails()
+    girildiMi, adi = getLoginDetails()[1:]
     return render_template('change_db.html', girildiMi=girildiMi, adi=adi)
 
 
 
-@app.route("/backupAccounting")
-def backupAccounting():
-    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
-        adminMi = 0
-        session['adminMi'] = adminMi
-    if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
-        return redirect(url_for('root'))
-    if 'email' not in session:  # bu kisim usttekilerle ayni mantik
-        return redirect(url_for('loginForm'))
-    userId, girildiMi, adi = getLoginDetails()
-    try:
-        con = sqlite3.connect(DatabaseName.databaseName)
-        cur = con.cursor()
-        cur.execute("select * from muhasebe")
-        data = cur.fetchall()  # data from database
-        cur.execute("select price from muhasebe")
-        temp_deger = cur.fetchall()
-        deger = []
-        for i in range(len(temp_deger)):
-            deger.append(int(str(temp_deger[i])[1:-2]))
-        deger = sum(deger)
-        today = date.today()
-        now = date.today().weekday()
-        if(now == 0):
-            now = "Pazartesi"
-        if(now == 1):
-            now = "Sali"
-        if(now == 2):
-            now = "Carsamba"
-        if(now == 3):
-            now = "Persembe"
-        if(now == 4):
-            now = "Cuma"
-        if(now == 5):
-            now = "Cumartesi"
-        if(now == 6):
-            now = "Pazar"
-
-        textfile = open("accountingBackup_"+str(today)+"_" +
-                        str(now)+".txt", "w", encoding="utf-8")
-        textfile.write(f"Toplam: {deger};")
-        for i in data:
-            textfile.write(f"\n{i}")
-        textfile.close()
-        cur.execute("DELETE FROM muhasebe")  # Remove all data
-        con.commit()
-        con.close()
-
-######################################################################
-
-        con = sqlite3.connect(DatabaseName.databaseName)
-        cur = con.cursor()
-        cur.execute("select * from alacaklar")
-        data = cur.fetchall()  # data from database
-        cur.execute("select price from alacaklar")
-        temp_deger2 = cur.fetchall()
-        deger2 = []
-        for i in range(len(temp_deger2)):
-            deger2.append(int(str(temp_deger2[i])[1:-2]))
-        deger2 = sum(deger2)
-        today = date.today()
-        now = date.today().weekday()
-        if(now == 0):
-            now = "Pazartesi"
-        if(now == 1):
-            now = "Sali"
-        if(now == 2):
-            now = "Carsamba"
-        if(now == 3):
-            now = "Persembe"
-        if(now == 4):
-            now = "Cuma"
-        if(now == 5):
-            now = "Cumartesi"
-        if(now == 6):
-            now = "Pazar"
-
-        textfile = open("accountingBackupAlacaklar_"+str(today)+"_" +
-                        str(now)+".txt", "w", encoding="utf-8")
-        textfile.write(f"Toplam: {deger};")
-        for i in data:
-            textfile.write(f"\n{i}")
-        textfile.close()
-        cur.execute("DELETE FROM alacaklar")  # Remove all data
-        con.commit()
-        con.close()
-########################################
-
-        con = sqlite3.connect(DatabaseName.databaseName)
-        cur = con.cursor()
-        cur.execute("select * from cafemuhasebe")
-        data = cur.fetchall()  # data from database
-        cur.execute("select price from cafemuhasebe")
-        temp_deger3 = cur.fetchall()
-        deger3 = []
-        for i in range(len(temp_deger3)):
-            deger3.append(int(str(temp_deger3[i])[1:-2]))
-        deger3 = sum(deger3)
-        today = date.today()
-        now = date.today().weekday()
-        if(now == 0):
-            now = "Pazartesi"
-        if(now == 1):
-            now = "Sali"
-        if(now == 2):
-            now = "Carsamba"
-        if(now == 3):
-            now = "Persembe"
-        if(now == 4):
-            now = "Cuma"
-        if(now == 5):
-            now = "Cumartesi"
-        if(now == 6):
-            now = "Pazar"
-
-        textfile = open("accountingBackupCafeMuhasebe_"+str(today)+"_" +
-                        str(now)+".txt", "w", encoding="utf-8")
-        textfile.write(f"Toplam: {deger};")
-        for i in data:
-            textfile.write(f"\n{i}")
-        textfile.close()
-        cur.execute("DELETE FROM cafemuhasebe")  # Remove all data
-        con.commit()
-        con.close()
-
-    except Exception as e:
-        print(f"Hata oluştu: {e}")
-    userId, girildiMi, adi = getLoginDetails()
-    return render_template('root.html', girildiMi=girildiMi, adi=adi)
+# @app.route("/backupAccounting")
+# def backupAccounting():
+#     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+#         adminMi = 0
+#         session['adminMi'] = adminMi
+#     if session['adminMi'] == 0:  # bu kisim usttekilerle ayni mantik
+#         return redirect(url_for('root'))
+#     if 'email' not in session:  # bu kisim usttekilerle ayni mantik
+#         return redirect(url_for('loginForm'))
+#     userId, girildiMi, adi = getLoginDetails()
+#     try:
+#         con = sqlite3.connect(DatabaseName.databaseName)
+#         cur = con.cursor()
+#         cur.execute("select * from muhasebe")
+#         data = cur.fetchall()  # data from database
+#         cur.execute("select price from muhasebe")
+#         temp_deger = cur.fetchall()
+#         deger = []
+#         for i in range(len(temp_deger)):
+#             deger.append(int(str(temp_deger[i])[1:-2]))
+#         deger = sum(deger)
+#         today = date.today()
+#         now = date.today().weekday()
+#         if(now == 0):
+#             now = "Pazartesi"
+#         if(now == 1):
+#             now = "Sali"
+#         if(now == 2):
+#             now = "Carsamba"
+#         if(now == 3):
+#             now = "Persembe"
+#         if(now == 4):
+#             now = "Cuma"
+#         if(now == 5):
+#             now = "Cumartesi"
+#         if(now == 6):
+#             now = "Pazar"
+# 
+#         textfile = open("accountingBackup_"+str(today)+"_" +
+#                         str(now)+".txt", "w", encoding="utf-8")
+#         textfile.write(f"Toplam: {deger};")
+#         for i in data:
+#             textfile.write(f"\n{i}")
+#         textfile.close()
+#         cur.execute("DELETE FROM muhasebe")  # Remove all data
+#         con.commit()
+#         con.close()
+# 
+#
+# 
+#         con = sqlite3.connect(DatabaseName.databaseName)
+#         cur = con.cursor()
+#         cur.execute("select * from alacaklar")
+#         data = cur.fetchall()  # data from database
+#         cur.execute("select price from alacaklar")
+#         temp_deger2 = cur.fetchall()
+#         deger2 = []
+#         for i in range(len(temp_deger2)):
+#             deger2.append(int(str(temp_deger2[i])[1:-2]))
+#         deger2 = sum(deger2)
+#         today = date.today()
+#         now = date.today().weekday()
+#         if(now == 0):
+#             now = "Pazartesi"
+#         if(now == 1):
+#             now = "Sali"
+#         if(now == 2):
+#             now = "Carsamba"
+#         if(now == 3):
+#             now = "Persembe"
+#         if(now == 4):
+#             now = "Cuma"
+#         if(now == 5):
+#             now = "Cumartesi"
+#         if(now == 6):
+#             now = "Pazar"
+# 
+#         textfile = open("accountingBackupAlacaklar_"+str(today)+"_" +
+#                         str(now)+".txt", "w", encoding="utf-8")
+#         textfile.write(f"Toplam: {deger};")
+#         for i in data:
+#             textfile.write(f"\n{i}")
+#         textfile.close()
+#         cur.execute("DELETE FROM alacaklar")  # Remove all data
+#         con.commit()
+#         con.close()
+#
+# 
+#         con = sqlite3.connect(DatabaseName.databaseName)
+#         cur = con.cursor()
+#         cur.execute("select * from cafemuhasebe")
+#         data = cur.fetchall()  # data from database
+#         cur.execute("select price from cafemuhasebe")
+#         temp_deger3 = cur.fetchall()
+#         deger3 = []
+#         for i in range(len(temp_deger3)):
+#             deger3.append(int(str(temp_deger3[i])[1:-2]))
+#         deger3 = sum(deger3)
+#         today = date.today()
+#         now = date.today().weekday()
+#         if(now == 0):
+#             now = "Pazartesi"
+#         if(now == 1):
+#             now = "Sali"
+#         if(now == 2):
+#             now = "Carsamba"
+#         if(now == 3):
+#             now = "Persembe"
+#         if(now == 4):
+#             now = "Cuma"
+#         if(now == 5):
+#             now = "Cumartesi"
+#         if(now == 6):
+#             now = "Pazar"
+# 
+#         textfile = open("accountingBackupCafeMuhasebe_"+str(today)+"_" +
+#                         str(now)+".txt", "w", encoding="utf-8")
+#         textfile.write(f"Toplam: {deger};")
+#         for i in data:
+#             textfile.write(f"\n{i}")
+#         textfile.close()
+#         cur.execute("DELETE FROM cafemuhasebe")  # Remove all data
+#         con.commit()
+#         con.close()
+# 
+#     except Exception as e:
+#         print(f"Hata oluştu: {e}")
+#     userId, girildiMi, adi = getLoginDetails()
+#     return render_template('root.html', girildiMi=girildiMi, adi=adi)
 
 
 @app.route("/accountingForm")  # kaydolma sayfasi

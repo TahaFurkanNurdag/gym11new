@@ -13,9 +13,17 @@
 {% include 'HEADER.html' %}
 
 <!-- Content -->
+
 <body
 	style="font-family: 'Roboto', sans-serif; background-image: url({{ url_for('static', filename='images/root_background.jpg') }}); background-position: center; background-repeat: no-repeat;background-size: cover;">
 	<div class="w3-display-container">
+		{% if girildiMi %}
+		<div class="w3-content w3-center w3-gym11-text">
+			{% for i in data %}
+				<h1>Bugün {{i}}'ın doğum günü!</h1>
+			{% endfor %}
+		</div>
+		{% endif %}
 		<div class="w3-content w3-center">
 			<img class="w3-bar-item w3-image w3-circle" src="{{ url_for('static', filename='images/sitelogo.png') }}" />
 		</div>

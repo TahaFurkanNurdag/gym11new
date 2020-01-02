@@ -8,6 +8,7 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename = 'js/tableSearchDiff1.js') }}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
 
@@ -44,6 +45,10 @@
 
 		</div>
 		<hr>
+
+		<input type="text" id="myInput" onkeyup="myFunction()" placeholder="User ID ile arama yapın."
+			title="User ID girin">
+
 		<div class="w3-padding w3-center w3-white" style="overflow-x:auto;">
 			<br>
 			<table id="myTable" style="width: 100%">
@@ -64,8 +69,6 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			Total debt is :
-			<label id="jsvals"></label>
 			<br>
 		</div>
 </body>

@@ -28,3 +28,65 @@
 #myTable tr.header, #myTable tr:hover {
     background-color: #f1f1f1;
 }
+
+#myInput2 {
+    background-image: url('/css/searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    width: 100%;
+    font-size: 16px;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+}
+
+#myTable2 {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+    font-size: 18px;
+}
+
+#myTable2 th, #myTable2 td {
+    text-align: left;
+    padding: 12px;
+}
+
+#myTable2 tr {
+    border-bottom: 1px solid #ddd;
+}
+
+#myTable2 tr.header, #myTable2 tr:hover {
+    background-color: #f1f1f1;
+}
+
+#myInput3 {
+    background-image: url('/css/searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    width: 100%;
+    font-size: 16px;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+}
+
+#myTable3 {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ddd;
+    font-size: 18px;
+}
+
+#myTable3 th, #myTable3 td {
+    text-align: left;
+    padding: 12px;
+}
+
+#myTable3 tr {
+    border-bottom: 1px solid #ddd;
+}
+
+#myTable3 tr.header, #myTable3 tr:hover {
+    background-color: #f1f1f1;
+}

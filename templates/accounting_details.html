@@ -7,6 +7,9 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/w3.css') }}">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
 	<script type="text/javascript" src="{{ url_for('static', filename = 'js/toggleMenu.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename = 'js/tableSearch.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename = 'js/tableSearchDif.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename = 'js/tableSearchDiff.js') }}"></script>
 	<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 </head>
 
@@ -22,7 +25,7 @@
 		<a class="w3-button w3-white" href="#alacak">Alacak Tutar</a>
 		<a class="w3-button w3-white" href="#kafe">Kafe Muhasebesi</a>
 	</div>
-	
+
 	<!-- NORMAL MUHASEBE -->
 	<div id="bakiye" class="w3-margin w3-center w3-blue">
 		<h1>Bakiye + Alacakların tutarı : {{degerAlacaklar + deger + degerCafe}}₺</h1>
@@ -41,8 +44,13 @@
 	</div>
 	{% endif %}
 
+
+
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+		<input type="text" id="myInput" onkeyup="myFunction()" placeholder="User ID ile arama yapın."
+			title="User ID girin">
 		<br>
+
 		<table id="myTable">
 			<thead>
 				<tr>
@@ -100,8 +108,11 @@
 
 
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+		<input type="text" id="myInput2" onkeyup="myFunction2()" placeholder="User ID ile arama yapın."
+			title="User ID girin">
+
 		<br>
-		<table id="myTable">
+		<table id="myTable2">
 			<thead>
 				<tr>
 					<th>Muhasebe No</th>
@@ -154,9 +165,13 @@
 		</div>
 		{% endif %}
 	</div>
+
+
 	<div class="w3-margin w3-padding w3-center w3-white w3-card" style="overflow-x:auto;">
+		<input type="text" id="myInput3" onkeyup="myFunction3()" placeholder="User ID ile arama yapın."
+			title="User ID girin">
 		<br>
-		<table id="myTable">
+		<table id="myTable3">
 			<thead>
 				<th>Muhasebe No</th>
 				<th>Üye numarası</th>
