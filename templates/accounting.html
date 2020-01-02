@@ -31,13 +31,13 @@
 			<p>İsim</p>
 			<select class="w3-input" name="name">
 				{% for row in isimler %}
-				<option value="{{row[0]}}">{{row[0]}}</option>
+				<option value="{{row[0]}}">{{row[0]}} - ID({{row[1]}})</option>
 				{% endfor %}
 			</select>
 			<p>Soyad</p>
 			<select class="w3-input" name="surname">
 				{% for row in soyadlar %}
-				<option value="{{row[0]}}">{{row[0]}}</option>
+				<option value="{{row[0]}}">{{row[0]}} - ID({{row[1]}})</option>
 				{% endfor %}
 			</select>
 			<p>Ücret<input type="text" name="price"></p>

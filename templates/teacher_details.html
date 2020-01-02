@@ -40,13 +40,13 @@
 				<p>Üye adı</p>
 				<select class="w3-input" name="clientName">
 					{% for row in isimler %}
-					<option value="{{row[0]}}">{{row[0]}}</option>
+					<option value="{{row[0]}}">{{row[0]}} - ID({{row[1]}})</option>
 					{% endfor %}
 				</select>
 				<p>Üye soyadı</p>
 				<select class="w3-input" name="clientSurname">
 					{% for row in soyadlar %}
-					<option value="{{row[0]}}">{{row[0]}}</option>
+					<option value="{{row[0]}}">{{row[0]}} - ID({{row[1]}})</option>
 					{% endfor %}
 				</select>
 				<p>Gün<input type="date" name="date"></p>

@@ -35,13 +35,13 @@
 				<p>Name</p>
 				<select class="w3-input" name="uyeAdi">
 					{% for row in isimler %}
-					<option value="{{row[0]}}">{{row[0]}}</option>
+					<option value="{{row[0]}}">{{row[0]}}  - ID({{row[1]}})</option>
 					{% endfor %}
 				</select>
 				<p>Surname</p>
 				<select class="w3-input" name="uyeSoyadi">
 					{% for row in soyadlar %}
-					<option value="{{row[0]}}">{{row[0]}}</option>
+					<option value="{{row[0]}}">{{row[0]}}  - ID({{row[1]}})</option>
 					{% endfor %}
 				</select>
 				<p>Price<input type="text" name="ucret"></p>

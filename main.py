@@ -362,10 +362,11 @@ def teachersDetails():
             data = cur.fetchall()  # data from database
             cur.execute('select userId from kullanicilar')
             idler = cur.fetchall()
-            cur.execute('select adi from kullanicilar ')
+            cur.execute('select adi,userId from kullanicilar ')
             isimler = cur.fetchall()
-            cur.execute('select soyadi from kullanicilar')
+            cur.execute('select soyadi,userId from kullanicilar')
             soyadlar = cur.fetchall()
+
         except Exception as e:
             con.rollback()
             print(f"Failure. Failure Code: 904. Failure is {e}")
@@ -454,9 +455,9 @@ def incomeDetails():
             temp_deger = cur.fetchall()
             cur.execute('select userId from kullanicilar')
             idler = cur.fetchall()
-            cur.execute('select adi from kullanicilar ')
+            cur.execute('select adi,userId from kullanicilar ')
             isimler = cur.fetchall()
-            cur.execute('select soyadi from kullanicilar')
+            cur.execute('select soyadi,userId from kullanicilar')
             soyadlar = cur.fetchall()
         except Exception as e:
             con.rollback()
@@ -808,9 +809,9 @@ def accountingForm():
                 cur = con.cursor()
                 cur.execute('select userId from kullanicilar')
                 idler = cur.fetchall()
-                cur.execute('select adi from kullanicilar ')
+                cur.execute('select adi,userId from kullanicilar ')
                 isimler = cur.fetchall()
-                cur.execute('select soyadi from kullanicilar')
+                cur.execute('select soyadi,userId from kullanicilar')
                 soyadlar = cur.fetchall()
             except Exception as e:
                 con.rollback()
